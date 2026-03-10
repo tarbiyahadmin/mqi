@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 33% 95%;
+    --foreground: 220 25% 18%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 18%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 18%;
+
+    --primary: 155 51% 37%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 170 50% 24%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 40 20% 90%;
+    --muted-foreground: 220 15% 45%;
+
+    --accent: 45 47% 52%;
+    --accent-foreground: 220 25% 18%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 40 15% 85%;
+    --input: 40 15% 85%;
+    --ring: 155 51% 37%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 155 51% 37%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 155 51% 37%;
+  }
+
+  .dark {
+    --background: 220 25% 10%;
+    --foreground: 40 20% 92%;
+
+    --card: 220 25% 14%;
+    --card-foreground: 40 20% 92%;
+
+    --popover: 220 25% 14%;
+    --popover-foreground: 40 20% 92%;
+
+    --primary: 155 51% 42%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 170 50% 30%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 20% 18%;
+    --muted-foreground: 220 15% 60%;
+
+    --accent: 45 47% 52%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 22%;
+    --input: 220 20% 22%;
+    --ring: 155 51% 42%;
+  }
+}
+
+/* Sitewide consistent max-width for content (cards, rich text, images) */
+.content-max {
+  max-width: 75rem; /* 1200px */
+}
+
+/* Hero stats marquee - continuous right-to-left scroll */
+@keyframes hero-stats-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.333%); }
+}
+.hero-stats-marquee {
+  animation: hero-stats-scroll 25s linear infinite;
+}
+.hero-stats-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Utility to hide horizontal scrollbars while preserving scroll */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari, Opera */
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+/* Islamic geometric pattern accent - subtle, lightweight */
+.geometric-border {
+  background-color: hsl(var(--background));
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%232F8F6B' stroke-width='0.4' opacity='0.12'%3E%3Cpath d='M20 0L40 20L20 40L0 20Z'/%3E%3Cpath d='M20 5L35 20L20 35L5 20Z'/%3E%3Cpath d='M20 10L30 20L20 30L10 20Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+.geometric-divider {
+  height: 4px;
+  background: linear-gradient(90deg, transparent, hsl(155 51% 37% / 0.3), hsl(45 47% 52% / 0.5), hsl(155 51% 37% / 0.3), transparent);
+}
+
+/* Islamic-inspired 8-point star motif - subtle section accents */
+.pattern-stars {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l4 12 12 4-4 12 4 12-12 4-4 12-4-12-12-4 4-12-4-12 12-4z' fill='none' stroke='%232F8F6B' stroke-width='0.3' opacity='0.08'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* Soft gradient accent for sections */
+.section-gradient {
+  background: linear-gradient(180deg, hsl(var(--muted) / 0.3) 0%, transparent 100%);
+}
+
+/* Light geometric line accent */
+.geometric-line {
+  background: linear-gradient(90deg, transparent, hsl(155 51% 37% / 0.2), hsl(45 47% 52% / 0.3), hsl(155 51% 37% / 0.2), transparent);
+  height: 1px;
+}
+
+/* Elegant section divider - Islamic geometric ornamental strip (repeating diamond motif) */
+.section-divider {
+  height: 24px;
+  margin: 0 auto;
+  max-width: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'%3E%3Cpath d='M0 12h48' fill='none' stroke='%232F8F6B' stroke-width='0.6' opacity='0.4'/%3E%3Cpath d='M12 6l6 6-6 6-6-6z' fill='none' stroke='%232F8F6B' stroke-width='0.5' opacity='0.5'/%3E%3Cpath d='M30 6l6 6-6 6-6-6z' fill='none' stroke='%232F8F6B' stroke-width='0.5' opacity='0.5'/%3E%3Cpath d='M24 4l4 4-4 4-4-4z' fill='none' stroke='%23B8860B' stroke-width='0.4' opacity='0.45'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+/* Lightweight Islamic geometric accent for section backgrounds */
+.bg-pattern-subtle {
+  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 0L32 16L16 32L0 16Z' fill='none' stroke='%232F8F6B' stroke-width='0.35' opacity='0.06'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* Pattern for dark backgrounds (CTA, footer) - lighter stroke */
+.pattern-dark {
+  background-image: url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 0l3 9 9 3-3 9 3 9-9 3-3 9-3-9-9-3 3-9-3-9 9-3z' fill='none' stroke='%23ffffff' stroke-width='0.25' opacity='0.06'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}

@@ -1,0 +1,183 @@
+import { defineType, defineField } from 'sanity';
+import { seoFields } from './seo';
+
+const heroStatIconOptions = [
+  'BookOpen',
+  'GraduationCap',
+  'Sun',
+  'Users',
+  'Award',
+  'Heart',
+  'Clock',
+  'Shield',
+  'Briefcase',
+];
+
+export const homepage = defineType({
+  name: 'homepage',
+  type: 'document',
+  title: 'Homepage',
+  groups: [
+    { name: 'hero', title: 'Hero' },
+    { name: 'programs', title: 'Our Programs' },
+    { name: 'whyChooseUs', title: 'Why Choose Us' },
+    { name: 'testimonials', title: 'Testimonials' },
+    { name: 'cta', title: 'CTA Banner' },
+    { name: 'seo', title: 'SEO' },
+  ],
+  fields: [
+    defineField({
+      name: 'heroEyebrow',
+      type: 'string',
+      title: 'Hero Eyebrow',
+      group: 'hero',
+      initialValue: "— Milton Quran Institute —",
+    }),
+    defineField({
+      name: 'heroTitle',
+      type: 'string',
+      title: 'Hero Title',
+      group: 'hero',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'heroSubtitle',
+      type: 'text',
+      title: 'Hero Subtitle',
+      group: 'hero',
+      rows: 2,
+    }),
+    defineField({
+      name: 'heroCtaButtons',
+      type: 'array',
+      title: 'Hero CTA Buttons',
+      group: 'hero',
+      of: [{ type: 'ctaButton' }],
+    }),
+    defineField({
+      name: 'heroStats',
+      type: 'array',
+      title: 'Hero Stats Row',
+      group: 'hero',
+      description: 'Thin horizontal stats that scroll below the hero. Add items to display (e.g. "500+ Students", "15 Years").',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({ name: 'label', type: 'string', title: 'Label', validation: (r) => r.required(), description: 'e.g. 500+ Students' }),
+            defineField({ name: 'value', type: 'string', title: 'Value (optional)', description: 'Optional subtext or unit' }),
+            defineField({
+              name: 'icon',
+              type: 'string',
+              title: 'Stat Icon',
+              description: 'Choose an icon to display before the stat (same set as Why Choose Us).',
+              options: { list: heroStatIconOptions },
+            }),
+          ],
+          preview: { select: { label: 'label' }, prepare: ({ label }: { label?: string }) => ({ title: label || 'Stat' }) },
+        },
+      ],
+    }),
+    defineField({
+      name: 'programsSectionTitle',
+      type: 'string',
+      title: 'Programs Section Title',
+      group: 'programs',
+      initialValue: 'Our Programs',
+    }),
+    defineField({
+      name: 'programsSectionSubtitle',
+      type: 'text',
+      title: 'Programs Section Subtitle',
+      group: 'programs',
+    }),
+    defineField({
+      name: 'featuredPrograms',
+      type: 'array',
+      title: 'Featured Programs',
+      group: 'programs',
+      description: 'Specific programs to display on the homepage. Users can filter by category.',
+      of: [{ type: 'reference', to: [{ type: 'program' }] }],
+    }),
+    defineField({
+      name: 'viewAllProgramsLabel',
+      type: 'string',
+      title: 'View All Programs Button Label',
+      group: 'programs',
+      initialValue: 'View All Programs',
+    }),
+    defineField({
+      name: 'whyChooseUsSectionTitle',
+      type: 'string',
+      title: 'Why Choose Us Section Title',
+      group: 'whyChooseUs',
+      initialValue: 'Why Choose Us',
+    }),
+    defineField({
+      name: 'whyChooseUsSectionSubtitle',
+      type: 'text',
+      title: 'Why Choose Us Section Subtitle',
+      group: 'whyChooseUs',
+    }),
+    defineField({
+      name: 'whyChooseUsItems',
+      type: 'array',
+      title: 'Why Choose Us Items',
+      group: 'whyChooseUs',
+      of: [{ type: 'whyChooseUsItem' }],
+    }),
+    defineField({
+      name: 'testimonialsSectionTitle',
+      type: 'string',
+      title: 'Testimonials Section Title',
+      group: 'testimonials',
+      initialValue: 'What Families Say',
+    }),
+    defineField({
+      name: 'testimonials',
+      type: 'array',
+      title: 'Testimonials',
+      group: 'testimonials',
+      description: 'Short quotes from parents or students.',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({ name: 'quote', type: 'text', title: 'Quote', validation: (r) => r.required(), rows: 3 }),
+            defineField({ name: 'name', type: 'string', title: 'Name', validation: (r) => r.required() }),
+            defineField({ name: 'role', type: 'string', title: 'Role or description', description: 'e.g. Parent of student, Alumni' }),
+          ],
+          preview: { select: { name: 'name' }, prepare: ({ name }: { name?: string }) => ({ title: name || 'Testimonial' }) },
+        },
+      ],
+    }),
+    defineField({
+      name: 'ctaTitle',
+      type: 'string',
+      title: 'CTA Banner Title',
+      group: 'cta',
+    }),
+    defineField({
+      name: 'ctaSubtitle',
+      type: 'text',
+      title: 'CTA Banner Subtitle',
+      group: 'cta',
+    }),
+    defineField({
+      name: 'ctaButtons',
+      type: 'array',
+      title: 'CTA Banner Buttons',
+      group: 'cta',
+      of: [{ type: 'ctaButton' }],
+    }),
+    defineField({
+      name: 'footerNote',
+      type: 'text',
+      title: 'Footer Note',
+      group: 'cta',
+      rows: 2,
+      description: 'Optional short note above or near the CTA (e.g. seasonal message).',
+    }),
+    ...seoFields,
+  ],
+});
