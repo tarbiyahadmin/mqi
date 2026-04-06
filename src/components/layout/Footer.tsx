@@ -1,8 +1,10 @@
-import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Mail, Phone, MapPin, Instagram, Facebook, Youtube, Twitter, Linkedin } from "lucide-react";
 import mqiLogo from "@/assets/mqi-logo.svg";
 import { useQuery } from "@tanstack/react-query";
 import { getSiteSettings } from "@/lib/sanityQueries";
+import type { NavLink as NavLinkFields } from "@/lib/sanityQueries";
+import { ConfigurableNavLink } from "@/components/layout/ConfigurableNavLink";
 
 const defaultQuickLinks = [
   { label: "Programs", to: "/programs" },
@@ -18,15 +20,16 @@ const defaultProgramLinks = [
 ];
 
 const Footer = () => {
+  const location = useLocation();
   const { data: siteSettings } = useQuery({
     queryKey: ["siteSettings"],
     queryFn: getSiteSettings,
   });
 
   const tagline = siteSettings?.footerTagline ?? "Nurturing minds and hearts through Qur'anic education, fostering a community of lifelong learners.";
-  const rawQuickLinks = (siteSettings?.footerQuickLinks?.length ? siteSettings.footerQuickLinks : defaultQuickLinks) as { label: string; to: string }[];
+  const rawQuickLinks = (siteSettings?.footerQuickLinks?.length ? siteSettings.footerQuickLinks : defaultQuickLinks) as NavLinkFields[];
   const quickLinks = rawQuickLinks.filter((link) => link.to !== "/contact");
-  const programLinks = (siteSettings?.footerProgramLinks?.length ? siteSettings.footerProgramLinks : defaultProgramLinks) as { label: string; to: string }[];
+  const programLinks = (siteSettings?.footerProgramLinks?.length ? siteSettings.footerProgramLinks : defaultProgramLinks) as NavLinkFields[];
   const address = siteSettings?.footerAddress ?? "123 Main Street, Milton, ON L9T 1X1";
   const phone = siteSettings?.footerPhone ?? "(905) 555-0123";
   const email = siteSettings?.footerEmail ?? "info@miltonquran.org";
@@ -60,11 +63,13 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-sm uppercase tracking-wider mb-4 text-secondary-foreground/90">Quick Links</h4>
             <ul className="space-y-2.5">
-              {quickLinks.map((link) => (
-                <li key={link.to}>
-                  <Link to={link.to} className="text-sm text-secondary-foreground/60 hover:text-secondary-foreground transition-colors">
-                    {link.label}
-                  </Link>
+              {quickLinks.map((link, index) => (
+                <li key={`${link.label}-${link.to}-${index}`}>
+                  <ConfigurableNavLink
+                    link={link}
+                    context="footer"
+                    isActive={location.pathname === link.to}
+                  />
                 </li>
               ))}
             </ul>
@@ -74,11 +79,13 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-sm uppercase tracking-wider mb-4 text-secondary-foreground/90">Programs</h4>
             <ul className="space-y-2.5">
-              {programLinks.map((link) => (
-                <li key={link.to}>
-                  <Link to={link.to} className="text-sm text-secondary-foreground/60 hover:text-secondary-foreground transition-colors">
-                    {link.label}
-                  </Link>
+              {programLinks.map((link, index) => (
+                <li key={`${link.label}-${link.to}-${index}`}>
+                  <ConfigurableNavLink
+                    link={link}
+                    context="footer"
+                    isActive={location.pathname === link.to}
+                  />
                 </li>
               ))}
             </ul>

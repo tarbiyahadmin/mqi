@@ -7,6 +7,8 @@ const imageProjection = `{ _type, asset->{ _id, url }, hotspot, crop }`;
 export interface NavLink {
   label: string;
   to: string;
+  displayAsButton?: boolean;
+  openInNewTab?: boolean;
 }
 
 export interface SocialLink {
@@ -352,10 +354,10 @@ export type TemplatePageDoc = ContentPageDoc | LandingPageDoc | InfoPageDoc;
 
 // --- GROQ Queries ---
 const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
-  navLinks[]{ label, to },
+  navLinks[]{ label, to, displayAsButton, openInNewTab },
   footerTagline,
-  footerQuickLinks[]{ label, to },
-  footerProgramLinks[]{ label, to },
+  footerQuickLinks[]{ label, to, displayAsButton, openInNewTab },
+  footerProgramLinks[]{ label, to, displayAsButton, openInNewTab },
   footerAddress,
   footerPhone,
   footerEmail,

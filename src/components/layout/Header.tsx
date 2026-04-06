@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import mqiLogo from "@/assets/mqi-logo.svg";
 import { useQuery } from "@tanstack/react-query";
 import { getSiteSettings } from "@/lib/sanityQueries";
+import type { NavLink } from "@/lib/sanityQueries";
+import { ConfigurableNavLink } from "@/components/layout/ConfigurableNavLink";
 
 const defaultNavLinks = [
   { label: "Home", to: "/" },
@@ -22,7 +23,7 @@ const Header = () => {
     queryFn: getSiteSettings,
   });
 
-  const rawLinks = (siteSettings?.navLinks?.length ? siteSettings.navLinks : defaultNavLinks) as { label: string; to: string }[];
+  const rawLinks = (siteSettings?.navLinks?.length ? siteSettings.navLinks : defaultNavLinks) as NavLink[];
   const navLinks = rawLinks.filter((link) => link.to !== "/contact");
 
   return (
@@ -33,25 +34,15 @@ const Header = () => {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-1">
-          {navLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-muted ${
-                location.pathname === link.to
-                  ? "text-primary font-semibold"
-                  : "text-foreground/70"
-              }`}
-            >
-              {link.label}
-            </Link>
+        <nav className="hidden lg:flex items-center gap-2 flex-wrap justify-end">
+          {navLinks.map((link, index) => (
+            <ConfigurableNavLink
+              key={`${link.label}-${link.to}-${index}`}
+              link={link}
+              context="header-desktop"
+              isActive={location.pathname === link.to}
+            />
           ))}
-          <Link to="/donate">
-            <Button className="ml-3 bg-accent text-accent-foreground hover:bg-accent/90 font-semibold rounded-full px-6">
-              Donate
-            </Button>
-          </Link>
         </nav>
 
         {/* Mobile toggle */}
@@ -67,26 +58,16 @@ const Header = () => {
       {/* Mobile nav */}
       {mobileOpen && (
         <div className="lg:hidden border-t border-border bg-card pb-4">
-          <nav className="container flex flex-col gap-1 pt-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setMobileOpen(false)}
-                className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors hover:bg-muted ${
-                  location.pathname === link.to
-                    ? "text-primary font-semibold bg-primary/5"
-                    : "text-foreground/70"
-                }`}
-              >
-                {link.label}
-              </Link>
+          <nav className="container flex flex-col gap-2 pt-3">
+            {navLinks.map((link, index) => (
+              <ConfigurableNavLink
+                key={`${link.label}-${link.to}-${index}`}
+                link={link}
+                context="header-mobile"
+                isActive={location.pathname === link.to}
+                onNavigate={() => setMobileOpen(false)}
+              />
             ))}
-            <Link to="/donate" onClick={() => setMobileOpen(false)}>
-              <Button className="mt-2 w-full bg-accent text-accent-foreground hover:bg-accent/90 font-semibold rounded-full">
-                Donate
-              </Button>
-            </Link>
           </nav>
         </div>
       )}
