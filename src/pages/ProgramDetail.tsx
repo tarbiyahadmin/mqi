@@ -41,7 +41,7 @@ const ProgramDetail = () => {
   const categoryTitle = program.category?.title ?? "";
   const categorySlug = program.category?.slug ?? "programs";
   const imageUrl = program.mainImage?.asset?.url
-    ? urlFor(program.mainImage).width(1200).height(600).fit("max").url()
+    ? urlFor(program.mainImage).width(1200).fit("max").url()
     : null;
 
   const infoCards = program.infoCards ?? [];
