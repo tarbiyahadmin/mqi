@@ -6,7 +6,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { useQuery } from "@tanstack/react-query";
 import { getProgramBySlug } from "@/lib/sanityQueries";
 import { urlFor } from "@/lib/sanity";
-import { getJotformUrl } from "@/lib/jotform";
 import { formPagePath } from "@/lib/routes";
 import { CtaLink } from "@/components/CtaLink";
 import { PageSeo } from "@/components/PageSeo";
@@ -56,15 +55,15 @@ const ProgramDetail = () => {
   const scheduleBlocks = program.scheduleBlocks ?? [];
   const registrationFormSlug = program.registrationFormPage?.slug;
   const registrationPath = registrationFormSlug ? formPagePath(registrationFormSlug) : null;
-  const legacyJotformUrl = getJotformUrl(program.jotformUrl);
-  const registerTo = registrationPath ?? legacyJotformUrl;
-  const registerIsExternal = !registrationPath && !!legacyJotformUrl;
-  const feeStructureUrl = program.feeStructureCtaUrl;
-  const feeStructureLabel = program.feeStructureCtaLabel?.trim() || "Request Fee Structure";
+  const bookMeetFormSlug = program.bookMeetFormPage?.slug;
+  const bookMeetPath = bookMeetFormSlug ? formPagePath(bookMeetFormSlug) : null;
 
-  const ProgramCta = () =>
-    registerTo ? (
-      <CtaLink label="Register Now" to={registerTo} isExternal={registerIsExternal} variant="accent" />
+  const ProgramCtas = () =>
+    registrationPath ? (
+      <div className="flex flex-wrap items-center gap-3 md:gap-4">
+        <CtaLink label="Register Now" to={registrationPath} variant="accent" />
+        {bookMeetPath && <CtaLink label="Book a Meet" to={bookMeetPath} variant="primary" />}
+      </div>
     ) : (
       <Button
         asChild
@@ -77,8 +76,11 @@ const ProgramDetail = () => {
 
   return (
     <main className="section-soft-radial relative py-16 md:py-28 lg:py-32">
-      <DecorativeArabic variant="full" opacity={0.034} />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/90" aria-hidden />
+      <DecorativeArabic variant="full" opacity={0.04} className="scale-[1.04]" />
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_74%_64%_at_50%_50%,transparent_18%,hsl(var(--background)/0.78)_100%)]"
+        aria-hidden
+      />
       <PageSeo title={program.seo?.seoTitle} description={program.seo?.metaDescription} fallbackTitle={`${program.title} | MQI`} />
       <div className="container relative z-10 max-w-4xl">
         <Link to="/programs" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-8 transition-colors">
@@ -105,15 +107,11 @@ const ProgramDetail = () => {
           {program.overview ? (
             <section className="mb-14">
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">{program.overview}</p>
-              <div className="flex flex-wrap gap-4">
-                <ProgramCta />
-              </div>
+              <ProgramCtas />
             </section>
           ) : (
             <section className="mb-14">
-              <div className="flex flex-wrap gap-4">
-                <ProgramCta />
-              </div>
+              <ProgramCtas />
             </section>
           )}
 
@@ -162,7 +160,7 @@ const ProgramDetail = () => {
               <h2 className="heading-section-sm mb-6">Schedule</h2>
               <ScheduleBlocks blocks={scheduleBlocks} />
               <div className="mt-8">
-                <ProgramCta />
+                <ProgramCtas />
               </div>
             </section>
           )}
@@ -187,21 +185,9 @@ const ProgramDetail = () => {
           <section className="mb-14 pt-6">
             <h2 className="heading-section-sm mb-2">Ready to Enroll?</h2>
             <p className="text-sm text-muted-foreground mb-4">
-              {registerTo ? "Complete the registration form to secure your spot." : "View our programs to get started."}
+              {registrationPath ? "Complete the registration form to secure your spot." : "View our programs to get started."}
             </p>
-            <div className="flex flex-wrap gap-4 items-center">
-              <ProgramCta />
-              {feeStructureUrl && (
-                <CtaLink
-                  label={feeStructureLabel}
-                  to={feeStructureUrl}
-                  isExternal
-                  variant="accent"
-                  compact
-                  className="bg-background text-primary border border-primary/40 hover:bg-primary/5"
-                />
-              )}
-            </div>
+            <ProgramCtas />
           </section>
 
           {program.faqs && program.faqs.length > 0 && (

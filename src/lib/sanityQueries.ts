@@ -191,9 +191,7 @@ export interface Program {
   curriculum?: string[];
   specialOffers?: SpecialOffer[];
   registrationFormPage?: FormPageRef | null;
-  jotformUrl?: string;
-   feeStructureCtaLabel?: string;
-   feeStructureCtaUrl?: string;
+  bookMeetFormPage?: FormPageRef | null;
   faqs?: ProgramFAQ[];
   seo?: SeoData;
 }
@@ -460,9 +458,7 @@ const PROGRAM_BY_SLUG_QUERY = `*[_type == "program" && slug.current == $slug][0]
   curriculum,
   specialOffers[]{ title, description },
   registrationFormPage->{ "slug": slug.current },
-  jotformUrl,
-  feeStructureCtaLabel,
-  feeStructureCtaUrl,
+  bookMeetFormPage->{ "slug": slug.current },
   faqs[]{ q, a },
   seo{ seoTitle, metaDescription }
 }`;

@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { GlobalGrain } from "@/components/layout/GlobalGrain";
 const Index = lazy(() => import("./pages/Index"));
 const About = lazy(() => import("./pages/About"));
 const Programs = lazy(() => import("./pages/Programs"));
@@ -38,8 +39,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <div className="relative flex min-h-screen flex-1 flex-col">
+          <GlobalGrain />
           <Header />
-          <div className="flex-1">
+          <div className="relative z-10 flex-1">
             <Suspense fallback={<div className="container py-16 text-sm text-muted-foreground">Loading page...</div>}>
               <Routes>
                 <Route path="/" element={<Index />} />

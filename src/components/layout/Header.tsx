@@ -46,17 +46,35 @@ const Header = () => {
 
         {/* Mobile toggle */}
         <button
-          className="lg:hidden p-2 rounded-lg hover:bg-muted"
+          className="lg:hidden rounded-lg p-2.5 hover:bg-muted"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
+          aria-expanded={mobileOpen}
         >
-          <span className="text-sm font-semibold">{mobileOpen ? "Close" : "Menu"}</span>
+          <span className="sr-only">{mobileOpen ? "Close menu" : "Open menu"}</span>
+          <span className="relative block h-4 w-5">
+            <span
+              className={`absolute left-0 top-0 block h-[2px] w-5 rounded-full bg-foreground transition-all duration-200 ${
+                mobileOpen ? "translate-y-[7px] rotate-45" : ""
+              }`}
+            />
+            <span
+              className={`absolute left-0 top-[7px] block h-[2px] w-5 rounded-full bg-foreground transition-all duration-200 ${
+                mobileOpen ? "opacity-0" : "opacity-100"
+              }`}
+            />
+            <span
+              className={`absolute left-0 top-[14px] block h-[2px] w-5 rounded-full bg-foreground transition-all duration-200 ${
+                mobileOpen ? "-translate-y-[7px] -rotate-45" : ""
+              }`}
+            />
+          </span>
         </button>
       </div>
 
       {/* Mobile nav */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-border bg-card pb-4">
+        <div className="lg:hidden border-t border-border bg-card/95 pb-4 backdrop-blur-md">
           <nav className="container flex flex-col gap-2 pt-3">
             {navLinks.map((link, index) => (
               <ConfigurableNavLink

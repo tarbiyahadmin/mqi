@@ -131,7 +131,7 @@ const Index = () => {
               initial="hidden"
               animate="visible"
               variants={fadeUp}
-              className="relative z-20 order-2 max-w-xl space-y-7 text-left lg:order-1 lg:max-w-[42rem]"
+              className="relative z-20 order-1 max-w-xl space-y-7 text-left lg:order-1 lg:max-w-[42rem]"
             >
               <p className="text-xs font-medium uppercase tracking-[0.28em] text-primary md:text-sm">
                 {heroEyebrow}
@@ -163,7 +163,7 @@ const Index = () => {
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-              className="relative z-10 order-1 flex justify-center lg:order-2 lg:-ml-16 lg:justify-end xl:-ml-20"
+              className="pointer-events-none absolute -right-8 bottom-2 z-10 flex justify-end md:-right-10 md:bottom-4 lg:pointer-events-auto lg:relative lg:order-2 lg:-ml-16 lg:bottom-auto lg:right-auto lg:justify-end xl:-ml-20"
             >
               <div className="relative">
                 <div
@@ -173,7 +173,7 @@ const Index = () => {
                 <img
                   src={quranHero}
                   alt=""
-                  className="relative w-[min(92vw,390px)] max-h-[min(56vh,470px)] object-contain object-bottom opacity-[0.9] drop-shadow-[0_18px_44px_rgba(0,0,0,0.1)] [filter:saturate(0.92)_contrast(0.93)] sm:w-[min(78vw,430px)] lg:absolute lg:right-[-2%] lg:top-1/2 lg:z-10 lg:w-[min(55vw,580px)] lg:max-w-none lg:max-h-[min(82vh,680px)] lg:-translate-y-[47%] lg:translate-x-[-6%] lg:[mask-image:linear-gradient(to_left,black_76%,transparent_100%)] lg:[-webkit-mask-image:linear-gradient(to_left,black_76%,transparent_100%)] xl:w-[min(52vw,620px)]"
+                  className="relative w-[min(68vw,300px)] max-h-[34vh] object-contain object-bottom opacity-[0.42] drop-shadow-[0_12px_32px_rgba(0,0,0,0.08)] [filter:saturate(0.86)_contrast(0.88)] [mask-image:linear-gradient(to_left,black_52%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_left,black_52%,transparent_100%)] sm:w-[min(58vw,340px)] sm:max-h-[38vh] sm:opacity-[0.5] lg:absolute lg:right-[-2%] lg:top-1/2 lg:z-10 lg:w-[min(55vw,580px)] lg:max-w-none lg:max-h-[min(82vh,680px)] lg:-translate-y-[47%] lg:translate-x-[-6%] lg:opacity-[0.9] lg:[filter:saturate(0.92)_contrast(0.93)] lg:[mask-image:linear-gradient(to_left,black_76%,transparent_100%)] lg:[-webkit-mask-image:linear-gradient(to_left,black_76%,transparent_100%)] xl:w-[min(52vw,620px)]"
                   width={800}
                   height={800}
                   decoding="async"
@@ -306,6 +306,11 @@ const Index = () => {
       {/* About Us */}
       {showAboutSection && (
         <section className="section-soft-radial relative overflow-hidden py-20 md:py-28">
+          <DecorativeArabic variant="full" opacity={0.048} className="z-[1] scale-[1.08]" />
+          <div
+            className="pointer-events-none absolute inset-0 z-[2] bg-[radial-gradient(ellipse_74%_66%_at_48%_52%,transparent_16%,hsl(var(--background)/0.76)_100%)]"
+            aria-hidden
+          />
           <div className="container relative z-10">
             <div className="content-max mx-auto grid w-full items-start gap-8 lg:grid-cols-12 lg:items-stretch lg:gap-10">
               <motion.div
