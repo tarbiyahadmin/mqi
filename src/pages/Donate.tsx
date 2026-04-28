@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import { Heart } from "lucide-react";
 import { PortableText } from "@portabletext/react";
 import { useQuery } from "@tanstack/react-query";
 import { getDonatePage } from "@/lib/sanityQueries";
 import { CtaLink } from "@/components/CtaLink";
 import { PageSeo } from "@/components/PageSeo";
 import { getJotformUrl } from "@/lib/jotform";
+import { formPagePath } from "@/lib/routes";
+import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
 
 const defaultTrustBullets = [
   { title: "Tax Deductible", desc: "All donations are eligible for tax receipts." },
@@ -30,23 +31,33 @@ const Donate = () => {
   const trustBullets = (donatePageData?.trustBullets?.length ? donatePageData.trustBullets : defaultTrustBullets) as Array<{ title?: string; desc?: string }>;
   const howDonationHelps = donatePageData?.howDonationHelps ?? [];
   const studentSponsorship = donatePageData?.studentSponsorship;
-  const donateUrl = getJotformUrl(donatePageData?.jotformDonateUrl);
-  const sponsorUrl = getJotformUrl(donatePageData?.jotformSponsorStudentUrl);
+  const donatePath =
+    donatePageData?.donateFormPage?.slug != null
+      ? formPagePath(donatePageData.donateFormPage.slug)
+      : null;
+  const sponsorPath =
+    donatePageData?.sponsorFormPage?.slug != null
+      ? formPagePath(donatePageData.sponsorFormPage.slug)
+      : null;
+  const legacyDonateUrl = getJotformUrl(donatePageData?.jotformDonateUrl);
+  const legacySponsorUrl = getJotformUrl(donatePageData?.jotformSponsorStudentUrl);
+  const donateUrl = donatePath ?? legacyDonateUrl;
+  const sponsorUrl = sponsorPath ?? legacySponsorUrl;
+  const donateIsExternal = !donatePath && !!legacyDonateUrl;
+  const sponsorIsExternal = !sponsorPath && !!legacySponsorUrl;
   const donateCtaLabel = donatePageData?.donateCtaLabel ?? "Make a Donation";
   const sponsorCtaLabel = donatePageData?.sponsorCtaLabel ?? "Sponsor a Student";
   const seo = donatePageData?.seo;
 
   return (
-    <main className="py-20 md:py-28">
+    <main className="section-soft-radial section-y relative overflow-hidden">
+      <DecorativeArabic variant="full" opacity={0.034} />
       <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | MQI`} />
-      <div className="container max-w-3xl">
-        <motion.div initial="hidden" animate="visible" variants={fadeUp} className="text-center mb-12">
-          <div className="mx-auto w-16 h-16 rounded-2xl bg-accent/20 flex items-center justify-center mb-6">
-            <Heart className="h-8 w-8 text-accent" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">{pageTitle}</h1>
-          <div className="geometric-divider w-24 mx-auto mb-4" />
-          <p className="text-muted-foreground max-w-xl mx-auto text-lg">
+      <div className="container relative z-10 max-w-4xl">
+        <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mb-14 text-center md:mb-16">
+          <h1 className="heading-section mb-6">{pageTitle}</h1>
+          <div className="geometric-divider mx-auto mb-6 w-28" />
+          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl md:leading-relaxed">
             {pageSubtitle}
           </p>
         </motion.div>
@@ -103,15 +114,15 @@ const Donate = () => {
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="space-y-8">
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             {donateUrl && (
-              <CtaLink label={donateCtaLabel} to={donateUrl} isExternal variant="primary" />
+              <CtaLink label={donateCtaLabel} to={donateUrl} isExternal={donateIsExternal} variant="primary" />
             )}
             {sponsorUrl && (
-              <CtaLink label={sponsorCtaLabel} to={sponsorUrl} isExternal variant="accent" />
+              <CtaLink label={sponsorCtaLabel} to={sponsorUrl} isExternal={sponsorIsExternal} variant="accent" />
             )}
           </div>
 
           {donatePageData?.additionalContent && donatePageData.additionalContent.length > 0 && (
-            <div className="mt-12 prose prose-lg max-w-none prose-p:text-muted-foreground">
+            <div className="prose prose-lg prose-editorial mt-12 max-w-none prose-p:text-muted-foreground">
               <PortableText value={donatePageData.additionalContent} />
             </div>
           )}

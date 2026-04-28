@@ -4,7 +4,11 @@ import { PortableText } from "@portabletext/react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getTemplatePageBySlug, type TemplatePageDoc, type ContentBlockRichText, type ContentBlockImage, type ContentBlockCta } from "@/lib/sanityQueries";
+import { resolveCtaButtonTarget } from "@/lib/ctaDestinations";
+import { CtaLink } from "@/components/CtaLink";
 import { PageSeo } from "@/components/PageSeo";
+import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
+import { ImageSoftFade } from "@/components/ui/ImageSoftFade";
 import { urlFor } from "@/lib/sanity";
 
 const fadeUp = {
@@ -27,9 +31,7 @@ function TemplateSections({ sections }: { sections?: TemplatePageDoc["sections"]
               viewport={{ once: true }}
               variants={fadeUp}
             >
-              {b.heading && (
-                <h2 className="text-2xl font-bold text-foreground mb-4">{b.heading}</h2>
-              )}
+              {b.heading && <h2 className="heading-section-sm mb-4">{b.heading}</h2>}
               {b.body && b.body.length > 0 && (
                 <div className="prose prose-lg max-w-none prose-p:text-muted-foreground">
                   <PortableText value={b.body} />
@@ -49,9 +51,11 @@ function TemplateSections({ sections }: { sections?: TemplatePageDoc["sections"]
               whileInView="visible"
               viewport={{ once: true }}
               variants={fadeUp}
-              className="rounded-2xl overflow-hidden border border-border/50"
+              className="rounded-2xl border border-border/50"
             >
-              <img src={imgUrl} alt={b.caption ?? ""} className="w-full h-auto object-cover" />
+              <ImageSoftFade className="rounded-2xl">
+                <img src={imgUrl} alt={b.caption ?? ""} className="h-auto w-full object-cover" />
+              </ImageSoftFade>
               {b.caption && (
                 <p className="text-sm text-muted-foreground mt-2 text-center">{b.caption}</p>
               )}
@@ -70,26 +74,27 @@ function TemplateSections({ sections }: { sections?: TemplatePageDoc["sections"]
               className="py-10 px-6 rounded-2xl bg-muted/50 border border-border/50 text-center"
             >
               {b.title && (
-                <h3 className="text-xl font-bold text-foreground mb-2">{b.title}</h3>
+                <h3 className="mb-2 text-xl font-bold text-foreground md:text-2xl">{b.title}</h3>
               )}
               {b.subtitle && (
                 <p className="text-muted-foreground mb-4 max-w-xl mx-auto">{b.subtitle}</p>
               )}
               {b.buttons && b.buttons.length > 0 && (
                 <div className="flex flex-wrap justify-center gap-3">
-                  {b.buttons.map((btn) => (
-                    <Link key={btn.to} to={btn.to}>
-                      <Button
-                        className={
-                          btn.variant === "accent"
-                            ? "rounded-full font-semibold bg-accent text-accent-foreground hover:bg-accent/85"
-                            : "rounded-full font-semibold"
-                        }
-                      >
-                        {btn.label}
-                      </Button>
-                    </Link>
-                  ))}
+                  {b.buttons.map((btn, j) => {
+                    const { to, isExternal } = resolveCtaButtonTarget(btn);
+                    return (
+                      <CtaLink
+                        key={`${to}-${j}`}
+                        label={btn.label}
+                        to={to}
+                        isExternal={isExternal}
+                        variant={btn.variant === "accent" ? "accent" : "primary"}
+                        size="default"
+                        compact
+                      />
+                    );
+                  })}
                 </div>
               )}
             </motion.section>
@@ -131,16 +136,17 @@ const TemplatePage = () => {
     urlFor(page.heroImage).width(1200).height(600).fit("max").url();
 
   return (
-    <main className="py-16 md:py-24">
+    <main className="section-soft-radial relative py-16 md:py-28 lg:py-32">
+      <DecorativeArabic variant="full" opacity={0.034} />
       <PageSeo title={page.seo?.seoTitle} description={page.seo?.metaDescription} fallbackTitle={`${page.title} | MQI`} />
-      <div className="container max-w-4xl">
+      <div className="container relative z-10 max-w-5xl">
         <motion.div
           initial="hidden"
           animate="visible"
           variants={fadeUp}
           className="text-center mb-12 md:mb-16"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">{page.title}</h1>
+          <h1 className="heading-section mb-6">{page.title}</h1>
           <div className="geometric-divider w-24 mx-auto mb-4" />
           {page.subtitle && (
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
@@ -151,20 +157,20 @@ const TemplatePage = () => {
 
         {page._type === "landingPage" && page.heroCtaButtons && page.heroCtaButtons.length > 0 && (
           <div className="flex flex-wrap justify-center gap-3 mb-10">
-            {page.heroCtaButtons.map((btn) => (
-              <Link key={btn.to} to={btn.to}>
-                <Button
+            {page.heroCtaButtons.map((btn, i) => {
+              const { to, isExternal } = resolveCtaButtonTarget(btn);
+              return (
+                <CtaLink
+                  key={`${to}-${i}`}
+                  label={btn.label}
+                  to={to}
+                  isExternal={isExternal}
+                  variant={btn.variant === "accent" ? "accent" : "primary"}
                   size="lg"
-                  className={
-                    btn.variant === "accent"
-                      ? "rounded-full font-semibold bg-accent text-accent-foreground hover:bg-accent/85"
-                      : "rounded-full font-semibold"
-                  }
-                >
-                  {btn.label}
-                </Button>
-              </Link>
-            ))}
+                  compact
+                />
+              );
+            })}
           </div>
         )}
 
@@ -174,13 +180,11 @@ const TemplatePage = () => {
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeUp}
-            className="rounded-2xl overflow-hidden border border-border/50 mb-12 aspect-[2/1] max-h-[400px]"
+            className="mb-12 aspect-[2/1] max-h-[400px] rounded-2xl border border-border/50"
           >
-            <img
-              src={heroImageUrl}
-              alt=""
-              className="w-full h-full object-cover"
-            />
+            <ImageSoftFade className="h-full rounded-2xl">
+              <img src={heroImageUrl} alt="" className="h-full w-full object-cover" />
+            </ImageSoftFade>
           </motion.div>
         )}
 

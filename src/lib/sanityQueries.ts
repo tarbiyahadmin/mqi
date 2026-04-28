@@ -31,15 +31,17 @@ export interface SiteSettings {
 export interface HomeProgramCategory {
   title: string;
   description: string;
-  icon: string;
   to?: string;
   categorySlug?: string;
 }
 
 export interface WhyChooseUsItem {
-  icon: string;
   title: string;
   description: string;
+}
+
+export interface FormPageRef {
+  slug?: string;
 }
 
 export interface CtaButton {
@@ -47,6 +49,7 @@ export interface CtaButton {
   to: string;
   isExternal?: boolean;
   variant?: 'primary' | 'accent';
+  formPage?: FormPageRef | null;
 }
 
 export interface Hadith {
@@ -74,7 +77,7 @@ export interface Homepage {
   ctaSubtitle?: string;
   ctaButtons?: CtaButton[];
   footerNote?: string;
-  heroStats?: { label?: string; value?: string; icon?: string }[];
+  editorialPhotos?: { asset?: { url: string }; _type?: string }[];
 }
 
 export interface ProgramCategoryRef {
@@ -89,7 +92,6 @@ export interface ProgramCategory {
   slug: string;
   title: string;
   description?: string;
-  icon?: string;
   programs?: ProgramCategoryRef[];
 }
 
@@ -99,7 +101,6 @@ export interface ProgramFAQ {
 }
 
 export interface ProgramInfoCard {
-  icon?: string;
   title: string;
   text: string;
 }
@@ -157,6 +158,24 @@ export interface SpecialOffer {
   description?: string;
 }
 
+export interface FormPageDoc {
+  _id: string;
+  title: string;
+  slug: string;
+  intro?: unknown[];
+  embedFormUrl?: string;
+  seo?: SeoData;
+}
+
+export interface ThankYouPageDoc {
+  title?: string;
+  subtitle?: string;
+  body?: unknown[];
+  primaryCtaLabel?: string;
+  primaryCtaPath?: string;
+  seo?: SeoData;
+}
+
 export interface Program {
   _id: string;
   slug: string;
@@ -171,8 +190,8 @@ export interface Program {
   scheduleBlocks?: ScheduleBlock[];
   curriculum?: string[];
   specialOffers?: SpecialOffer[];
+  registrationFormPage?: FormPageRef | null;
   jotformUrl?: string;
-  jotformId?: string;
    feeStructureCtaLabel?: string;
    feeStructureCtaUrl?: string;
   faqs?: ProgramFAQ[];
@@ -217,10 +236,10 @@ export interface CareerRole {
   _id: string;
   title: string;
   type: string;
-  icon?: string;
   location?: string;
   description?: string;
   requirements?: string[];
+  applicationFormPage?: FormPageRef | null;
   jotformLink?: string;
 }
 
@@ -245,6 +264,8 @@ export interface DonatePage {
   trustBullets?: DonateTrustBullet[];
   howDonationHelps?: string[];
   studentSponsorship?: string;
+  donateFormPage?: FormPageRef | null;
+  sponsorFormPage?: FormPageRef | null;
   jotformDonateUrl?: string;
   donateCtaLabel?: string;
   jotformSponsorStudentUrl?: string;
@@ -275,10 +296,9 @@ export interface AboutPage {
   ourStory?: string;
   ourMission?: string;
   ourVision?: string;
-  ourValues?: { title: string; description?: string; icon?: string }[];
+  ourValues?: { title: string; description?: string }[];
   ourApproach?: string;
   instituteText?: string;
-  heroImage?: { asset?: { url: string } };
   teachers?: AboutTeacher[];
   graduates?: AboutGraduate[];
   additionalContent?: unknown[];
@@ -369,8 +389,7 @@ const HOMEPAGE_QUERY = `*[_type == "homepage"][0]{
   heroEyebrow,
   heroTitle,
   heroSubtitle,
-  heroCtaButtons[]{ label, to, isExternal, variant },
-  heroStats[]{ label, value, icon },
+  heroCtaButtons[]{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
   programsSectionTitle,
   programsSectionSubtitle,
   "featuredPrograms": featuredPrograms[]->{
@@ -382,14 +401,15 @@ const HOMEPAGE_QUERY = `*[_type == "homepage"][0]{
     "category": category->{ _id, title, "slug": slug.current }
   },
   viewAllProgramsLabel,
+  editorialPhotos[] ${imageProjection},
   whyChooseUsSectionTitle,
   whyChooseUsSectionSubtitle,
-  whyChooseUsItems[]{ icon, title, description },
+  whyChooseUsItems[]{ title, description },
   testimonialsSectionTitle,
   testimonials[]{ quote, name, role },
   ctaTitle,
   ctaSubtitle,
-  ctaButtons[]{ label, to, isExternal, variant },
+  ctaButtons[]{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
   footerNote,
   seo{ seoTitle, metaDescription }
 }`;
@@ -401,7 +421,6 @@ const PROGRAM_CATEGORIES_QUERY = `*[_type == "programCategory"] | order(title as
   "slug": slug.current,
   title,
   description,
-  icon,
   programs[]{ slug, title, ages, schedule }
 }`;
 
@@ -423,7 +442,7 @@ const PROGRAM_BY_SLUG_QUERY = `*[_type == "program" && slug.current == $slug][0]
   mainImage ${imageProjection},
   shortDescription,
   overview,
-  infoCards[]{ icon, title, text },
+  infoCards[]{ title, text },
   location{ address, city, province, postalCode },
   scheduleBlocks[]{
     _type,
@@ -440,8 +459,8 @@ const PROGRAM_BY_SLUG_QUERY = `*[_type == "program" && slug.current == $slug][0]
   },
   curriculum,
   specialOffers[]{ title, description },
+  registrationFormPage->{ "slug": slug.current },
   jotformUrl,
-  jotformId,
   feeStructureCtaLabel,
   feeStructureCtaUrl,
   faqs[]{ q, a },
@@ -485,10 +504,10 @@ const CAREER_ROLES_QUERY = `*[_type == "careerRole"] | order(title asc){
   _id,
   title,
   type,
-  icon,
   location,
   description,
   requirements,
+  applicationFormPage->{ "slug": slug.current },
   jotformLink
 }`;
 
@@ -499,6 +518,8 @@ const DONATE_PAGE_QUERY = `*[_type == "donatePage"][0]{
   trustBullets[]{ title, desc },
   howDonationHelps,
   studentSponsorship,
+  donateFormPage->{ "slug": slug.current },
+  sponsorFormPage->{ "slug": slug.current },
   jotformDonateUrl,
   donateCtaLabel,
   jotformSponsorStudentUrl,
@@ -515,10 +536,9 @@ const ABOUT_PAGE_QUERY = `*[_type == "aboutPage"][0]{
   ourStory,
   ourMission,
   ourVision,
-  ourValues[]{ title, description, icon },
+  ourValues[]{ title, description },
   ourApproach,
   instituteText,
-  heroImage ${imageProjection},
   teachers[]{
     name,
     role,
@@ -535,6 +555,24 @@ const ABOUT_PAGE_QUERY = `*[_type == "aboutPage"][0]{
   seo{ seoTitle, metaDescription }
 }`;
 
+const FORM_PAGE_BY_SLUG_QUERY = `*[_type == "formPage" && slug.current == $slug][0]{
+  _id,
+  title,
+  "slug": slug.current,
+  intro,
+  embedFormUrl,
+  seo{ seoTitle, metaDescription }
+}`;
+
+const THANK_YOU_PAGE_QUERY = `*[_type == "thankYouPage"] | order(_updatedAt desc)[0]{
+  title,
+  subtitle,
+  body,
+  primaryCtaLabel,
+  primaryCtaPath,
+  seo{ seoTitle, metaDescription }
+}`;
+
 const TEMPLATE_PAGE_QUERY = `*[_type in ["contentPage", "landingPage", "infoPage"] && slug.current == $slug][0]{
   _type,
   _id,
@@ -542,7 +580,7 @@ const TEMPLATE_PAGE_QUERY = `*[_type in ["contentPage", "landingPage", "infoPage
   title,
   subtitle,
   heroImage ${imageProjection},
-  heroCtaButtons[]{ label, to, variant },
+  heroCtaButtons[]{ label, to, variant, isExternal, formPage->{ "slug": slug.current } },
   mainContent,
   body,
   introText,
@@ -555,7 +593,7 @@ const TEMPLATE_PAGE_QUERY = `*[_type in ["contentPage", "landingPage", "infoPage
     caption,
     title,
     subtitle,
-    buttons[]{ label, to, variant }
+    buttons[]{ label, to, variant, isExternal, formPage->{ "slug": slug.current } }
   },
   seo{ seoTitle, metaDescription }
 }`;
@@ -615,4 +653,12 @@ export async function getAboutPage(): Promise<AboutPage | null> {
 
 export async function getTemplatePageBySlug(slug: string): Promise<TemplatePageDoc | null> {
   return sanityClient.fetch<TemplatePageDoc | null>(TEMPLATE_PAGE_QUERY, { slug });
+}
+
+export async function getFormPageBySlug(slug: string): Promise<FormPageDoc | null> {
+  return sanityClient.fetch<FormPageDoc | null>(FORM_PAGE_BY_SLUG_QUERY, { slug });
+}
+
+export async function getThankYouPage(): Promise<ThankYouPageDoc | null> {
+  return sanityClient.fetch<ThankYouPageDoc | null>(THANK_YOU_PAGE_QUERY);
 }

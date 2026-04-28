@@ -115,21 +115,13 @@ export const aboutPage = defineType({
       type: 'array',
       title: 'Our Values',
       group: 'content',
-      description: 'Values as cards with title, description, and optional icon.',
+      description: 'Values as concise statements with title and description.',
       of: [
         {
           type: 'object',
           fields: [
             defineField({ name: 'title', type: 'string', title: 'Title', validation: (r) => r.required() }),
             defineField({ name: 'description', type: 'text', title: 'Description', rows: 3 }),
-            defineField({
-              name: 'icon',
-              type: 'string',
-              title: 'Icon',
-              options: {
-                list: ['Heart', 'BookOpen', 'Users', 'Award', 'Shield', 'Globe', 'Target', 'Sparkles'],
-              },
-            }),
           ],
           preview: { select: { title: 'title' }, prepare: ({ title }: { title?: string }) => ({ title: title || 'Value' }) },
         },
@@ -142,14 +134,6 @@ export const aboutPage = defineType({
       group: 'content',
       rows: 6,
       description: 'How we approach education and community.',
-    }),
-    defineField({
-      name: 'heroImage',
-      type: 'image',
-      title: 'Hero / Supporting Image',
-      group: 'content',
-      options: { hotspot: true },
-      description: 'Shown on the About page and homepage About section.',
     }),
     defineField({
       name: 'instituteText',

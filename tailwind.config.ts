@@ -9,13 +9,19 @@ export default {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1200px",
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+        "2xl": "90rem",
       },
     },
     extend: {
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-        arabic: ['"Noto Naskh Arabic"', 'serif'],
+        sans: ['"Poppins"', "system-ui", "sans-serif"],
+        display: ['"Poppins"', "system-ui", "sans-serif"],
+        arabic: ['"Noto Naskh Arabic"', "serif"],
+        serif: ['"Amiri"', "Georgia", "serif"],
       },
       colors: {
         emerald: {
@@ -95,6 +101,9 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      maxWidth: {
+        content: "88rem",
       },
     },
   },

@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PortableText } from "@portabletext/react";
 import { useQuery } from "@tanstack/react-query";
 import { getCareerRoles, getCareersPage } from "@/lib/sanityQueries";
-import { getIcon } from "@/lib/icons";
 import { getJotformUrl } from "@/lib/jotform";
+import { formPagePath } from "@/lib/routes";
 import { CtaLink } from "@/components/CtaLink";
 import { PageSeo } from "@/components/PageSeo";
+import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -34,17 +34,22 @@ const Careers = () => {
   const whyWorkAtMqi = careersPageData?.whyWorkAtMqi;
   const applyFormTitle = careersPageData?.applyFormTitle ?? "Apply for this Position";
   const introContent = careersPageData?.introContent;
-  const formUrl = role ? getJotformUrl(role.jotformLink) : null;
+  const applicationPath =
+    role?.applicationFormPage?.slug != null ? formPagePath(role.applicationFormPage.slug) : null;
+  const legacyApplyUrl = role ? getJotformUrl(role.jotformLink) : null;
+  const applyTo = applicationPath ?? legacyApplyUrl;
+  const applyIsExternal = !applicationPath && !!legacyApplyUrl;
   const seo = careersPageData?.seo;
 
   return (
-    <main className="py-20 md:py-28">
+    <main className="section-soft-radial section-y relative overflow-hidden">
+      <DecorativeArabic variant="full" opacity={0.034} />
       <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | MQI`} />
-      <div className="container">
+      <div className="container relative z-10">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">{pageTitle}</h1>
-          <div className="geometric-divider w-24 mx-auto mb-4" />
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+          <h1 className="heading-section mb-6">{pageTitle}</h1>
+          <div className="geometric-divider mx-auto mb-6 w-28" />
+          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl md:leading-relaxed">
             {pageSubtitle}
           </p>
           {introContent && introContent.length > 0 && (
@@ -62,30 +67,29 @@ const Careers = () => {
         )}
 
         {!selectedRole ? (
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="mx-auto flex max-w-5xl flex-col gap-8">
             {roles.map((r, i) => {
-              const Icon = getIcon(r.icon);
               return (
                 <div key={r._id}>
                   <Card
-                    className="h-full hover:shadow-lg transition-all duration-300 cursor-pointer border-border/50 hover:-translate-y-1"
+                    className="h-full cursor-pointer border-border/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                     onClick={() => setSelectedRole(r._id)}
                   >
-                    <CardContent className="p-6 space-y-3">
+                    <CardContent className="space-y-5 p-8 md:p-10">
                       <div className="flex items-center justify-between">
                         <span
-                          className={`text-xs px-3 py-1 rounded-full font-medium ${
+                          className={`rounded-full px-3 py-1 text-xs font-medium ${
                             r.type === "Volunteer" ? "bg-accent/20 text-accent-foreground" : "bg-primary/10 text-primary"
                           }`}
                         >
                           {r.type}
                         </span>
-                        {r.location && <span className="text-xs text-muted-foreground">{r.location}</span>}
+                        {r.location && <span className="text-sm text-muted-foreground">{r.location}</span>}
                       </div>
-                      <h3 className="text-lg font-semibold text-foreground">{r.title}</h3>
-                      <p className="text-sm text-muted-foreground">{r.description}</p>
+                      <h3 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">{r.title}</h3>
+                      <p className="max-w-3xl text-base leading-relaxed text-muted-foreground md:text-lg">{r.description}</p>
                       <Button variant="link" className="p-0 h-auto text-primary font-medium">
-                        View Details <ArrowRight className="h-4 w-4 ml-1" />
+                        View Details <span aria-hidden className="ml-1">→</span>
                       </Button>
                     </CardContent>
                   </Card>
@@ -94,22 +98,22 @@ const Careers = () => {
             })}
           </div>
         ) : (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mx-auto max-w-4xl">
             <button onClick={() => setSelectedRole(null)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-6 transition-colors">
-              <X className="h-4 w-4" /> Back to all positions
+              <span aria-hidden>×</span> Back to all positions
             </button>
             {role && (
               <>
                 <span className={`text-xs px-3 py-1 rounded-full font-medium ${role.type === "Volunteer" ? "bg-accent/20 text-accent-foreground" : "bg-primary/10 text-primary"}`}>{role.type}</span>
-                <h2 className="text-3xl font-bold text-foreground mt-3 mb-2">{role.title}</h2>
-                <p className="text-muted-foreground mb-6">{role.description}</p>
+                <h2 className="mt-4 mb-3 text-4xl font-bold tracking-tight text-foreground md:text-5xl">{role.title}</h2>
+                <p className="mb-8 text-lg leading-relaxed text-muted-foreground">{role.description}</p>
 
                 {role.requirements && role.requirements.length > 0 && (
                   <>
-                    <h3 className="text-lg font-semibold text-foreground mb-3">Requirements</h3>
-                    <ul className="space-y-2 mb-10">
+                    <h3 className="mb-4 text-2xl font-semibold text-foreground">Requirements</h3>
+                    <ul className="mb-12 space-y-3">
                       {role.requirements.map((req, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <li key={i} className="flex items-start gap-3 text-base text-muted-foreground">
                           <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
                           {req}
                         </li>
@@ -119,13 +123,13 @@ const Careers = () => {
                 )}
 
                 {/* Apply CTA */}
-                <section className="mt-10">
-                  <h3 className="text-2xl font-semibold text-foreground mb-2">{applyFormTitle}</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
+                <section className="mt-12">
+                  <h3 className="mb-3 text-3xl font-semibold text-foreground">{applyFormTitle}</h3>
+                  <p className="mb-5 text-base text-muted-foreground">
                     Click the button below to submit your application via our form.
                   </p>
-                  {formUrl ? (
-                    <CtaLink label="Apply for this Position" to={formUrl} isExternal variant="accent" />
+                  {applyTo ? (
+                    <CtaLink label="Apply for this Position" to={applyTo} isExternal={applyIsExternal} variant="accent" />
                   ) : (
                     <p className="text-muted-foreground text-sm">No application form URL is configured for this role.</p>
                   )}

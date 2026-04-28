@@ -18,6 +18,8 @@ import { blogPost } from './blogPost'
 import { blogPage } from './blogPage'
 import { careerRole, careersPage } from './careerRole'
 import { donateTrustBullet, donatePage } from './donatePage'
+import { formPage } from './formPage'
+import { thankYouPage } from './thankYouPage'
 import { aboutTeacher, aboutGraduate, aboutPage } from './aboutPage'
 import {
   contentBlockRichText,
@@ -52,6 +54,8 @@ export const schemaTypes = [
   careersPage,
   donateTrustBullet,
   donatePage,
+  formPage,
+  thankYouPage,
   aboutTeacher,
   aboutGraduate,
   aboutPage,

@@ -1,17 +1,18 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useQuery } from "@tanstack/react-query";
 import { getProgramBySlug } from "@/lib/sanityQueries";
-import { getIcon } from "@/lib/icons";
 import { urlFor } from "@/lib/sanity";
 import { getJotformUrl } from "@/lib/jotform";
+import { formPagePath } from "@/lib/routes";
 import { CtaLink } from "@/components/CtaLink";
 import { PageSeo } from "@/components/PageSeo";
 import { ScheduleBlocks } from "@/components/ScheduleBlocks";
+import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
+import { ImageSoftFade } from "@/components/ui/ImageSoftFade";
 
 const ProgramDetail = () => {
   const { programSlug } = useParams();
@@ -53,40 +54,52 @@ const ProgramDetail = () => {
     : "";
 
   const scheduleBlocks = program.scheduleBlocks ?? [];
-  const formUrl = getJotformUrl(program.jotformUrl ?? program.jotformId);
+  const registrationFormSlug = program.registrationFormPage?.slug;
+  const registrationPath = registrationFormSlug ? formPagePath(registrationFormSlug) : null;
+  const legacyJotformUrl = getJotformUrl(program.jotformUrl);
+  const registerTo = registrationPath ?? legacyJotformUrl;
+  const registerIsExternal = !registrationPath && !!legacyJotformUrl;
   const feeStructureUrl = program.feeStructureCtaUrl;
   const feeStructureLabel = program.feeStructureCtaLabel?.trim() || "Request Fee Structure";
 
   const ProgramCta = () =>
-    formUrl ? (
-      <CtaLink label="Register Now" to={formUrl} isExternal variant="accent" />
+    registerTo ? (
+      <CtaLink label="Register Now" to={registerTo} isExternal={registerIsExternal} variant="accent" />
     ) : (
-      <Button asChild className="rounded-2xl font-semibold px-10 py-6 text-base shadow-lg hover:shadow-xl">
+      <Button
+        asChild
+        variant="outline"
+        className="rounded-2xl border-primary/24 bg-background/85 px-10 py-6 text-base font-medium shadow-sm backdrop-blur-sm hover:border-primary/34 hover:bg-primary/[0.07]"
+      >
         <Link to="/programs">View Programs</Link>
       </Button>
     );
 
   return (
-    <main className="py-12 md:py-20">
+    <main className="section-soft-radial relative py-16 md:py-28 lg:py-32">
+      <DecorativeArabic variant="full" opacity={0.034} />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/90" aria-hidden />
       <PageSeo title={program.seo?.seoTitle} description={program.seo?.metaDescription} fallbackTitle={`${program.title} | MQI`} />
-      <div className="container max-w-4xl">
+      <div className="container relative z-10 max-w-4xl">
         <Link to="/programs" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-8 transition-colors">
-          <ArrowLeft className="h-4 w-4" /> Back to Programs
+          <span aria-hidden>←</span> Back to Programs
         </Link>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           {/* Hero */}
           <section className="mb-14">
             <span className="text-xs uppercase tracking-wider text-primary font-semibold">{categoryTitle}</span>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mt-2 mb-2">{program.title}</h1>
+            <h1 className="heading-section mt-2 mb-3 max-w-[22ch]">
+              {program.title}
+            </h1>
             {program.heroText && <p className="text-lg text-muted-foreground mb-6">{program.heroText}</p>}
             <div className="geometric-divider w-16 mb-8" />
           </section>
 
           {imageUrl && (
-            <div className="rounded-2xl overflow-hidden mb-14 shadow-md">
-              <img src={imageUrl} alt={program.title} loading="lazy" className="w-full h-auto object-contain" />
-            </div>
+            <ImageSoftFade className="mb-14 rounded-2xl shadow-md">
+              <img src={imageUrl} alt={program.title} loading="lazy" className="h-auto w-full object-contain" />
+            </ImageSoftFade>
           )}
 
           {program.overview ? (
@@ -108,15 +121,11 @@ const ProgramDetail = () => {
             <section className="mb-14">
               <div className="grid sm:grid-cols-2 gap-4">
                 {infoCards.map((card, i) => {
-                  const Icon = getIcon(card.icon);
                   return (
                     <Card key={card.title + i} className="border-border/50 shadow-sm">
-                      <CardContent className="p-5 flex items-start gap-3">
-                        <Icon className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                        <div>
-                          <p className="text-xs text-muted-foreground">{card.title}</p>
-                          <p className="text-sm font-medium text-foreground">{card.text}</p>
-                        </div>
+                      <CardContent className="p-5">
+                        <p className="text-xs text-muted-foreground">{card.title}</p>
+                        <p className="text-sm font-medium text-foreground">{card.text}</p>
                       </CardContent>
                     </Card>
                   );
@@ -126,8 +135,8 @@ const ProgramDetail = () => {
           )}
 
           {(program.curriculum?.length ?? 0) > 0 && (
-            <section className="mb-14 py-10 px-6 rounded-2xl bg-muted/30 border border-border/50">
-              <h2 className="text-2xl font-bold text-foreground mb-6">Curriculum</h2>
+            <section className="mb-14 rounded-2xl border border-border/50 px-6 py-10">
+              <h2 className="heading-section-sm mb-6">Curriculum</h2>
               <ul className="space-y-3">
                 {program.curriculum!.map((item: string, i: number) => (
                   <li key={i} className="flex items-start gap-3 text-muted-foreground">
@@ -141,17 +150,16 @@ const ProgramDetail = () => {
 
           {hasLocation && locationStr && (
             <section className="mb-14">
-              <h2 className="text-2xl font-bold text-foreground mb-4">Location</h2>
-              <div className="flex items-start gap-3 p-5 rounded-xl bg-card border border-border/50 shadow-sm">
-                <MapPin className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+              <h2 className="heading-section-sm mb-4">Location</h2>
+              <div className="p-5 rounded-xl bg-card border border-border/50 shadow-sm">
                 <p className="text-muted-foreground whitespace-pre-line">{locationStr}</p>
               </div>
             </section>
           )}
 
           {scheduleBlocks.length > 0 && (
-            <section className="mb-14 py-10 px-6 rounded-2xl bg-muted/20 border border-border/50">
-              <h2 className="text-2xl font-bold text-foreground mb-6">Schedule</h2>
+            <section className="mb-14 rounded-2xl border border-border/50 px-6 py-10">
+              <h2 className="heading-section-sm mb-6">Schedule</h2>
               <ScheduleBlocks blocks={scheduleBlocks} />
               <div className="mt-8">
                 <ProgramCta />
@@ -161,7 +169,7 @@ const ProgramDetail = () => {
 
           {program.specialOffers && program.specialOffers.length > 0 && (
             <section className="mb-14">
-              <h2 className="text-2xl font-bold text-foreground mb-4">Special Offers</h2>
+              <h2 className="heading-section-sm mb-4">Special Offers</h2>
               <div className="space-y-4">
                 {program.specialOffers.map((offer, i) => (
                   <Card key={i} className="border-primary/20 bg-primary/5">
@@ -177,9 +185,9 @@ const ProgramDetail = () => {
 
           {/* Final CTA - main conversion focus */}
           <section className="mb-14 pt-6">
-            <h2 className="text-2xl font-bold text-foreground mb-2">Ready to Enroll?</h2>
+            <h2 className="heading-section-sm mb-2">Ready to Enroll?</h2>
             <p className="text-sm text-muted-foreground mb-4">
-              {formUrl ? "Complete the registration form to secure your spot." : "View our programs to get started."}
+              {registerTo ? "Complete the registration form to secure your spot." : "View our programs to get started."}
             </p>
             <div className="flex flex-wrap gap-4 items-center">
               <ProgramCta />
@@ -197,8 +205,8 @@ const ProgramDetail = () => {
           </section>
 
           {program.faqs && program.faqs.length > 0 && (
-            <section className="py-10 px-6 rounded-2xl bg-muted/20 border border-border/50">
-              <h2 className="text-2xl font-bold text-foreground mb-6">Frequently Asked Questions</h2>
+            <section className="rounded-2xl border border-border/50 px-6 py-10">
+              <h2 className="heading-section-sm mb-6">Frequently Asked Questions</h2>
               <Accordion type="single" collapsible className="w-full">
                 {program.faqs.map((faq, i) =>
                   faq?.q ? (

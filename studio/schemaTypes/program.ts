@@ -2,24 +2,6 @@ import { defineType, defineField } from 'sanity';
 import { seoFields } from './seo';
 import { programInfoCard } from './programInfoCard';
 
-const categoryIconOptions = [
-  'BookOpen',
-  'GraduationCap',
-  'Sun',
-  'BookMarked',
-  'Library',
-  'School',
-  'Calendar',
-  'Clock',
-  'Users',
-  'Sparkles',
-  'Palette',
-  'Globe',
-  'Heart',
-  'Award',
-  'Target',
-];
-
 export const program = defineType({
   name: 'program',
   type: 'document',
@@ -70,7 +52,7 @@ export const program = defineType({
       type: 'array',
       title: 'Program Information Cards',
       group: 'content',
-      description: 'Flexible cards (Audience, Fees, etc.). Add unlimited cards with icon, title, and text.',
+      description: 'Flexible cards (Audience, Fees, etc.). Add unlimited cards with title and text.',
       of: [{ type: 'programInfoCard' }],
     }),
     defineField({
@@ -127,11 +109,19 @@ export const program = defineType({
       ],
     }),
     defineField({
+      name: 'registrationFormPage',
+      type: 'reference',
+      title: 'Registration form page',
+      group: 'registration',
+      to: [{ type: 'formPage' }],
+      description: 'Dedicated on-site form page (/forms/…). Preferred over linking directly to Jotform.',
+    }),
+    defineField({
       name: 'jotformUrl',
       type: 'string',
-      title: 'Registration Jotform URL',
+      title: 'Registration Jotform URL (legacy)',
       group: 'registration',
-      description: 'Full URL or form ID. Button links to this (opens in new tab).',
+      description: 'Used only if no registration form page is set. Full URL or form ID; opens in a new tab.',
     }),
     defineField({
       name: 'feeStructureCtaLabel',
@@ -146,13 +136,6 @@ export const program = defineType({
       title: 'Fee Structure CTA URL',
       group: 'registration',
       description: 'Optional URL (or mailto:) used when requesting the fee structure. Button is hidden if this is empty.',
-    }),
-    defineField({
-      name: 'jotformId',
-      type: 'string',
-      title: 'Jotform ID (legacy)',
-      description: 'Deprecated: use Jotform URL above. Form ID only, e.g. 123456789.',
-      hidden: ({ document }) => !!document?.jotformUrl,
     }),
     defineField({
       name: 'faqs',
@@ -182,13 +165,6 @@ export const programCategory = defineType({
     defineField({ name: 'slug', type: 'slug', title: 'Slug', validation: (r) => r.required(), options: { source: 'title' } }),
     defineField({ name: 'title', type: 'string', title: 'Title', validation: (r) => r.required() }),
     defineField({ name: 'description', type: 'text', title: 'Description' }),
-    defineField({
-      name: 'icon',
-      type: 'string',
-      title: 'Icon',
-      options: { list: categoryIconOptions },
-      initialValue: 'BookOpen',
-    }),
     defineField({
       name: 'programs',
       type: 'array',

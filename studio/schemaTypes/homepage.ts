@@ -1,18 +1,6 @@
 import { defineType, defineField } from 'sanity';
 import { seoFields } from './seo';
 
-const heroStatIconOptions = [
-  'BookOpen',
-  'GraduationCap',
-  'Sun',
-  'Users',
-  'Award',
-  'Heart',
-  'Clock',
-  'Shield',
-  'Briefcase',
-];
-
 export const homepage = defineType({
   name: 'homepage',
   type: 'document',
@@ -55,30 +43,6 @@ export const homepage = defineType({
       of: [{ type: 'ctaButton' }],
     }),
     defineField({
-      name: 'heroStats',
-      type: 'array',
-      title: 'Hero Stats Row',
-      group: 'hero',
-      description: 'Thin horizontal stats that scroll below the hero. Add items to display (e.g. "500+ Students", "15 Years").',
-      of: [
-        {
-          type: 'object',
-          fields: [
-            defineField({ name: 'label', type: 'string', title: 'Label', validation: (r) => r.required(), description: 'e.g. 500+ Students' }),
-            defineField({ name: 'value', type: 'string', title: 'Value (optional)', description: 'Optional subtext or unit' }),
-            defineField({
-              name: 'icon',
-              type: 'string',
-              title: 'Stat Icon',
-              description: 'Choose an icon to display before the stat (same set as Why Choose Us).',
-              options: { list: heroStatIconOptions },
-            }),
-          ],
-          preview: { select: { label: 'label' }, prepare: ({ label }: { label?: string }) => ({ title: label || 'Stat' }) },
-        },
-      ],
-    }),
-    defineField({
       name: 'programsSectionTitle',
       type: 'string',
       title: 'Programs Section Title',
@@ -105,6 +69,16 @@ export const homepage = defineType({
       title: 'View All Programs Button Label',
       group: 'programs',
       initialValue: 'View All Programs',
+    }),
+    defineField({
+      name: 'editorialPhotos',
+      type: 'array',
+      title: 'Editorial accent photos',
+      group: 'programs',
+      description:
+        'Optional lifestyle photos (About page gallery, homepage CTA band, etc.). Up to 4. If empty, default library images are used.',
+      validation: (r) => r.max(4),
+      of: [{ type: 'image', title: 'Photo', options: { hotspot: true } }],
     }),
     defineField({
       name: 'whyChooseUsSectionTitle',

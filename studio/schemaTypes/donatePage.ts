@@ -54,11 +54,19 @@ export const donatePage = defineType({
       description: 'Descriptive text for the Sponsor a Student section.',
     }),
     defineField({
+      name: 'donateFormPage',
+      type: 'reference',
+      title: 'Make a Donation – form page',
+      group: 'cta',
+      to: [{ type: 'formPage' }],
+      description: 'On-site donation form (/forms/…). Preferred over a raw Jotform link.',
+    }),
+    defineField({
       name: 'jotformDonateUrl',
       type: 'string',
-      title: 'Make a Donation – Jotform URL',
+      title: 'Make a Donation – Jotform URL (legacy)',
       group: 'cta',
-      description: 'Full URL or form ID. Button links to this (opens in new tab).',
+      description: 'Used only if no donation form page is set. Full URL or form ID.',
     }),
     defineField({
       name: 'donateCtaLabel',
@@ -68,11 +76,19 @@ export const donatePage = defineType({
       initialValue: 'Make a Donation',
     }),
     defineField({
+      name: 'sponsorFormPage',
+      type: 'reference',
+      title: 'Sponsor a Student – form page',
+      group: 'cta',
+      to: [{ type: 'formPage' }],
+      description: 'On-site sponsor form (/forms/…). Preferred over a raw Jotform link.',
+    }),
+    defineField({
       name: 'jotformSponsorStudentUrl',
       type: 'string',
-      title: 'Sponsor a Student – Jotform URL',
+      title: 'Sponsor a Student – Jotform URL (legacy)',
       group: 'cta',
-      description: 'Full URL or form ID. Button links to this (opens in new tab).',
+      description: 'Used only if no sponsor form page is set. Full URL or form ID.',
     }),
     defineField({
       name: 'sponsorCtaLabel',

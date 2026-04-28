@@ -1,29 +1,36 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CtaLink } from "@/components/CtaLink";
 import { PageSeo } from "@/components/PageSeo";
-import heroImage from "@/assets/hero-classroom.jpg";
+import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
+import { ImageSoftFade } from "@/components/ui/ImageSoftFade";
+import quranHero from "@/assets/quran.png";
+import photoEditorialA from "@/assets/mqi-images/DSC00985.JPG";
+import photoEditorialB from "@/assets/mqi-images/IMG_7312.JPG";
+import photoEditorialC from "@/assets/mqi-images/DSC00518.JPG";
+import photoEditorialD from "@/assets/mqi-images/IMG_7382.JPG";
+import photoCtaBand from "@/assets/mqi-images/IMG_7176.JPG";
 import { useQuery } from "@tanstack/react-query";
 import { getHomepage, getAboutPage, type AboutTeacher } from "@/lib/sanityQueries";
-import { getIcon } from "@/lib/icons";
+import { resolveCtaButtonTarget } from "@/lib/ctaDestinations";
 import { urlFor } from "@/lib/sanity";
 
 const defaultProgramCategories = [
-  { title: "Courses", description: "Flexible courses in Qur'an recitation, Tajweed, Arabic, and Islamic Studies for all ages and levels.", icon: "BookOpen", to: "/programs" },
-  { title: "Full Time School", description: "Comprehensive Hifz and Islamic Studies programs with structured daily schedules and qualified instructors.", icon: "GraduationCap", to: "/programs" },
-  { title: "Summer Programs", description: "Engaging summer intensives combining Qur'anic learning with enrichment activities for youth.", icon: "Sun", to: "/programs" },
+  { title: "Courses", description: "Flexible courses in Qur'an recitation, Tajweed, Arabic, and Islamic Studies for all ages and levels.", to: "/programs" },
+  { title: "Full Time School", description: "Comprehensive Hifz and Islamic Studies programs with structured daily schedules and qualified instructors.", to: "/programs" },
+  { title: "Summer Programs", description: "Engaging summer intensives combining Qur'anic learning with enrichment activities for youth.", to: "/programs" },
 ];
 
 const defaultWhyChooseUs = [
-  { icon: "Award", title: "Qualified Instructors", description: "Certified scholars with Ijazah in Qur'anic recitation" },
-  { icon: "Users", title: "Small Class Sizes", description: "Personalized attention for every student" },
-  { icon: "BookOpen", title: "Structured Curriculum", description: "Progressive learning paths tailored to each level" },
-  { icon: "Heart", title: "Supportive Community", description: "A welcoming environment for families" },
-  { icon: "Clock", title: "Flexible Scheduling", description: "Weekend, evening, and full-time options" },
-  { icon: "Shield", title: "Safe Environment", description: "Background-checked staff and secure facilities" },
+  { title: "Qualified Instructors", description: "Certified scholars with Ijazah in Qur'anic recitation" },
+  { title: "Small Class Sizes", description: "Personalized attention for every student" },
+  { title: "Structured Curriculum", description: "Progressive learning paths tailored to each level" },
+  { title: "Supportive Community", description: "A welcoming environment for families" },
+  { title: "Flexible Scheduling", description: "Weekend, evening, and full-time options" },
+  { title: "Safe Environment", description: "Background-checked staff and secure facilities" },
 ];
 
 const fadeUp = {
@@ -53,14 +60,27 @@ const Index = () => {
   const featuredPrograms = homepage?.featuredPrograms ?? [];
   const programCategories = homepage?.programCategories?.length ? homepage.programCategories : defaultProgramCategories;
   const viewAllProgramsLabel = homepage?.viewAllProgramsLabel ?? "View All Programs";
-  const heroStats = homepage?.heroStats ?? [];
 
   const allCategories = [...new Set((featuredPrograms as { category?: { slug?: string; title?: string } }[])
     .map((p) => p.category?.slug)
     .filter(Boolean))] as string[];
   const [programFilter, setProgramFilter] = useState<string | null>(null);
   const programsScrollRef = useRef<HTMLDivElement>(null);
-  const testimonialsScrollRef = useRef<HTMLDivElement | null>(null);
+  const [testimonialIndex, setTestimonialIndex] = useState(0);
+
+  const editorialPhotoUrls = useMemo(() => {
+    const fromCms = (homepage?.editorialPhotos ?? [])
+      .map((img) => {
+        if (img && typeof img === "object" && "asset" in img && img.asset) {
+          return urlFor(img as never).width(960).height(720).fit("max").url();
+        }
+        return null;
+      })
+      .filter((u): u is string => !!u);
+    const defaults = [photoEditorialA, photoEditorialB, photoEditorialC, photoEditorialD];
+    const base = fromCms.length >= 2 ? fromCms : defaults;
+    return [0, 1, 2, 3].map((i) => base[i] ?? defaults[i]);
+  }, [homepage?.editorialPhotos]);
   const filteredPrograms = programFilter
     ? featuredPrograms.filter((p: { category?: { slug?: string } }) => p.category?.slug === programFilter)
     : featuredPrograms;
@@ -78,6 +98,19 @@ const Index = () => {
 
   const testimonialsSectionTitle = homepage?.testimonialsSectionTitle ?? "What Families Say";
   const testimonials = homepage?.testimonials ?? [];
+
+  useEffect(() => {
+    setTestimonialIndex(0);
+  }, [testimonials.length]);
+
+  useEffect(() => {
+    if (testimonials.length <= 1) return;
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => {
+      setTestimonialIndex((i) => (i + 1) % testimonials.length);
+    }, 10000);
+    return () => window.clearInterval(id);
+  }, [testimonials.length]);
   const aboutSectionTitle = aboutPage?.title ?? "About Us";
   const aboutSectionSubtitle = aboutPage?.subtitle ?? "";
   const aboutTextFull = aboutPage?.instituteText ?? aboutPage?.ourStory ?? "";
@@ -87,81 +120,77 @@ const Index = () => {
   return (
     <main>
       <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} />
-      {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center overflow-hidden rounded-b-3xl">
-        <div className="absolute inset-0">
-          <img src={heroImage} alt="Milton Qur'an Institute classroom" className="w-full h-full object-cover rounded-b-3xl" />
-          <div className="absolute inset-0 bg-gradient-to-r from-secondary/95 via-secondary/80 to-secondary/50 rounded-b-3xl" />
-        </div>
-        <div className="container relative z-10 py-20 md:py-32">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            className="max-w-2xl text-white space-y-6"
-          >
-            <p className="text-xs md:text-sm tracking-[0.25em] uppercase text-accent font-sans font-medium mb-1 text-left">
-              {heroEyebrow}
-            </p>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.4]">
-              {heroTitle}
-            </h1>
-            <p className="text-lg md:text-xl text-white/80 leading-[1.5]">
-              {heroSubtitle}
-            </p>
-            <div className="flex flex-wrap gap-4 pt-4">
-              {heroCtaButtons.map((btn, i) => (
-                <CtaLink
-                  key={`${btn.to}-${i}`}
-                  label={btn.label}
-                  to={btn.to}
-                  isExternal={btn.isExternal}
-                  variant={btn.variant ?? "primary"}
-                  compact
-                  className="shadow-lg shadow-black/20 hover:shadow-xl text-base"
+      {/* Hero — full viewport, editorial two-column */}
+      <section className="section-soft-radial relative flex min-h-[100svh] items-center overflow-hidden">
+        <div className="hero-editorial-grid pointer-events-none absolute inset-0" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/75" />
+
+        <div className="container relative z-10 py-16 md:py-20 lg:py-24">
+          <div className="relative grid items-center gap-8 lg:grid-cols-2 lg:gap-4 lg:items-center">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+              className="relative z-20 order-2 max-w-xl space-y-7 text-left lg:order-1 lg:max-w-[42rem]"
+            >
+              <p className="text-xs font-medium uppercase tracking-[0.28em] text-primary md:text-sm">
+                {heroEyebrow}
+              </p>
+              <h1 className="hero-headline-gradient max-w-[20ch] text-4xl font-bold leading-[1.05] sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl">
+                {heroTitle}
+              </h1>
+              <p className="text-lg leading-relaxed text-muted-foreground md:text-xl md:leading-relaxed max-w-xl">
+                {heroSubtitle}
+              </p>
+              <div className="flex flex-wrap gap-3.5 pt-2">
+                {heroCtaButtons.map((btn, i) => {
+                  const { to, isExternal } = resolveCtaButtonTarget(btn);
+                  return (
+                    <CtaLink
+                      key={`${to}-${i}`}
+                      label={btn.label}
+                      to={to}
+                      isExternal={isExternal}
+                      variant={btn.variant ?? "primary"}
+                      compact
+                    />
+                  );
+                })}
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+              className="relative z-10 order-1 flex justify-center lg:order-2 lg:-ml-16 lg:justify-end xl:-ml-20"
+            >
+              <div className="relative">
+                <div
+                  className="pointer-events-none absolute inset-0 -z-10 rounded-[48%] bg-[radial-gradient(ellipse_52%_48%_at_42%_52%,hsl(var(--primary)/0.15),transparent_72%)] blur-2xl"
+                  aria-hidden
                 />
-              ))}
-            </div>
-          </motion.div>
+                <img
+                  src={quranHero}
+                  alt=""
+                  className="relative w-[min(92vw,390px)] max-h-[min(56vh,470px)] object-contain object-bottom opacity-[0.9] drop-shadow-[0_18px_44px_rgba(0,0,0,0.1)] [filter:saturate(0.92)_contrast(0.93)] sm:w-[min(78vw,430px)] lg:absolute lg:right-[-2%] lg:top-1/2 lg:z-10 lg:w-[min(55vw,580px)] lg:max-w-none lg:max-h-[min(82vh,680px)] lg:-translate-y-[47%] lg:translate-x-[-6%] lg:[mask-image:linear-gradient(to_left,black_76%,transparent_100%)] lg:[-webkit-mask-image:linear-gradient(to_left,black_76%,transparent_100%)] xl:w-[min(52vw,620px)]"
+                  width={800}
+                  height={800}
+                  decoding="async"
+                />
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Hero Stats - scrolling marquee */}
-      {heroStats.length > 0 && (
-        <div className="bg-background py-4 overflow-hidden -mt-px">
-          <div className="hero-stats-marquee flex items-center gap-20 px-4 md:px-8 whitespace-nowrap">
-            {[...heroStats, ...heroStats, ...heroStats].map((s: any, i: number) => {
-              const Icon = s?.icon ? getIcon(s.icon) : null;
-              return (
-                <span
-                  key={i}
-                  className="inline-flex items-center gap-4 text-base md:text-lg font-medium text-muted-foreground"
-                >
-                  {Icon && (
-                    <span className="inline-flex items-center justify-center h-9 w-9 rounded-full bg-primary/5 border border-primary/20">
-                      <Icon className="h-5 w-5 text-primary" />
-                    </span>
-                  )}
-                  <span className="text-primary font-semibold">{s.label}</span>
-                  {s.value && (
-                    <span className="text-muted-foreground/80 text-sm md:text-base">
-                      {s.value}
-                    </span>
-                  )}
-                </span>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
       {/* Our Programs */}
-      <section className="py-20 md:py-28 pattern-stars">
-        <div className="container">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">{programsSectionTitle}</h2>
-            <div className="geometric-divider w-24 mx-auto mt-4 mb-4" />
-            <p className="text-muted-foreground max-w-2xl mx-auto">{programsSectionSubtitle}</p>
+      <section className="section-soft-radial section-y pattern-stars relative overflow-hidden">
+        <div className="container relative z-10">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="mb-16 text-center md:mb-20">
+            <h2 className="heading-section">{programsSectionTitle}</h2>
+            <div className="geometric-divider mx-auto mt-6 mb-6 w-28" />
+            <p className="heading-section-sub">{programsSectionSubtitle}</p>
           </motion.div>
 
           {featuredPrograms.length > 0 ? (
@@ -171,8 +200,10 @@ const Index = () => {
                   <button
                     type="button"
                     onClick={() => setProgramFilter(null)}
-                    className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
-                      !programFilter ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"
+                    className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                      !programFilter
+                        ? "border-primary/80 bg-primary text-primary-foreground shadow-sm"
+                        : "border-transparent bg-muted/70 text-muted-foreground hover:border-primary/75 hover:bg-primary hover:text-primary-foreground"
                     }`}
                   >
                     All
@@ -184,8 +215,10 @@ const Index = () => {
                         key={slug}
                         type="button"
                         onClick={() => setProgramFilter(slug)}
-                        className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
-                          programFilter === slug ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"
+                        className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                          programFilter === slug
+                            ? "border-primary/80 bg-primary text-primary-foreground shadow-sm"
+                            : "border-transparent bg-muted/70 text-muted-foreground hover:border-primary/75 hover:bg-primary hover:text-primary-foreground"
                         }`}
                       >
                         {cat?.category?.title ?? slug}
@@ -197,29 +230,21 @@ const Index = () => {
               <div className="relative">
               <div
                 ref={programsScrollRef}
-                className="flex gap-6 overflow-x-auto pb-4 -mx-2 px-2 md:mx-0 md:px-0 scrollbar-thin hide-scrollbar snap-x snap-mandatory"
+                className="flex gap-5 overflow-x-auto pb-4 -mx-2 px-2 md:mx-0 md:gap-6 md:px-0 scrollbar-thin hide-scrollbar snap-x snap-mandatory"
               >
                   {filteredPrograms.map((prog: { _id: string; slug?: string; title?: string; category?: { slug?: string }; shortDescription?: string; mainImage?: unknown }) => {
                     const catSlug = prog.category?.slug ?? "programs";
-                    const imageUrl = prog.mainImage && typeof prog.mainImage === "object" && "asset" in prog.mainImage && prog.mainImage.asset
-                      ? urlFor(prog.mainImage as { asset?: { url: string } }).width(400).height(240).fit("crop").url()
-                      : null;
                     return (
                       <Link
                         key={prog._id}
                         to={`/programs/${catSlug}/${prog.slug ?? ""}`}
-                        className="flex-shrink-0 w-[280px] snap-start"
+                        className="w-[min(86vw,300px)] shrink-0 snap-start sm:w-[min(72vw,320px)] md:w-[340px]"
                       >
-                        <Card className="group h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-border/50 overflow-hidden">
-                          {imageUrl && (
-                            <div className="aspect-video overflow-hidden">
-                              <img src={imageUrl} alt={prog.title ?? ""} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
-                            </div>
-                          )}
-                          <CardContent className="p-6 space-y-3">
-                            <h3 className="text-lg font-semibold text-foreground">{prog.title}</h3>
-                            <p className="text-muted-foreground text-sm line-clamp-2">{prog.shortDescription}</p>
-                            <span className="inline-block text-primary font-medium text-sm hover:underline">
+                        <Card className="group relative h-full min-h-[200px] overflow-hidden border-border/50 shadow-md transition-shadow duration-300 hover:shadow-lg">
+                          <CardContent className="relative z-[1] flex h-full flex-col space-y-4 p-8">
+                            <h3 className="text-xl font-semibold leading-snug text-foreground md:text-2xl">{prog.title}</h3>
+                            <p className="line-clamp-3 flex-1 text-base leading-relaxed text-muted-foreground">{prog.shortDescription}</p>
+                            <span className="inline-block pt-1 text-base font-medium text-foreground/80 group-hover:text-primary/90 group-hover:underline">
                               Learn more →
                             </span>
                           </CardContent>
@@ -249,9 +274,9 @@ const Index = () => {
                   </>
                 )}
               </div>
-              <div className="flex justify-center mt-10">
+              <div className="mt-12 flex justify-center">
                 <Link to="/programs">
-                  <Button variant="default" size="lg" className="rounded-2xl font-semibold px-12 py-7 text-base shadow-lg hover:shadow-xl bg-primary text-primary-foreground hover:bg-primary/90">
+                  <Button variant="secondary" size="lg" className="px-12 py-7">
                     {viewAllProgramsLabel}
                   </Button>
                 </Link>
@@ -260,15 +285,11 @@ const Index = () => {
           ) : (
             <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
               {programCategories.map((cat) => {
-                const Icon = getIcon(cat.icon);
                 return (
                   <div key={cat.title}>
                     <Link to={cat.categorySlug ? `/programs?category=${cat.categorySlug}` : (cat.to ?? "/programs")}>
                       <Card className="group h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-border/50">
                         <CardContent className="p-8 text-center space-y-4">
-                          <div className="mx-auto w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                            <Icon className="h-8 w-8 text-primary" />
-                          </div>
                           <h3 className="text-xl font-semibold text-foreground">{cat.title}</h3>
                           <p className="text-muted-foreground text-sm leading-relaxed">{cat.description}</p>
                         </CardContent>
@@ -284,36 +305,82 @@ const Index = () => {
 
       {/* About Us */}
       {showAboutSection && (
-        <section className="py-20 md:py-28 bg-background bg-pattern-subtle">
-          <div className="container">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground">{aboutSectionTitle}</h2>
-              <div className="geometric-divider w-24 mx-auto mt-4 mb-4" />
-              {aboutSectionSubtitle && (
-                <p className="text-muted-foreground max-w-2xl mx-auto">
-                  {aboutSectionSubtitle}
-                </p>
-              )}
-            </motion.div>
-
-            {aboutTextFull && (
-              <p className="text-muted-foreground text-base md:text-lg leading-relaxed whitespace-pre-line mb-10 max-w-4xl mx-auto">
-                {aboutTextFull}
-              </p>
-            )}
-
-            <div className="mt-10 flex justify-center">
-              <Link to="/about">
-                <Button variant="outline" className="rounded-2xl font-semibold px-10 py-6 text-base shadow-md hover:shadow-lg hover:bg-primary/5 hover:border-primary/30 transition-all">
-                  Learn more about us
-                </Button>
-              </Link>
+        <section className="section-soft-radial relative overflow-hidden py-20 md:py-28">
+          <div className="container relative z-10">
+            <div className="content-max mx-auto grid w-full items-start gap-8 lg:grid-cols-12 lg:items-stretch lg:gap-10">
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeUp}
+                className="order-1 text-center lg:col-span-6 lg:self-center lg:text-left"
+              >
+                <div className="relative">
+                  <div
+                    className="pointer-events-none absolute -inset-x-6 -top-8 bottom-1/2 hidden rounded-[40%] gold-accent-radial opacity-70 lg:block"
+                    aria-hidden
+                  />
+                  <h2 className="heading-section relative">{aboutSectionTitle}</h2>
+                </div>
+                <div className="geometric-divider mx-auto mt-5 mb-5 w-28 lg:mx-0" />
+                {aboutSectionSubtitle && (
+                  <p className="heading-section-sub !mx-0 max-w-2xl text-center lg:text-left">
+                    {aboutSectionSubtitle}
+                  </p>
+                )}
+                {aboutTextFull && (
+                  <p className="mt-5 text-base leading-relaxed text-muted-foreground md:mt-6 md:text-lg md:leading-relaxed whitespace-pre-line">
+                    {aboutTextFull}
+                  </p>
+                )}
+                <div className="mt-8 flex justify-center lg:justify-start">
+                  <Link to="/about">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="rounded-2xl border-primary/22 bg-background/80 px-10 py-7 text-base font-medium shadow-sm backdrop-blur-sm hover:border-primary/32 hover:bg-primary/[0.06]"
+                    >
+                      Learn more about us
+                    </Button>
+                  </Link>
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="order-2 lg:col-span-6 lg:self-center"
+              >
+                <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
+                  <div className="grid h-[min(56vw,360px)] grid-cols-12 grid-rows-6 gap-2 sm:h-[400px] sm:gap-3 lg:h-[min(440px,44vh)]">
+                    <ImageSoftFade className="relative col-span-7 row-span-6 overflow-hidden rounded-2xl shadow-md ring-1 ring-border/35">
+                      <img
+                        src={editorialPhotoUrls[2] ?? photoEditorialC}
+                        alt=""
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    </ImageSoftFade>
+                    <ImageSoftFade className="relative col-span-5 col-start-8 row-span-3 -translate-y-0.5 overflow-hidden rounded-xl shadow-sm ring-1 ring-border/30 sm:-translate-y-1">
+                      <img
+                        src={editorialPhotoUrls[0] ?? photoEditorialA}
+                        alt=""
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    </ImageSoftFade>
+                    <ImageSoftFade className="relative col-span-5 col-start-8 row-span-3 row-start-4 translate-y-0.5 overflow-hidden rounded-xl shadow-sm ring-1 ring-border/30 sm:translate-y-1">
+                      <img
+                        src={editorialPhotoUrls[1] ?? photoEditorialB}
+                        alt=""
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    </ImageSoftFade>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </div>
         </section>
@@ -321,13 +388,13 @@ const Index = () => {
 
       {/* Our Teachers - separate section */}
       {showAboutSection && homeTeachers.length > 0 && (
-        <section className="py-20 md:py-28 pattern-stars">
+        <section className="section-y pattern-stars relative">
             <div className="container">
-              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground">Our Teachers</h2>
-                <div className="geometric-divider w-24 mx-auto mt-4 mb-4" />
+              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="mb-14 text-center md:mb-16">
+                <h2 className="heading-section">Our Teachers</h2>
+                <div className="geometric-divider mx-auto mt-6 w-28" />
               </motion.div>
-              <div className="flex gap-6 overflow-x-auto pb-2 -mx-2 px-2 md:mx-0 md:px-0 scrollbar-thin justify-center flex-wrap md:flex-nowrap md:justify-center">
+              <div className="flex flex-wrap justify-center gap-8 overflow-x-auto pb-2 -mx-2 px-2 md:mx-0 md:px-0 scrollbar-thin md:flex-nowrap">
                 {homeTeachers.map((t) => {
                   const photoUrl = t.photo?.asset?.url
                     ? urlFor(t.photo).width(280).height(280).fit("crop").url()
@@ -335,12 +402,12 @@ const Index = () => {
                   return (
                     <Card
                       key={t.name}
-                      className="min-w-[260px] max-w-[280px] flex-shrink-0 border-border/60 bg-card/80 backdrop-blur-sm"
+                      className="min-w-[260px] max-w-[280px] flex-shrink-0 border-border/50 bg-card/90 shadow-sm backdrop-blur-sm"
                     >
-                      <CardContent className="p-6 flex flex-col items-center text-center gap-3">
+                      <CardContent className="flex flex-col items-center gap-4 p-7 text-center">
                         {photoUrl && (
-                          <div className="w-20 h-20 rounded-full overflow-hidden border border-border/60">
-                            <img src={photoUrl} alt={t.name} loading="lazy" className="w-full h-full object-cover" />
+                          <div className="h-24 w-24 overflow-hidden rounded-2xl border border-border/50 shadow-inner ring-2 ring-background">
+                            <img src={photoUrl} alt={t.name} loading="lazy" className="h-full w-full object-cover" />
                           </div>
                         )}
                         <div>
@@ -357,63 +424,92 @@ const Index = () => {
           </section>
       )}
 
-      {/* Testimonials - single-row carousel with arrows */}
+      {/* Testimonials — centered editorial, one at a time */}
       {testimonials.length > 0 && (
-        <section className="py-20 md:py-28 bg-background">
-          <div className="container">
+        <section className="section-soft-radial section-y relative overflow-hidden">
+          <div className="container relative z-10">
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
               variants={fadeUp}
-              className="text-center mb-12"
+              className="mb-16 text-center md:mb-20"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground">{testimonialsSectionTitle}</h2>
-              <div className="geometric-divider w-24 mx-auto mt-4 mb-4" />
+              <h2 className="heading-section">{testimonialsSectionTitle}</h2>
+              <div className="geometric-divider mx-auto mt-6 w-28" />
             </motion.div>
-            <div className="relative content-max mx-auto">
-              <div
-                ref={testimonialsScrollRef}
-                className="flex gap-6 overflow-x-auto pb-4 -mx-2 px-2 md:mx-0 md:px-0 scrollbar-thin hide-scrollbar snap-x snap-mandatory"
-              >
-                {testimonials.map((t, i) => (
-                  <motion.div
-                    key={t.name ?? i}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    variants={fadeUp}
-                    className="flex-shrink-0 w-[280px] snap-start"
-                  >
-                    <Card className="h-full border-border/50 bg-card/80">
-                      <CardContent className="p-6">
-                        <p className="text-muted-foreground italic mb-4">&ldquo;{t.quote}&rdquo;</p>
-                        <p className="font-semibold text-foreground">{t.name}</p>
-                        {t.role && <p className="text-sm text-primary">{t.role}</p>}
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-              {testimonials.length > 0 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => testimonialsScrollRef.current?.scrollBy({ left: -320, behavior: "smooth" })}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 w-10 h-10 rounded-full bg-background/90 shadow-md border border-border/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-background transition-colors z-10"
-                    aria-label="Scroll testimonials left"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => testimonialsScrollRef.current?.scrollBy({ left: 320, behavior: "smooth" })}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 w-10 h-10 rounded-full bg-background/90 shadow-md border border-border/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-background transition-colors z-10"
-                    aria-label="Scroll testimonials right"
-                  >
-                    ›
-                  </button>
-                </>
+
+            <div className="content-max relative mx-auto max-w-4xl px-4 md:px-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={testimonialIndex}
+                  role="status"
+                  aria-live="polite"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.35 }}
+                  className="text-center"
+                >
+                  <blockquote className="font-sans text-2xl font-normal leading-snug tracking-tight text-foreground md:text-3xl md:leading-snug lg:text-4xl lg:leading-tight">
+                    <span className="text-primary/55">&ldquo;</span>
+                    {testimonials[testimonialIndex]?.quote}
+                    <span className="text-primary/55">&rdquo;</span>
+                  </blockquote>
+                  <footer className="mt-12 space-y-2 border-t border-border/40 pt-10">
+                    <p className="text-lg font-semibold text-foreground md:text-xl">
+                      {testimonials[testimonialIndex]?.name}
+                    </p>
+                    {testimonials[testimonialIndex]?.role && (
+                      <p className="text-base text-muted-foreground md:text-lg">{testimonials[testimonialIndex]?.role}</p>
+                    )}
+                  </footer>
+                </motion.div>
+              </AnimatePresence>
+
+              {testimonials.length > 1 && (
+                <div className="mt-14 flex flex-col items-center gap-8 sm:flex-row sm:justify-center">
+                  <div className="flex items-center gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-12 w-12 rounded-full border-border/60 shadow-sm"
+                      aria-label="Previous testimonial"
+                      onClick={() =>
+                        setTestimonialIndex((i) => (i - 1 + testimonials.length) % testimonials.length)
+                      }
+                    >
+                      <span aria-hidden>‹</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-12 w-12 rounded-full border-border/60 shadow-sm"
+                      aria-label="Next testimonial"
+                      onClick={() => setTestimonialIndex((i) => (i + 1) % testimonials.length)}
+                    >
+                      <span aria-hidden>›</span>
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {testimonials.map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        aria-label={`Go to testimonial ${i + 1}`}
+                        aria-current={i === testimonialIndex}
+                        onClick={() => setTestimonialIndex(i)}
+                        className={`h-2.5 rounded-full transition-all ${
+                          i === testimonialIndex
+                            ? "w-10 bg-gradient-to-r from-primary/50 to-accent/45"
+                            : "w-2.5 bg-border/90 hover:bg-primary/30"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           </div>
@@ -421,26 +517,24 @@ const Index = () => {
       )}
 
       {/* Why Choose Us */}
-      <section className="py-20 md:py-28 bg-background geometric-border">
-        <div className="container">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">{whyChooseUsSectionTitle}</h2>
-            <div className="geometric-divider w-24 mx-auto mt-4 mb-4" />
-            <p className="text-muted-foreground max-w-2xl mx-auto">{whyChooseUsSectionSubtitle}</p>
+      <section className="section-soft-radial section-y relative overflow-hidden">
+        <div className="container relative z-10">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="relative mb-16 text-center md:mb-20">
+            <div
+              className="pointer-events-none absolute left-1/2 top-0 h-36 w-[min(90%,36rem)] -translate-x-1/2 rounded-full gold-accent-radial opacity-45 blur-2xl"
+              aria-hidden
+            />
+            <h2 className="heading-section relative">{whyChooseUsSectionTitle}</h2>
+            <div className="geometric-divider relative mx-auto mt-6 w-28" />
+            <p className="heading-section-sub">{whyChooseUsSectionSubtitle}</p>
           </motion.div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 content-max mx-auto">
+          <div className="content-max mx-auto grid gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-3 lg:gap-12">
             {whyChooseUsItems.map((item, i) => {
-              const Icon = getIcon(item.icon);
               return (
                 <div key={item.title}>
-                  <div className="flex items-start gap-4 p-6 rounded-xl bg-card/80 backdrop-blur-sm">
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <Icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground mb-1">{item.title}</h3>
-                      <p className="text-sm text-muted-foreground">{item.description}</p>
-                    </div>
+                  <div className="space-y-3 border-l-2 border-primary/35 pl-4">
+                    <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground md:text-base">{item.description}</p>
                   </div>
                 </div>
               );
@@ -449,24 +543,72 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Banner */}
-      <section className="py-24 md:py-28 bg-secondary pattern-dark">
-        <div className="container text-center space-y-6">
+      {/* CTA Banner — calligraphy (left) → green → photo (right), soft blends */}
+      <section className="section-y relative min-h-[260px] overflow-hidden bg-secondary pattern-dark text-secondary-foreground">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-secondary via-secondary/95 to-[hsl(166_49%_20%)]" aria-hidden />
+        <div
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_75%_at_30%_48%,hsl(45_42%_58%/0.18),transparent_58%)]"
+          aria-hidden
+        />
+        <DecorativeArabic variant="bandLeft" opacity={0.075} />
+        <div
+          className="pointer-events-none absolute inset-y-0 right-0 z-[1] hidden w-[68%] bg-gradient-to-r from-secondary/0 via-secondary/42 to-secondary md:block"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute inset-y-0 right-0 z-[1] hidden w-[min(54%,620px)] md:block"
+          aria-hidden
+        >
+          <div
+            className="relative h-full w-full"
+            style={{
+              WebkitMaskImage:
+                "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.45) 16%, rgba(0,0,0,0.82) 30%, #000 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%)",
+              WebkitMaskComposite: "source-in",
+              maskImage:
+                "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.45) 16%, rgba(0,0,0,0.82) 30%, #000 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%)",
+              maskComposite: "intersect",
+            }}
+          >
+            <img
+              src={photoCtaBand}
+              alt=""
+              className="h-full min-h-[300px] w-full object-cover object-center opacity-[0.9]"
+              loading="lazy"
+            />
+          </div>
+          <div
+            className="pointer-events-none absolute inset-0 bg-gradient-to-l from-transparent via-secondary/0 to-secondary/80 mix-blend-multiply"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,hsl(var(--secondary)/0.35)_0%,transparent_14%,transparent_86%,hsl(var(--secondary)/0.45)_100%)]"
+            aria-hidden
+          />
+        </div>
+        <div className="container relative z-10 space-y-8 text-center md:space-y-10">
           {footerNote && (
-            <p className="text-secondary-foreground/90 text-sm max-w-xl mx-auto">{footerNote}</p>
+            <p className="mx-auto max-w-xl text-base leading-relaxed text-secondary-foreground/90">{footerNote}</p>
           )}
-          <h2 className="text-3xl md:text-4xl font-bold text-secondary-foreground">{ctaTitle}</h2>
-          <p className="text-secondary-foreground/80 max-w-xl mx-auto text-lg">{ctaSubtitle}</p>
-          <div className="flex flex-wrap justify-center gap-4 pt-2">
-            {ctaButtons.map((btn, i) => (
-              <CtaLink
-                key={`${btn.to}-${i}`}
-                label={btn.label}
-                to={btn.to}
-                isExternal={btn.isExternal}
-                variant={btn.variant ?? "primary"}
-              />
-            ))}
+          <h2 className="heading-section-on-dark mx-auto max-w-4xl leading-tight">
+            {ctaTitle}
+          </h2>
+          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-secondary-foreground/85 md:text-xl md:leading-relaxed">
+            {ctaSubtitle}
+          </p>
+          <div className="flex flex-wrap justify-center gap-5 pt-4">
+            {ctaButtons.map((btn, i) => {
+              const { to, isExternal } = resolveCtaButtonTarget(btn);
+              return (
+                <CtaLink
+                  key={`${to}-${i}`}
+                  label={btn.label}
+                  to={to}
+                  isExternal={isExternal}
+                  variant={btn.variant ?? "primary"}
+                />
+              );
+            })}
           </div>
         </div>
       </section>

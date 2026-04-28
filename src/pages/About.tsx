@@ -1,12 +1,17 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { motion } from "framer-motion";
 import { PortableText } from "@portabletext/react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageSeo } from "@/components/PageSeo";
 import { getAboutPage, getHomepage, type AboutTeacher, type AboutGraduate } from "@/lib/sanityQueries";
-import { getIcon } from "@/lib/icons";
 import { urlFor } from "@/lib/sanity";
+import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
+import { ImageSoftFade } from "@/components/ui/ImageSoftFade";
+import photoEditorialA from "@/assets/mqi-images/DSC00985.JPG";
+import photoEditorialB from "@/assets/mqi-images/IMG_7312.JPG";
+import photoEditorialC from "@/assets/mqi-images/DSC00518.JPG";
+import photoEditorialD from "@/assets/mqi-images/IMG_7382.JPG";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -27,6 +32,20 @@ const About = () => {
   const testimonials = homepage?.testimonials ?? [];
   const testimonialsSectionTitle = homepage?.testimonialsSectionTitle ?? "What Families Say";
 
+  const editorialPhotoUrls = useMemo(() => {
+    const fromCms = (homepage?.editorialPhotos ?? [])
+      .map((img) => {
+        if (img && typeof img === "object" && "asset" in img && img.asset) {
+          return urlFor(img as never).width(960).height(720).fit("max").url();
+        }
+        return null;
+      })
+      .filter((u): u is string => !!u);
+    const defaults = [photoEditorialA, photoEditorialB, photoEditorialC, photoEditorialD];
+    const base = fromCms.length >= 2 ? fromCms : defaults;
+    return [0, 1, 2, 3].map((i) => base[i] ?? defaults[i]);
+  }, [homepage?.editorialPhotos]);
+
   const teachersRef = useRef<HTMLDivElement | null>(null);
   const graduatesRef = useRef<HTMLDivElement | null>(null);
 
@@ -40,9 +59,6 @@ const About = () => {
   ].filter((s) => s.content);
   const ourValuesCards = Array.isArray(aboutPage?.ourValues) ? aboutPage.ourValues : [];
 
-  const heroImageUrl =
-    aboutPage?.heroImage?.asset?.url && urlFor(aboutPage.heroImage).width(1200).height(800).fit("max").url();
-
   const seo = aboutPage?.seo;
   const teachers = (aboutPage?.teachers ?? []) as AboutTeacher[];
   const graduates = (aboutPage?.graduates ?? []) as AboutGraduate[];
@@ -54,90 +70,128 @@ const About = () => {
     el.scrollBy({ left: delta, behavior: "smooth" });
   };
 
-  /* Section styling: first two plain text (full width), rest card-style */
-  const sectionStyles = (i: number) => (i < 2 ? "w-full" : "w-full py-8 md:py-10 rounded-2xl bg-muted/20 px-6 md:px-10 border border-border/40");
-
   return (
-    <main className="py-16 md:py-24 pattern-stars">
+    <main className="section-soft-radial section-y relative overflow-hidden pattern-stars">
+      <DecorativeArabic variant="full" opacity={0.036} />
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_68%_58%_at_52%_50%,transparent_22%,hsl(var(--background)/0.7)_100%)]"
+        aria-hidden
+      />
       <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | MQI`} />
 
       {/* Hero - same container as rest of site */}
-      <section className="mb-16 md:mb-20">
+      <section className="relative z-10 mb-12 md:mb-16">
         <div className="container">
-          <motion.div initial="hidden" animate="visible" variants={fadeUp} className="text-center mb-10 md:mb-12">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">{pageTitle}</h1>
-            <div className="geometric-divider w-24 mx-auto mb-4" />
+          <motion.div initial="hidden" animate="visible" variants={fadeUp} className="text-center">
+            <h1 className="heading-section mb-5">{pageTitle}</h1>
+            <div className="geometric-divider mx-auto mb-5 w-28" />
             {pageSubtitle && (
-              <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+              <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl md:leading-relaxed">
                 {pageSubtitle}
               </p>
             )}
           </motion.div>
-          {heroImageUrl && (
-            <div className="w-full rounded-2xl overflow-hidden shadow-sm border border-border/50 aspect-[2/1] max-h-[480px] md:max-h-[520px]">
-              <img
-                src={heroImageUrl}
-                alt="Milton Quran Institute"
-                loading="lazy"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
         </div>
       </section>
 
-      <div className="container">
+      <div className="container relative z-10">
 
         {sections.length > 0 && (
-          <div className="space-y-20 md:space-y-24 mb-20 md:mb-28">
-            {sections.map((s, i) => (
-              <motion.section key={s.title} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className={sectionStyles(i)}>
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 tracking-tight">{s.title}</h2>
-                <div className="geometric-divider w-16 mb-6" />
-                <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-base md:text-lg">{s.content}</p>
-              </motion.section>
-            ))}
+          <div className="mb-20 space-y-14 md:mb-28 md:space-y-20">
+            {sections.map((s, i) => {
+              const imgUrl = editorialPhotoUrls[i % 4];
+              const layout = i % 3;
+              return (
+                <motion.section
+                  key={s.title}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={fadeUp}
+                  className="w-full"
+                >
+                  <h2 className="heading-section-sm mb-4">{s.title}</h2>
+                  <div className="geometric-divider mb-6 w-16" />
+                  {layout === 0 && (
+                    <div className="grid min-w-0 gap-8 md:grid-cols-2 md:items-start md:gap-10">
+                      <p className="text-base leading-relaxed text-muted-foreground whitespace-pre-line md:text-lg">
+                        {s.content}
+                      </p>
+                      <ImageSoftFade className="relative aspect-[4/3] w-full max-w-xl overflow-hidden rounded-2xl shadow-sm ring-1 ring-border/35 md:mx-0 md:max-w-none">
+                        <img src={imgUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
+                      </ImageSoftFade>
+                    </div>
+                  )}
+                  {layout === 1 && (
+                    <>
+                      <p className="text-base leading-relaxed text-muted-foreground whitespace-pre-line md:text-lg">
+                        {s.content}
+                      </p>
+                      <div className="mt-8 md:mt-10">
+                        <ImageSoftFade className="relative aspect-[21/10] max-h-[240px] w-full overflow-hidden rounded-2xl shadow-sm ring-1 ring-border/35 sm:max-h-[280px] md:max-h-[300px]">
+                          <img src={imgUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
+                        </ImageSoftFade>
+                      </div>
+                    </>
+                  )}
+                  {layout === 2 && (
+                    <div className="grid min-w-0 gap-8 md:grid-cols-2 md:items-center md:gap-10">
+                      <ImageSoftFade className="relative order-2 aspect-[3/4] max-h-[280px] overflow-hidden rounded-2xl shadow-sm ring-1 ring-border/35 md:order-1 md:max-h-[min(52vh,380px)] md:aspect-[4/5]">
+                        <img src={imgUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
+                      </ImageSoftFade>
+                      <p className="order-1 text-base leading-relaxed text-muted-foreground whitespace-pre-line md:order-2 md:text-lg">
+                        {s.content}
+                      </p>
+                    </div>
+                  )}
+                </motion.section>
+              );
+            })}
           </div>
         )}
 
         {/* Testimonials - minimal layout: quote + attribution */}
         {testimonials.length > 0 && (
           <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="mb-20 md:mb-28">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4 tracking-tight">{testimonialsSectionTitle}</h2>
-            <div className="geometric-divider w-16 mb-10" />
-            <div className="space-y-12 md:space-y-16 w-full">
+            <h2 className="heading-section-sm relative mb-4">
+              <span className="gold-accent-radial pointer-events-none absolute -inset-x-4 -inset-y-3 -z-10 rounded-3xl opacity-50" aria-hidden />
+              {testimonialsSectionTitle}
+            </h2>
+            <div className="geometric-divider mb-10 w-16" />
+            <div className="w-full space-y-12 md:space-y-16">
               {testimonials.map((t, i) => (
-                <blockquote key={t.name ?? i} className="border-l-4 border-primary/40 pl-6 md:pl-8 py-2">
-                  <p className="text-muted-foreground text-lg md:text-xl leading-relaxed italic">&ldquo;{t.quote}&rdquo;</p>
-                  <footer className="mt-4 text-foreground font-semibold">{t.name}{t.role ? <span className="text-primary font-normal text-base ml-2">— {t.role}</span> : null}</footer>
+                <blockquote key={t.name ?? i} className="border-l-4 border-primary/30 py-2 pl-6 md:pl-8">
+                  <p className="font-sans text-lg font-normal leading-relaxed tracking-tight text-foreground md:text-xl md:leading-relaxed">
+                    &ldquo;{t.quote}&rdquo;
+                  </p>
+                  <footer className="mt-4 font-semibold text-foreground">
+                    {t.name}
+                    {t.role ? (
+                      <span className="ml-2 text-base font-normal text-muted-foreground">— {t.role}</span>
+                    ) : null}
+                  </footer>
                 </blockquote>
               ))}
             </div>
           </motion.section>
         )}
 
-        {/* Our Values - Cards */}
+        {/* Our Values */}
         {ourValuesCards.length > 0 && (
-          <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="mb-20 md:mb-28">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4 tracking-tight">Our Values</h2>
-            <div className="geometric-divider w-16 mb-10" />
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 content-max mx-auto">
+          <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="relative mb-20 md:mb-28">
+            <div
+              className="pointer-events-none absolute -left-6 top-0 h-40 w-[min(100%,28rem)] rounded-full gold-accent-radial opacity-40 blur-2xl md:left-0"
+              aria-hidden
+            />
+            <h2 className="heading-section-sm relative mb-4">Our Values</h2>
+            <div className="geometric-divider mb-10 w-16" />
+            <div className="grid gap-8 content-max mx-auto sm:grid-cols-2 lg:grid-cols-3">
               {ourValuesCards.map((v, i) => {
-                const Icon = getIcon(v.icon);
                 return (
-                  <Card key={v.title + i} className="border-border/50 bg-card/80">
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                          <Icon className="h-6 w-6 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-foreground mb-1">{v.title}</h3>
-                          {v.description && <p className="text-sm text-muted-foreground leading-relaxed">{v.description}</p>}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <div key={v.title + i} className="space-y-3 border-l-2 border-primary/35 pl-4">
+                    <h3 className="text-lg font-semibold text-foreground">{v.title}</h3>
+                    {v.description && <p className="text-sm leading-relaxed text-muted-foreground">{v.description}</p>}
+                  </div>
                 );
               })}
             </div>
@@ -147,7 +201,7 @@ const About = () => {
         {/* Teachers */}
         {teachers.length > 0 && (
           <section className="mb-20 md:mb-28">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 tracking-tight">Our Teachers</h2>
+            <h2 className="heading-section-sm mb-2">Our Teachers</h2>
             <div className="geometric-divider w-16 mb-6" />
             <div className="flex items-center justify-end gap-4 mb-4">
               <div className="hidden md:flex items-center gap-2">
@@ -183,14 +237,9 @@ const About = () => {
                   >
                     <CardContent className="p-6 flex flex-col items-center text-center gap-4">
                       {photoUrl && (
-                        <div className="w-28 h-28 rounded-full overflow-hidden border border-border/60">
-                          <img
-                            src={photoUrl}
-                            alt={t.name}
-                            loading="lazy"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
+                        <ImageSoftFade className="h-28 w-28 shrink-0 rounded-2xl border border-border/60">
+                          <img src={photoUrl} alt={t.name} loading="lazy" className="h-full w-full object-cover" />
+                        </ImageSoftFade>
                       )}
                       <div>
                         <h3 className="font-semibold text-foreground">{t.name}</h3>
@@ -210,7 +259,7 @@ const About = () => {
         {/* Graduates */}
         {graduates.length > 0 && (
           <section>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 tracking-tight">Our Graduates</h2>
+            <h2 className="heading-section-sm mb-2">Our Graduates</h2>
             <div className="geometric-divider w-16 mb-6" />
             <div className="flex items-center justify-end gap-4 mb-4">
               <div className="hidden md:flex items-center gap-2">
@@ -246,14 +295,9 @@ const About = () => {
                   >
                     <CardContent className="p-6 flex flex-col items-center text-center gap-4">
                       {photoUrl && (
-                        <div className="w-24 h-24 rounded-full overflow-hidden border border-border/60">
-                          <img
-                            src={photoUrl}
-                            alt={g.name}
-                            loading="lazy"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
+                        <ImageSoftFade className="h-24 w-24 shrink-0 rounded-2xl border border-border/60">
+                          <img src={photoUrl} alt={g.name} loading="lazy" className="h-full w-full object-cover" />
+                        </ImageSoftFade>
                       )}
                       <div>
                         <h3 className="font-semibold text-foreground">{g.name}</h3>

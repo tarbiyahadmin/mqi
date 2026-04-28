@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
 import mqiLogo from "@/assets/mqi-logo.svg";
 import { useQuery } from "@tanstack/react-query";
 import { getSiteSettings } from "@/lib/sanityQueries";
@@ -28,9 +27,9 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-sm">
-      <div className="container flex items-center justify-between h-16 md:h-20">
+      <div className="container flex h-[4.25rem] items-center justify-between md:h-[5.25rem]">
         <Link to="/" className="flex items-center gap-3">
-          <img src={mqiLogo} alt="Milton Qur'an Institute" className="h-10 md:h-12 w-auto" />
+          <img src={mqiLogo} alt="Milton Qur'an Institute" className="h-11 w-auto md:h-[3.25rem]" />
         </Link>
 
         {/* Desktop nav */}
@@ -51,7 +50,7 @@ const Header = () => {
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          <span className="text-sm font-semibold">{mobileOpen ? "Close" : "Menu"}</span>
         </button>
       </div>
 

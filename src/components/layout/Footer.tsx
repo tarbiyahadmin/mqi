@@ -1,5 +1,4 @@
 import { useLocation } from "react-router-dom";
-import { Mail, Phone, MapPin, Instagram, Facebook, Youtube, Twitter, Linkedin } from "lucide-react";
 import mqiLogo from "@/assets/mqi-logo.svg";
 import { useQuery } from "@tanstack/react-query";
 import { getSiteSettings } from "@/lib/sanityQueries";
@@ -36,15 +35,6 @@ const Footer = () => {
   const socialLinks = siteSettings?.socialLinks ?? [];
   const copyright = siteSettings?.footerCopyright ?? `© ${new Date().getFullYear()} Milton Qur'an Institute. All rights reserved.`;
   const copyrightText = copyright.includes('{year}') ? copyright.replace('{year}', String(new Date().getFullYear())) : copyright;
-
-  const socialIcons: Record<string, typeof Instagram> = {
-    instagram: Instagram,
-    facebook: Facebook,
-    youtube: Youtube,
-    twitter: Twitter,
-    linkedin: Linkedin,
-    tiktok: Instagram, // Lucide has no TikTok, use generic
-  };
 
   return (
     <footer className="bg-secondary text-secondary-foreground">
@@ -95,33 +85,23 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-sm uppercase tracking-wider mb-4 text-secondary-foreground/90">Contact Us</h4>
             <ul className="space-y-3">
-              <li className="flex items-start gap-3 text-sm text-secondary-foreground/60">
-                <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
-                <span>{address}</span>
-              </li>
-              <li className="flex items-center gap-3 text-sm text-secondary-foreground/60">
-                <Phone className="h-4 w-4 shrink-0" />
-                <span>{phone}</span>
-              </li>
-              <li className="flex items-center gap-3 text-sm text-secondary-foreground/60">
-                <Mail className="h-4 w-4 shrink-0" />
-                <span>{email}</span>
-              </li>
+              <li className="text-sm text-secondary-foreground/60">{address}</li>
+              <li className="text-sm text-secondary-foreground/60">{phone}</li>
+              <li className="text-sm text-secondary-foreground/60">{email}</li>
             </ul>
             {socialLinks.length > 0 && (
-              <div className="flex items-center gap-3 mt-4">
+              <div className="mt-4 flex flex-wrap items-center gap-2">
                 {socialLinks.map((s) => {
-                  const Icon = socialIcons[s.platform] ?? Mail;
                   return (
                     <a
                       key={s.platform + s.url}
                       href={s.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-secondary-foreground/60 hover:text-secondary-foreground transition-colors p-1.5 rounded-lg hover:bg-secondary-foreground/10"
+                      className="rounded-lg border border-secondary-foreground/25 px-2.5 py-1 text-xs uppercase tracking-wide text-secondary-foreground/70 transition-colors hover:text-secondary-foreground"
                       aria-label={s.platform}
                     >
-                      <Icon className="h-5 w-5" />
+                      {s.platform}
                     </a>
                   );
                 })}
