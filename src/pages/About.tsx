@@ -4,6 +4,7 @@ import { PortableText } from "@portabletext/react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageSeo } from "@/components/PageSeo";
+import { PageTitle } from "@/components/layout/PageTitle";
 import { getAboutPage, getHomepage, type AboutTeacher, type AboutGraduate } from "@/lib/sanityQueries";
 import { urlFor } from "@/lib/sanity";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
@@ -79,17 +80,10 @@ const About = () => {
       />
       <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | MQI`} />
 
-      {/* Hero - same container as rest of site */}
       <section className="relative z-10 mb-12 md:mb-16">
         <div className="container">
-          <motion.div initial="hidden" animate="visible" variants={fadeUp} className="text-center">
-            <h1 className="heading-section mb-5">{pageTitle}</h1>
-            <div className="geometric-divider mx-auto mb-5 w-28" />
-            {pageSubtitle && (
-              <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl md:leading-relaxed">
-                {pageSubtitle}
-              </p>
-            )}
+          <motion.div initial="hidden" animate="visible" variants={fadeUp}>
+            <PageTitle title={pageTitle} subtitle={pageSubtitle?.trim() ? pageSubtitle : undefined} />
           </motion.div>
         </div>
       </section>

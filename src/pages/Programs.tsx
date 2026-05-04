@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getProgramCategories, getProgramsPage, getProgramsForListing } from "@/lib/sanityQueries";
 import { PageSeo } from "@/components/PageSeo";
+import { PageTitle } from "@/components/layout/PageTitle";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
 import type { ProgramForListing } from "@/lib/sanityQueries";
 
@@ -57,13 +58,9 @@ const Programs = () => {
       <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | MQI`} />
       <div className="container relative z-10">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mx-auto mb-16 max-w-5xl md:mb-20">
-          <h1 className="heading-section mb-6">{pageTitle}</h1>
-          <div className="geometric-divider mb-6 w-28" />
-          <p className="max-w-3xl text-lg leading-relaxed text-muted-foreground md:text-xl md:leading-relaxed">
-            {pageSubtitle}
-          </p>
+          <PageTitle title={pageTitle} subtitle={pageSubtitle} />
           {introContent && introContent.length > 0 && (
-            <div className="prose prose-lg prose-editorial mt-6 max-w-3xl prose-p:text-muted-foreground">
+            <div className="prose prose-lg prose-editorial mx-auto mt-8 max-w-3xl text-center prose-p:text-muted-foreground md:text-left">
               <PortableText value={introContent} />
             </div>
           )}

@@ -10,6 +10,7 @@ const defaultNavLinks = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
   { label: "Programs", to: "/programs" },
+  { label: "Financial Aid", to: "/financial-aid" },
   { label: "Career & Volunteer", to: "/careers" },
   { label: "Blog", to: "/blog" },
 ];

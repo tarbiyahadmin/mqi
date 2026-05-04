@@ -9,6 +9,7 @@ import { urlFor } from "@/lib/sanity";
 import { formPagePath } from "@/lib/routes";
 import { CtaLink } from "@/components/CtaLink";
 import { PageSeo } from "@/components/PageSeo";
+import { PageTitle } from "@/components/layout/PageTitle";
 import { ScheduleBlocks } from "@/components/ScheduleBlocks";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
 import { ImageSoftFade } from "@/components/ui/ImageSoftFade";
@@ -31,9 +32,13 @@ const ProgramDetail = () => {
 
   if (!program) {
     return (
-      <div className="container py-20 text-center">
-        <h1 className="text-2xl font-bold mb-4">Program not found</h1>
-        <Link to="/programs"><Button>Back to Programs</Button></Link>
+      <div className="container py-20">
+        <PageTitle title="Program not found" subtitle="This program may have been moved or removed." />
+        <div className="mt-10 flex justify-center">
+          <Link to="/programs">
+            <Button>Back to Programs</Button>
+          </Link>
+        </div>
       </div>
     );
   }
@@ -88,14 +93,16 @@ const ProgramDetail = () => {
         </Link>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          {/* Hero */}
           <section className="mb-14">
-            <span className="text-xs uppercase tracking-wider text-primary font-semibold">{categoryTitle}</span>
-            <h1 className="heading-section mt-2 mb-3 max-w-[22ch]">
-              {program.title}
-            </h1>
-            {program.heroText && <p className="text-lg text-muted-foreground mb-6">{program.heroText}</p>}
-            <div className="geometric-divider w-16 mb-8" />
+            <PageTitle
+              eyebrow={
+                categoryTitle ? (
+                  <span className="text-xs font-semibold uppercase tracking-wider text-primary">{categoryTitle}</span>
+                ) : undefined
+              }
+              title={program.title}
+              subtitle={program.heroText ?? undefined}
+            />
           </section>
 
           {imageUrl && (

@@ -17,9 +17,7 @@ const DOCUMENT_TYPES = [
   'formPage',
   'thankYouPage',
   'aboutPage',
-  'contentPage',
-  'landingPage',
-  'infoPage',
+  'financialAidPage',
 ]
 
 export default defineConfig({

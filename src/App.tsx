@@ -15,10 +15,10 @@ const Careers = lazy(() => import("./pages/Careers"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Donate = lazy(() => import("./pages/Donate"));
+const FinancialAid = lazy(() => import("./pages/FinancialAid"));
 const FormPageRoute = lazy(() => import("./pages/FormPage"));
 const ThankYou = lazy(() => import("./pages/ThankYou"));
 const NotFound = lazy(() => import("./pages/NotFound"));
-const TemplatePage = lazy(() => import("./pages/TemplatePage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,9 +52,9 @@ const App = () => (
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/donate" element={<Donate />} />
+                <Route path="/financial-aid" element={<FinancialAid />} />
                 <Route path="/forms/:slug" element={<FormPageRoute />} />
                 <Route path="/thank-you" element={<ThankYou />} />
-                <Route path="/page/:slug" element={<TemplatePage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

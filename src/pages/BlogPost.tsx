@@ -7,6 +7,7 @@ import { getBlogPostBySlug } from "@/lib/sanityQueries";
 import { urlFor } from "@/lib/sanity";
 import { format } from "date-fns";
 import { PageSeo } from "@/components/PageSeo";
+import { PageTitle } from "@/components/layout/PageTitle";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
 import { ImageSoftFade } from "@/components/ui/ImageSoftFade";
 
@@ -28,10 +29,13 @@ const BlogPost = () => {
 
   if (!post) {
     return (
-      <div className="container py-20 text-center">
-        <h1 className="text-2xl font-bold mb-4">Post not found</h1>
-        <p className="text-muted-foreground mb-6">This blog post will be available soon through our CMS.</p>
-        <Link to="/blog"><Button>Back to Blog</Button></Link>
+      <div className="container py-20">
+        <PageTitle title="Post not found" subtitle="This blog post will be available soon through our CMS." />
+        <div className="mt-10 flex justify-center">
+          <Link to="/blog">
+            <Button>Back to Blog</Button>
+          </Link>
+        </div>
       </div>
     );
   }
@@ -53,13 +57,15 @@ const BlogPost = () => {
         </Link>
 
         <motion.article initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          {post.category && (
-            <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">{post.category}</span>
-          )}
-          <h1 className="hero-headline-gradient mt-4 mb-4 text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl">
-            {post.title}
-          </h1>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-8">
+          <PageTitle
+            eyebrow={
+              post.category ? (
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">{post.category}</span>
+              ) : undefined
+            }
+            title={post.title}
+          />
+          <div className="mb-10 mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-muted-foreground md:mt-4">
             {post.author && (
               <span>{post.author}</span>
             )}

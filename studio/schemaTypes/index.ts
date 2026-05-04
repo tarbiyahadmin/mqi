@@ -21,14 +21,7 @@ import { donateTrustBullet, donatePage } from './donatePage'
 import { formPage } from './formPage'
 import { thankYouPage } from './thankYouPage'
 import { aboutTeacher, aboutGraduate, aboutPage } from './aboutPage'
-import {
-  contentBlockRichText,
-  contentBlockImage,
-  contentBlockCta,
-  contentPage,
-  landingPage,
-  infoPage,
-} from './templates'
+import { financialAidStep, financialAidPage } from './financialAidPage'
 
 export const schemaTypes = [
   navLink,
@@ -59,10 +52,6 @@ export const schemaTypes = [
   aboutTeacher,
   aboutGraduate,
   aboutPage,
-  contentBlockRichText,
-  contentBlockImage,
-  contentBlockCta,
-  contentPage,
-  landingPage,
-  infoPage,
+  financialAidStep,
+  financialAidPage,
 ]

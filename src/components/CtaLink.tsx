@@ -21,7 +21,9 @@ export function CtaLink({
   compact = false,
   className = "",
 }: CtaLinkProps) {
-  const isExternalUrl = isExternal || /^https?:\/\//i.test(to);
+  const isMailOrTel = /^mailto:|^tel:/i.test(to);
+  const isHttpUrl = /^https?:\/\//i.test(to);
+  const isExternalUrl = isExternal || isHttpUrl;
 
   const baseCompact =
     "rounded-xl border px-7 py-4 text-sm font-semibold min-h-[3rem] shadow-sm transition-all hover:shadow-md";
@@ -40,7 +42,17 @@ export function CtaLink({
 
   const buttonClass = `${variantStyles[variant]} ${className}`;
 
-  if (isExternalUrl && /^https?:\/\//i.test(to)) {
+  if (isMailOrTel) {
+    return (
+      <a href={to}>
+        <Button size={size} className={buttonClass}>
+          {label}
+        </Button>
+      </a>
+    );
+  }
+
+  if (isExternalUrl && isHttpUrl) {
     return (
       <a href={to} target="_blank" rel="noopener noreferrer">
         <Button size={size} className={buttonClass}>

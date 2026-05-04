@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getThankYouPage } from "@/lib/sanityQueries";
 import { PageSeo } from "@/components/PageSeo";
+import { PageTitle } from "@/components/layout/PageTitle";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
 
 const fadeUp = {
@@ -40,30 +41,25 @@ const ThankYou = () => {
       <DecorativeArabic variant="full" opacity={0.034} />
       <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${title} | MQI`} />
       <div className="container relative z-10 max-w-3xl">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-          className="text-center"
-        >
-          <h1 className="heading-section mb-6">{title}</h1>
-          <div className="geometric-divider w-24 mx-auto mb-4" />
-          <p className="text-muted-foreground text-lg mb-8">{subtitle}</p>
+        <motion.div initial="hidden" animate="visible" variants={fadeUp}>
+          <PageTitle title={title} subtitle={subtitle} />
 
           {body && body.length > 0 && (
-            <div className="prose prose-lg max-w-none prose-p:text-muted-foreground text-left mb-10">
+            <div className="prose prose-lg mt-8 max-w-none text-left prose-p:text-muted-foreground mb-10 md:mt-10">
               <PortableText value={body} />
             </div>
           )}
 
-          <Button
-            asChild
-            size="lg"
-            variant="outline"
-            className="rounded-2xl border-primary/24 bg-background/85 px-10 py-6 text-base font-medium shadow-sm backdrop-blur-sm hover:border-primary/34 hover:bg-primary/[0.07]"
-          >
-            <Link to={ctaPath.startsWith("/") ? ctaPath : `/${ctaPath}`}>{ctaLabel}</Link>
-          </Button>
+          <div className="mt-10 flex justify-center md:mt-12">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="rounded-2xl border-primary/24 bg-background/85 px-10 py-6 text-base font-medium shadow-sm backdrop-blur-sm hover:border-primary/34 hover:bg-primary/[0.07]"
+            >
+              <Link to={ctaPath.startsWith("/") ? ctaPath : `/${ctaPath}`}>{ctaLabel}</Link>
+            </Button>
+          </div>
         </motion.div>
       </div>
     </main>

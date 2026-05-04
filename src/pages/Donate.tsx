@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getDonatePage } from "@/lib/sanityQueries";
 import { CtaLink } from "@/components/CtaLink";
 import { PageSeo } from "@/components/PageSeo";
+import { PageTitle } from "@/components/layout/PageTitle";
 import { getJotformUrl } from "@/lib/jotform";
 import { formPagePath } from "@/lib/routes";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
@@ -54,12 +55,8 @@ const Donate = () => {
       <DecorativeArabic variant="full" opacity={0.034} />
       <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | MQI`} />
       <div className="container relative z-10 max-w-4xl">
-        <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mb-14 text-center md:mb-16">
-          <h1 className="heading-section mb-6">{pageTitle}</h1>
-          <div className="geometric-divider mx-auto mb-6 w-28" />
-          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl md:leading-relaxed">
-            {pageSubtitle}
-          </p>
+        <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mb-14 md:mb-16">
+          <PageTitle title={pageTitle} subtitle={pageSubtitle} />
         </motion.div>
 
         {/* Hadith */}

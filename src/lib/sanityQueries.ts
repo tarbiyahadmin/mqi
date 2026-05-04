@@ -288,6 +288,35 @@ export interface AboutGraduate {
   photo?: { asset?: { url: string } };
 }
 
+export interface FinancialAidStep {
+  title?: string;
+  description?: string;
+}
+
+export interface FinancialAidPage {
+  title?: string;
+  slug?: string;
+  scholarshipOverviewTitle?: string;
+  scholarshipOverviewBody?: string;
+  scholarshipOverviewImage?: { asset?: { url: string }; _type?: string };
+  howItWorksTitle?: string;
+  howItWorksSteps?: FinancialAidStep[];
+  howItWorksImage?: { asset?: { url: string }; _type?: string };
+  meritNeedTitle?: string;
+  meritNeedIntro?: string;
+  meritNeedBullets?: string[];
+  meritNeedImage?: { asset?: { url: string }; _type?: string };
+  quoteEyebrow?: string;
+  quote?: Hadith;
+  closingCtaTitle?: string;
+  closingCtaSubtitle?: string;
+  closingCtaImage?: { asset?: { url: string }; _type?: string };
+  closingApplyCta?: CtaButton | null;
+  closingDonateCta?: CtaButton | null;
+  additionalContent?: unknown[];
+  seo?: SeoData;
+}
+
 export interface AboutPage {
   title?: string;
   subtitle?: string;
@@ -303,72 +332,10 @@ export interface AboutPage {
   seo?: SeoData;
 }
 
-export interface ContentBlockRichText {
-  _type: 'contentBlockRichText';
-  _key?: string;
-  heading?: string;
-  body?: unknown[];
-}
-
-export interface ContentBlockImage {
-  _type: 'contentBlockImage';
-  _key?: string;
-  image?: { asset?: { url: string } };
-  caption?: string;
-}
-
-export interface ContentBlockCta {
-  _type: 'contentBlockCta';
-  _key?: string;
-  title?: string;
-  subtitle?: string;
-  buttons?: CtaButton[];
-}
-
-export type TemplateSection = ContentBlockRichText | ContentBlockImage | ContentBlockCta;
-
 export interface SeoData {
   seoTitle?: string | null;
   metaDescription?: string | null;
 }
-
-export interface ContentPageDoc {
-  _type: 'contentPage';
-  _id: string;
-  slug: string;
-  title: string;
-  subtitle?: string;
-  heroImage?: { asset?: { url: string } };
-  mainContent?: unknown[];
-  sections?: TemplateSection[];
-  seo?: SeoData;
-}
-
-export interface LandingPageDoc {
-  _type: 'landingPage';
-  _id: string;
-  slug: string;
-  title: string;
-  subtitle?: string;
-  heroImage?: { asset?: { url: string } };
-  heroCtaButtons?: CtaButton[];
-  body?: unknown[];
-  sections?: TemplateSection[];
-  seo?: SeoData;
-}
-
-export interface InfoPageDoc {
-  _type: 'infoPage';
-  _id: string;
-  slug: string;
-  title: string;
-  subtitle?: string;
-  introText?: string;
-  sections?: TemplateSection[];
-  seo?: SeoData;
-}
-
-export type TemplatePageDoc = ContentPageDoc | LandingPageDoc | InfoPageDoc;
 
 // --- GROQ Queries ---
 const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
@@ -526,6 +493,30 @@ const DONATE_PAGE_QUERY = `*[_type == "donatePage"][0]{
   seo{ seoTitle, metaDescription }
 }`;
 
+const FINANCIAL_AID_PAGE_QUERY = `*[_type == "financialAidPage"][0]{
+  title,
+  "slug": slug.current,
+  scholarshipOverviewTitle,
+  scholarshipOverviewBody,
+  scholarshipOverviewImage ${imageProjection},
+  howItWorksTitle,
+  howItWorksSteps[]{ title, description },
+  howItWorksImage ${imageProjection},
+  meritNeedTitle,
+  meritNeedIntro,
+  meritNeedBullets,
+  meritNeedImage ${imageProjection},
+  quoteEyebrow,
+  quote{ arabic, english, reference },
+  closingCtaTitle,
+  closingCtaSubtitle,
+  closingCtaImage ${imageProjection},
+  closingApplyCta{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
+  closingDonateCta{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
+  additionalContent,
+  seo{ seoTitle, metaDescription }
+}`;
+
 const ABOUT_PAGE_QUERY = `*[_type == "aboutPage"][0]{
   title,
   subtitle,
@@ -566,31 +557,6 @@ const THANK_YOU_PAGE_QUERY = `*[_type == "thankYouPage"] | order(_updatedAt desc
   body,
   primaryCtaLabel,
   primaryCtaPath,
-  seo{ seoTitle, metaDescription }
-}`;
-
-const TEMPLATE_PAGE_QUERY = `*[_type in ["contentPage", "landingPage", "infoPage"] && slug.current == $slug][0]{
-  _type,
-  _id,
-  "slug": slug.current,
-  title,
-  subtitle,
-  heroImage ${imageProjection},
-  heroCtaButtons[]{ label, to, variant, isExternal, formPage->{ "slug": slug.current } },
-  mainContent,
-  body,
-  introText,
-  sections[]{
-    _type,
-    _key,
-    heading,
-    body,
-    image ${imageProjection},
-    caption,
-    title,
-    subtitle,
-    buttons[]{ label, to, variant, isExternal, formPage->{ "slug": slug.current } }
-  },
   seo{ seoTitle, metaDescription }
 }`;
 
@@ -647,8 +613,8 @@ export async function getAboutPage(): Promise<AboutPage | null> {
   return sanityClient.fetch<AboutPage | null>(ABOUT_PAGE_QUERY);
 }
 
-export async function getTemplatePageBySlug(slug: string): Promise<TemplatePageDoc | null> {
-  return sanityClient.fetch<TemplatePageDoc | null>(TEMPLATE_PAGE_QUERY, { slug });
+export async function getFinancialAidPage(): Promise<FinancialAidPage | null> {
+  return sanityClient.fetch<FinancialAidPage | null>(FINANCIAL_AID_PAGE_QUERY);
 }
 
 export async function getFormPageBySlug(slug: string): Promise<FormPageDoc | null> {

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { PortableText } from "@portabletext/react";
 import { PageSeo } from "@/components/PageSeo";
+import { PageTitle } from "@/components/layout/PageTitle";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
 import { getJotformEmbedUrl } from "@/lib/jotform";
 import type { SeoData } from "@/lib/sanityQueries";
@@ -20,8 +21,7 @@ export interface FormPageShellProps {
 }
 
 /**
- * Shared layout for dedicated form routes: hero-style title, optional intro, embedded iframe.
- * Matches spacing and patterns used on Donate and Template pages.
+ * Shared layout for dedicated form routes: page title stack, optional intro, embedded iframe.
  */
 export function FormPageShell({
   title,
@@ -37,14 +37,8 @@ export function FormPageShell({
       <DecorativeArabic variant="full" opacity={0.038} />
       <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${title} | MQI`} />
       <div className="container relative z-10 w-full max-w-6xl px-3 sm:px-6">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-          className="mb-10 text-center md:mb-12"
-        >
-          <h1 className="heading-section mb-4">{title}</h1>
-          <div className="geometric-divider mx-auto w-28" />
+        <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mb-10 md:mb-12">
+          <PageTitle title={title} />
         </motion.div>
 
         {intro && intro.length > 0 && (

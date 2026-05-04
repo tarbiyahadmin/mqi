@@ -124,6 +124,22 @@
     color: transparent;
   }
 
+  /**
+   * Shared page title stack for inner routes (not the homepage hero).
+   * Keeps alignment, max width, type rhythm, and vertical spacing consistent.
+   */
+  .page-title-block {
+    @apply mx-auto w-full max-w-4xl pb-10 text-center md:pb-14;
+  }
+
+  .page-title-divider {
+    @apply geometric-divider mx-auto mt-5 w-28 md:mt-6;
+  }
+
+  .page-title-subtitle {
+    @apply mx-auto mt-6 max-w-2xl text-balance text-lg leading-relaxed text-muted-foreground md:mt-8 md:text-xl md:leading-relaxed;
+  }
+
   .heading-section-sub {
     @apply mx-auto mt-5 max-w-3xl text-lg leading-relaxed text-muted-foreground md:text-xl;
   }

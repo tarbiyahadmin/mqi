@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { FormPageShell } from "@/components/forms/FormPageShell";
+import { PageTitle } from "@/components/layout/PageTitle";
 import { getFormPageBySlug } from "@/lib/sanityQueries";
 
 const FormPageRoute = () => {
@@ -22,12 +23,13 @@ const FormPageRoute = () => {
 
   if (!page) {
     return (
-      <div className="container py-20 text-center max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-4">Form not found</h1>
-        <p className="text-muted-foreground mb-6 text-sm">This form page may have been moved or removed.</p>
-        <Button asChild variant="default" className="rounded-2xl font-semibold">
-          <Link to="/">Back to home</Link>
-        </Button>
+      <div className="container mx-auto max-w-lg py-20">
+        <PageTitle title="Form not found" subtitle="This form page may have been moved or removed." />
+        <div className="mt-10 flex justify-center">
+          <Button asChild variant="default" className="rounded-2xl font-semibold">
+            <Link to="/">Back to home</Link>
+          </Button>
+        </div>
       </div>
     );
   }

@@ -7,6 +7,7 @@ import { getBlogPosts, getBlogPage } from "@/lib/sanityQueries";
 import { urlFor } from "@/lib/sanity";
 import { format } from "date-fns";
 import { PageSeo } from "@/components/PageSeo";
+import { PageTitle } from "@/components/layout/PageTitle";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
 import { ImageSoftFade } from "@/components/ui/ImageSoftFade";
 
@@ -35,14 +36,10 @@ const Blog = () => {
       <DecorativeArabic variant="full" opacity={0.034} />
       <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | MQI`} />
       <div className="container relative z-10">
-        <motion.div initial="hidden" animate="visible" variants={fadeUp} className="text-center mb-12">
-          <h1 className="heading-section mb-6">{pageTitle}</h1>
-          <div className="geometric-divider w-24 mx-auto mb-4" />
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-            {pageSubtitle}
-          </p>
+        <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mb-12 md:mb-16">
+          <PageTitle title={pageTitle} subtitle={pageSubtitle} />
           {introContent && introContent.length > 0 && (
-            <div className="prose prose-lg max-w-2xl mx-auto mt-6 text-center prose-p:text-muted-foreground">
+            <div className="prose prose-lg mx-auto mt-8 max-w-2xl text-center prose-p:text-muted-foreground">
               <PortableText value={introContent} />
             </div>
           )}
