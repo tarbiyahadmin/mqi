@@ -1,6 +1,5 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PortableText } from "@portabletext/react";
 import { useQuery } from "@tanstack/react-query";
@@ -8,6 +7,8 @@ import { getBlogPostBySlug } from "@/lib/sanityQueries";
 import { urlFor } from "@/lib/sanity";
 import { format } from "date-fns";
 import { PageSeo } from "@/components/PageSeo";
+import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
+import { ImageSoftFade } from "@/components/ui/ImageSoftFade";
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -43,36 +44,34 @@ const BlogPost = () => {
     : "";
 
   return (
-    <main className="py-12 md:py-20">
+    <main className="section-soft-radial relative py-16 md:py-28 lg:py-32">
+      <DecorativeArabic variant="full" opacity={0.034} />
       <PageSeo title={post.seo?.seoTitle} description={post.seo?.metaDescription} fallbackTitle={`${post.title} | MQI`} />
-      <div className="container max-w-3xl">
+      <div className="container relative z-10 max-w-3xl">
         <Link to="/blog" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-8 transition-colors">
-          <ArrowLeft className="h-4 w-4" /> Back to Blog
+          <span aria-hidden>←</span> Back to Blog
         </Link>
 
         <motion.article initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           {post.category && (
             <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">{post.category}</span>
           )}
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mt-4 mb-4 leading-tight">{post.title}</h1>
+          <h1 className="hero-headline-gradient mt-4 mb-4 text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+            {post.title}
+          </h1>
           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-8">
             {post.author && (
-              <span className="flex items-center gap-1"><User className="h-4 w-4" /> {post.author}</span>
+              <span>{post.author}</span>
             )}
             {dateStr && (
-              <span className="flex items-center gap-1"><Calendar className="h-4 w-4" /> {dateStr}</span>
+              <span>{dateStr}</span>
             )}
           </div>
 
           {imageUrl && (
-            <div className="rounded-2xl overflow-hidden mb-10">
-              <img
-                src={imageUrl}
-                alt={post.title}
-                loading="lazy"
-                className="w-full h-auto"
-              />
-            </div>
+            <ImageSoftFade className="mb-10 rounded-2xl">
+              <img src={imageUrl} alt={post.title} loading="lazy" className="h-auto w-full" />
+            </ImageSoftFade>
           )}
 
           {post.body && post.body.length > 0 ? (

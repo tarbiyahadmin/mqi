@@ -14,6 +14,8 @@ const DOCUMENT_TYPES = [
   'careersPage',
   'careerRole',
   'donatePage',
+  'formPage',
+  'thankYouPage',
   'aboutPage',
   'contentPage',
   'landingPage',

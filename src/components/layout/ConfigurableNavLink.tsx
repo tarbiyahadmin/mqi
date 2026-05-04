@@ -10,14 +10,14 @@ export function isExternalNavigationTarget(to: string): boolean {
 export type NavLinkContext = "header-desktop" | "header-mobile" | "footer";
 
 const headerDesktopText =
-  "px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-muted";
+  "rounded-lg px-4 py-2.5 text-base font-medium text-foreground/70 transition-colors hover:text-foreground";
 const headerMobileText =
-  "block px-4 py-3 rounded-lg text-sm font-medium transition-colors hover:bg-muted";
+  "block rounded-lg px-4 py-3.5 text-base font-medium text-foreground/70 transition-colors hover:text-foreground";
 const footerText = "text-sm text-secondary-foreground/60 hover:text-secondary-foreground transition-colors";
 
 function textClasses(context: NavLinkContext, isActive: boolean): string {
   const activeHeader = isActive ? "text-primary font-semibold" : "text-foreground/70";
-  const activeMobile = isActive ? "text-primary font-semibold bg-primary/5" : "text-foreground/70";
+  const activeMobile = isActive ? "text-primary font-semibold" : "";
   if (context === "header-desktop") return cn(headerDesktopText, activeHeader);
   if (context === "header-mobile") return cn(headerMobileText, activeMobile);
   return cn(footerText, isActive && "text-secondary-foreground font-medium");
@@ -25,12 +25,12 @@ function textClasses(context: NavLinkContext, isActive: boolean): string {
 
 function buttonClassName(context: NavLinkContext): string {
   if (context === "header-desktop") {
-    return "shrink-0 rounded-full px-6 font-semibold bg-accent text-accent-foreground hover:bg-accent/90 shadow-none";
+    return "shrink-0 rounded-xl border border-primary/70 bg-gradient-to-br from-[hsl(155_56%_36%)] via-[hsl(156_52%_33%)] to-[hsl(45_55%_48%)] px-6 py-2 text-sm font-semibold text-white shadow-[0_0_20px_hsl(var(--accent)/0.18)] hover:brightness-[1.04]";
   }
   if (context === "header-mobile") {
-    return "w-full rounded-full font-semibold bg-accent text-accent-foreground hover:bg-accent/90 shadow-none";
+    return "w-full rounded-xl border border-primary/70 bg-gradient-to-br from-[hsl(155_56%_36%)] via-[hsl(156_52%_33%)] to-[hsl(45_55%_48%)] py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_hsl(var(--accent)/0.18)] hover:brightness-[1.04]";
   }
-  return "h-9 rounded-full px-4 text-sm font-medium border border-secondary-foreground/35 bg-transparent text-secondary-foreground hover:bg-secondary-foreground/10 shadow-none";
+  return "h-10 rounded-xl border border-primary/70 bg-gradient-to-br from-[hsl(155_56%_36%)] via-[hsl(156_52%_33%)] to-[hsl(45_55%_48%)] px-5 text-sm font-semibold text-white shadow-sm hover:brightness-[1.04] md:text-sm";
 }
 
 export interface ConfigurableNavLinkProps {

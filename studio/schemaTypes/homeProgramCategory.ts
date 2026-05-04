@@ -1,17 +1,5 @@
 import { defineType, defineField } from 'sanity';
 
-const iconOptions = [
-  'BookOpen',
-  'GraduationCap',
-  'Sun',
-  'Users',
-  'Award',
-  'Heart',
-  'Clock',
-  'Shield',
-  'Briefcase',
-];
-
 export const homeProgramCategory = defineType({
   name: 'homeProgramCategory',
   type: 'object',
@@ -19,13 +7,6 @@ export const homeProgramCategory = defineType({
   fields: [
     defineField({ name: 'title', type: 'string', title: 'Title', validation: (r) => r.required() }),
     defineField({ name: 'description', type: 'text', title: 'Description', validation: (r) => r.required() }),
-    defineField({
-      name: 'icon',
-      type: 'string',
-      title: 'Icon',
-      options: { list: iconOptions },
-      validation: (r) => r.required(),
-    }),
     defineField({ name: 'to', type: 'string', title: 'Link (path)', initialValue: '/programs' }),
     defineField({
       name: 'programCategory',
@@ -42,13 +23,6 @@ export const whyChooseUsItem = defineType({
   type: 'object',
   title: 'Why Choose Us Item',
   fields: [
-    defineField({
-      name: 'icon',
-      type: 'string',
-      title: 'Icon',
-      options: { list: iconOptions },
-      validation: (r) => r.required(),
-    }),
     defineField({ name: 'title', type: 'string', title: 'Title', validation: (r) => r.required() }),
     defineField({ name: 'description', type: 'string', title: 'Description', validation: (r) => r.required() }),
   ],
@@ -61,10 +35,17 @@ export const ctaButton = defineType({
   fields: [
     defineField({ name: 'label', type: 'string', title: 'Label', validation: (r) => r.required() }),
     defineField({
+      name: 'formPage',
+      type: 'reference',
+      title: 'Form page (optional)',
+      to: [{ type: 'formPage' }],
+      description: 'When set, the button goes to this on-site form (/forms/…) and overrides the destination below.',
+    }),
+    defineField({
       name: 'to',
       type: 'string',
       title: 'Destination',
-      description: 'Internal path (e.g. /programs) or full URL (e.g. https://form.jotform.com/123). External URLs open in new tab.',
+      description: 'Internal path (e.g. /programs, /donate) or full URL. Prefer linking a Form Page for Jotform instead of pasting a Jotform URL here.',
       validation: (r) => r.required(),
     }),
     defineField({

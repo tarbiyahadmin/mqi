@@ -1,8 +1,6 @@
 import { defineType, defineField } from 'sanity';
 import { seoFields } from './seo';
 
-const roleIconOptions = ['Briefcase', 'Users', 'Heart'];
-
 export const careerRole = defineType({
   name: 'careerRole',
   type: 'document',
@@ -16,13 +14,6 @@ export const careerRole = defineType({
       options: { list: ['Teaching', 'Admin', 'Volunteer'] },
       validation: (r) => r.required(),
     }),
-    defineField({
-      name: 'icon',
-      type: 'string',
-      title: 'Icon',
-      options: { list: roleIconOptions },
-      initialValue: 'Briefcase',
-    }),
     defineField({ name: 'location', type: 'string', title: 'Location' }),
     defineField({ name: 'description', type: 'text', title: 'Description', validation: (r) => r.required() }),
     defineField({
@@ -33,10 +24,17 @@ export const careerRole = defineType({
       options: { layout: 'list' },
     }),
     defineField({
+      name: 'applicationFormPage',
+      type: 'reference',
+      title: 'Application form page',
+      to: [{ type: 'formPage' }],
+      description: 'Dedicated on-site application form (/forms/…). Preferred over a raw Jotform link.',
+    }),
+    defineField({
       name: 'jotformLink',
       type: 'string',
-      title: 'Jotform Link',
-      description: 'Full URL (e.g. https://form.jotform.com/123456789) or form ID only.',
+      title: 'Jotform link (legacy)',
+      description: 'Used only if no application form page is set. Full URL or form ID.',
     }),
   ],
 });
