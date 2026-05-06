@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { PortableText } from "@portabletext/react";
 import { useQuery } from "@tanstack/react-query";
 import { getCareerRoles, getCareersPage } from "@/lib/sanityQueries";
-import { getJotformUrl } from "@/lib/jotform";
 import { formPagePath } from "@/lib/routes";
 import { CtaLink } from "@/components/CtaLink";
 import { PageSeo } from "@/components/PageSeo";
@@ -37,9 +36,6 @@ const Careers = () => {
   const introContent = careersPageData?.introContent;
   const applicationPath =
     role?.applicationFormPage?.slug != null ? formPagePath(role.applicationFormPage.slug) : null;
-  const legacyApplyUrl = role ? getJotformUrl(role.jotformLink) : null;
-  const applyTo = applicationPath ?? legacyApplyUrl;
-  const applyIsExternal = !applicationPath && !!legacyApplyUrl;
   const seo = careersPageData?.seo;
 
   return (
@@ -107,20 +103,48 @@ const Careers = () => {
               <>
                 <span className={`text-xs px-3 py-1 rounded-full font-medium ${role.type === "Volunteer" ? "bg-accent/20 text-accent-foreground" : "bg-primary/10 text-primary"}`}>{role.type}</span>
                 <h2 className="mt-4 mb-3 text-4xl font-bold tracking-tight text-foreground md:text-5xl">{role.title}</h2>
-                <p className="mb-8 text-lg leading-relaxed text-muted-foreground">{role.description}</p>
+                <p className="mb-10 text-lg leading-relaxed text-muted-foreground">{role.description}</p>
+
+                {role.positionDetails && (
+                  <section className="mb-10">
+                    <h3 className="mb-4 text-2xl font-semibold text-foreground">Position Details</h3>
+                    <p className="text-base leading-relaxed text-muted-foreground whitespace-pre-line">{role.positionDetails}</p>
+                  </section>
+                )}
+
+                {role.responsibilities && role.responsibilities.length > 0 && (
+                  <section className="mb-10">
+                    <h3 className="mb-4 text-2xl font-semibold text-foreground">Responsibilities</h3>
+                    <ul className="space-y-3">
+                      {role.responsibilities.map((item, i) => (
+                        <li key={i} className="flex items-start gap-3 text-base text-muted-foreground">
+                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
 
                 {role.requirements && role.requirements.length > 0 && (
-                  <>
+                  <section className="mb-10">
                     <h3 className="mb-4 text-2xl font-semibold text-foreground">Requirements</h3>
-                    <ul className="mb-12 space-y-3">
+                    <ul className="space-y-3">
                       {role.requirements.map((req, i) => (
                         <li key={i} className="flex items-start gap-3 text-base text-muted-foreground">
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
                           {req}
                         </li>
                       ))}
                     </ul>
-                  </>
+                  </section>
+                )}
+
+                {role.whatMqiOffers && (
+                  <section className="mb-12">
+                    <h3 className="mb-4 text-2xl font-semibold text-foreground">What MQI Offers</h3>
+                    <p className="text-base leading-relaxed text-muted-foreground whitespace-pre-line">{role.whatMqiOffers}</p>
+                  </section>
                 )}
 
                 {/* Apply CTA */}
@@ -129,8 +153,8 @@ const Careers = () => {
                   <p className="mb-5 text-base text-muted-foreground">
                     Click the button below to submit your application via our form.
                   </p>
-                  {applyTo ? (
-                    <CtaLink label="Apply for this Position" to={applyTo} isExternal={applyIsExternal} variant="accent" />
+                  {applicationPath ? (
+                    <CtaLink label="Apply for this Position" to={applicationPath} isExternal={false} variant="accent" />
                   ) : (
                     <p className="text-muted-foreground text-sm">No application form URL is configured for this role.</p>
                   )}

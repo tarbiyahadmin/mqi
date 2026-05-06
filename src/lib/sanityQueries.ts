@@ -236,9 +236,11 @@ export interface CareerRole {
   type: string;
   location?: string;
   description?: string;
+  positionDetails?: string;
+  responsibilities?: string[];
+  whatMqiOffers?: string;
   requirements?: string[];
   applicationFormPage?: FormPageRef | null;
-  jotformLink?: string;
 }
 
 export interface CareersPage {
@@ -469,9 +471,11 @@ const CAREER_ROLES_QUERY = `*[_type == "careerRole"] | order(title asc){
   type,
   location,
   description,
+  positionDetails,
+  responsibilities,
+  whatMqiOffers,
   requirements,
-  applicationFormPage->{ "slug": slug.current },
-  jotformLink
+  applicationFormPage->{ "slug": slug.current }
 }`;
 
 const DONATE_PAGE_QUERY = `*[_type == "donatePage"][0]{

@@ -17,6 +17,25 @@ export const careerRole = defineType({
     defineField({ name: 'location', type: 'string', title: 'Location' }),
     defineField({ name: 'description', type: 'text', title: 'Description', validation: (r) => r.required() }),
     defineField({
+      name: 'positionDetails',
+      type: 'text',
+      title: 'Position Details',
+      rows: 8,
+    }),
+    defineField({
+      name: 'responsibilities',
+      type: 'array',
+      title: 'Responsibilities',
+      of: [{ type: 'string' }],
+      options: { layout: 'list' },
+    }),
+    defineField({
+      name: 'whatMqiOffers',
+      type: 'text',
+      title: 'What MQI Offers',
+      rows: 8,
+    }),
+    defineField({
       name: 'requirements',
       type: 'array',
       title: 'Requirements',
@@ -28,13 +47,7 @@ export const careerRole = defineType({
       type: 'reference',
       title: 'Application form page',
       to: [{ type: 'formPage' }],
-      description: 'Dedicated on-site application form (/forms/…). Preferred over a raw Jotform link.',
-    }),
-    defineField({
-      name: 'jotformLink',
-      type: 'string',
-      title: 'Jotform link (legacy)',
-      description: 'Used only if no application form page is set. Full URL or form ID.',
+      description: 'Dedicated on-site application form (/forms/…).',
     }),
   ],
 });
