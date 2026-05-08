@@ -115,6 +115,13 @@ export const financialAidPage = defineType({
       options: { hotspot: true },
     }),
     defineField({
+      name: 'meritNeedCta',
+      type: 'ctaButton',
+      title: 'Merit & need — button',
+      group: 'sections',
+      description: 'Optional button shown under this section, linking to an internal form page.',
+    }),
+    defineField({
       name: 'quoteEyebrow',
       type: 'string',
       title: 'Quote section label',
@@ -151,15 +158,13 @@ export const financialAidPage = defineType({
       name: 'closingApplyCta',
       type: 'ctaButton',
       title: 'Apply button',
-      group: 'closing',
-      description: 'Defaults to Apply → institute email if left incomplete.',
+      group: 'closing'
     }),
     defineField({
       name: 'closingDonateCta',
       type: 'ctaButton',
       title: 'Donate button',
-      group: 'closing',
-      description: 'Defaults to Donate → /donate if left incomplete.',
+      group: 'closing'
     }),
     defineField({
       name: 'additionalContent',

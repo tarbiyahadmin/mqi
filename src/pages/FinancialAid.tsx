@@ -2,7 +2,7 @@ import type { ComponentProps } from "react";
 import { motion } from "framer-motion";
 import { PortableText } from "@portabletext/react";
 import { useQuery } from "@tanstack/react-query";
-import { getFinancialAidPage, getSiteSettings, type CtaButton, type FinancialAidPage } from "@/lib/sanityQueries";
+import { getFinancialAidPage, type FinancialAidPage } from "@/lib/sanityQueries";
 import { urlFor } from "@/lib/sanity";
 import { resolveCtaButtonTarget } from "@/lib/ctaDestinations";
 import { PageSeo } from "@/components/PageSeo";
@@ -79,18 +79,6 @@ const DEFAULT_CLOSING_TITLE = "Fuel lasting reward";
 const DEFAULT_CLOSING_SUBTITLE =
   "Your zakāh and general donations help keep tuition accessible for neighbors who long to learn but face genuine hardship. Supporting this fund is an investment in Qur'anic literacy across generations.";
 
-function mergeClosingButton(raw: CtaButton | null | undefined, fallback: CtaButton): CtaButton {
-  if (!raw) return fallback;
-  const hasDestination = Boolean(raw.formPage?.slug) || Boolean(raw.to?.trim());
-  if (!hasDestination) return fallback;
-  return {
-    ...fallback,
-    ...raw,
-    label: raw.label?.trim() || fallback.label,
-    variant: raw.variant ?? fallback.variant,
-  };
-}
-
 function resolveImg(
   img: FinancialAidPage["scholarshipOverviewImage"],
   w: number,
@@ -108,12 +96,6 @@ const FinancialAid = () => {
     queryKey: ["financialAidPage"],
     queryFn: getFinancialAidPage,
   });
-  const { data: siteSettings } = useQuery({
-    queryKey: ["siteSettings"],
-    queryFn: getSiteSettings,
-  });
-
-  const instituteEmail = siteSettings?.footerEmail ?? "info@miltonquran.org";
 
   const img = (cms: FinancialAidPage["scholarshipOverviewImage"], i: number, w: number, h: number) =>
     resolveImg(cms, w, h, FALLBACK_IMAGES[i % FALLBACK_IMAGES.length]);
@@ -131,28 +113,17 @@ const FinancialAid = () => {
     page?.quote && (page.quote.english?.trim() || page.quote.arabic?.trim()) ? page.quote : DEFAULT_QUOTE;
   const closingCtaTitle = page?.closingCtaTitle ?? DEFAULT_CLOSING_TITLE;
   const closingCtaSubtitle = page?.closingCtaSubtitle ?? DEFAULT_CLOSING_SUBTITLE;
-
-  const defaultApply: CtaButton = {
-    label: "Apply",
-    to: `mailto:${instituteEmail}`,
-    isExternal: true,
-    variant: "primary",
-  };
-  const defaultDonate: CtaButton = {
-    label: "Donate",
-    to: "/donate",
-    variant: "accent",
-  };
-
-  const applyCta = mergeClosingButton(page?.closingApplyCta ?? undefined, defaultApply);
-  const donateCta = mergeClosingButton(page?.closingDonateCta ?? undefined, defaultDonate);
+  const meritNeedCta = page?.meritNeedCta;
+  const applyCta = page?.closingApplyCta;
+  const donateCta = page?.closingDonateCta;
 
   const seo = page?.seo;
 
   const closingFallbackPhoto = img09;
 
-  const applyTarget = resolveCtaButtonTarget(applyCta);
-  const donateTarget = resolveCtaButtonTarget(donateCta);
+  const meritNeedTarget = meritNeedCta ? resolveCtaButtonTarget(meritNeedCta) : null;
+  const applyTarget = applyCta ? resolveCtaButtonTarget(applyCta) : null;
+  const donateTarget = donateCta ? resolveCtaButtonTarget(donateCta) : null;
 
   return (
     <main className="section-soft-radial relative overflow-hidden pattern-stars pb-0">
@@ -184,9 +155,11 @@ const FinancialAid = () => {
               />
             </ImageSoftFade>
           </div>
-          <div className="mt-8 flex justify-start">
-            <CtaLink label={applyCta.label} to={applyTarget.to} isExternal={applyTarget.isExternal} variant={applyCta.variant ?? "primary"} />
-          </div>
+          {applyCta && applyTarget && (
+            <div className="mt-8 flex justify-start">
+              <CtaLink label={applyCta.label} to={applyTarget} variant={applyCta.variant ?? "primary"} />
+            </div>
+          )}
         </motion.section>
 
         {/* How it works */}
@@ -216,14 +189,11 @@ const FinancialAid = () => {
               <img src={img(page?.howItWorksImage, 2, 960, 720)} alt="" className="h-full w-full object-cover" loading="lazy" />
             </ImageSoftFade>
           </div>
-          <div className="mt-8 flex justify-start">
-            <CtaLink
-              label={donateCta.label}
-              to={donateTarget.to}
-              isExternal={donateTarget.isExternal}
-              variant={donateCta.variant ?? "accent"}
-            />
-          </div>
+          {donateCta && donateTarget && (
+            <div className="mt-8 flex justify-start">
+              <CtaLink label={donateCta.label} to={donateTarget} variant={donateCta.variant ?? "accent"} />
+            </div>
+          )}
         </motion.section>
 
         {/* Merit & need — larger image */}
@@ -231,7 +201,7 @@ const FinancialAid = () => {
           <h2 className="heading-section-sm mb-4">{meritNeedTitle}</h2>
           <div className="geometric-divider mb-6 w-16" />
           <div className="grid min-w-0 gap-8 lg:grid-cols-12 lg:items-center lg:gap-12">
-            <ImageSoftFade className="relative order-2 aspect-[16/10] min-h-[260px] overflow-hidden rounded-2xl shadow-sm ring-1 ring-border/35 sm:min-h-[300px] lg:order-1 lg:col-span-7 lg:aspect-auto lg:min-h-[min(62vh,560px)] lg:max-h-[720px]">
+            <ImageSoftFade className="relative order-2 aspect-[16/10] overflow-hidden rounded-2xl shadow-sm ring-1 ring-border/35 lg:order-1 lg:col-span-7">
               <img src={img(page?.meritNeedImage, 3, 1600, 1000)} alt="" className="h-full w-full object-cover" loading="lazy" />
             </ImageSoftFade>
             <div className="order-1 lg:order-2 lg:col-span-5">
@@ -246,14 +216,11 @@ const FinancialAid = () => {
               </ul>
             </div>
           </div>
-          <div className="mt-8 flex justify-start">
-            <CtaLink
-              label="Ask about eligibility"
-              to={`mailto:${instituteEmail}`}
-              isExternal
-              variant="primary"
-            />
-          </div>
+          {meritNeedCta && meritNeedTarget && (
+            <div className="mt-8 flex justify-start">
+              <CtaLink label={meritNeedCta.label} to={meritNeedTarget} variant={meritNeedCta.variant ?? "primary"} />
+            </div>
+          )}
         </motion.section>
 
         {/* Hadith / quote */}
@@ -340,20 +307,16 @@ const FinancialAid = () => {
           <p className="mx-auto max-w-2xl text-lg leading-relaxed text-secondary-foreground/85 md:text-xl md:leading-relaxed">
             {closingCtaSubtitle}
           </p>
-          <div className="flex flex-wrap justify-center gap-5 pt-4">
-            <CtaLink
-              label={applyCta.label}
-              to={applyTarget.to}
-              isExternal={applyTarget.isExternal}
-              variant={applyCta.variant ?? "primary"}
-            />
-            <CtaLink
-              label={donateCta.label}
-              to={donateTarget.to}
-              isExternal={donateTarget.isExternal}
-              variant={donateCta.variant ?? "accent"}
-            />
-          </div>
+          {(applyCta && applyTarget) || (donateCta && donateTarget) ? (
+            <div className="flex flex-wrap justify-center gap-5 pt-4">
+              {applyCta && applyTarget && (
+                <CtaLink label={applyCta.label} to={applyTarget} variant={applyCta.variant ?? "primary"} />
+              )}
+              {donateCta && donateTarget && (
+                <CtaLink label={donateCta.label} to={donateTarget} variant={donateCta.variant ?? "accent"} />
+              )}
+            </div>
+          ) : null}
         </div>
       </section>
     </main>

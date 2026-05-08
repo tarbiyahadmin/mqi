@@ -37,23 +37,10 @@ export const ctaButton = defineType({
     defineField({
       name: 'formPage',
       type: 'reference',
-      title: 'Form page (optional)',
+      title: 'Form page',
       to: [{ type: 'formPage' }],
-      description: 'When set, the button goes to this on-site form (/forms/…) and overrides the destination below.',
-    }),
-    defineField({
-      name: 'to',
-      type: 'string',
-      title: 'Destination',
-      description: 'Internal path (e.g. /programs, /donate) or full URL. Prefer linking a Form Page for Jotform instead of pasting a Jotform URL here.',
+      description: 'Buttons route to internal form pages only (/forms/…).',
       validation: (r) => r.required(),
-    }),
-    defineField({
-      name: 'isExternal',
-      type: 'boolean',
-      title: 'Open in new tab',
-      description: 'When enabled, opens link in a new tab (use for external URLs like Jotform).',
-      initialValue: false,
     }),
     defineField({
       name: 'variant',

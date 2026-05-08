@@ -46,8 +46,6 @@ export interface FormPageRef {
 
 export interface CtaButton {
   label: string;
-  to: string;
-  isExternal?: boolean;
   variant?: 'primary' | 'accent';
   formPage?: FormPageRef | null;
 }
@@ -322,6 +320,7 @@ export interface FinancialAidPage {
   meritNeedIntro?: string;
   meritNeedBullets?: string[];
   meritNeedImage?: { asset?: { url: string }; _type?: string };
+  meritNeedCta?: CtaButton | null;
   quoteEyebrow?: string;
   quote?: Hadith;
   closingCtaTitle?: string;
@@ -370,7 +369,7 @@ const HOMEPAGE_QUERY = `*[_type == "homepage"][0]{
   heroEyebrow,
   heroTitle,
   heroSubtitle,
-  heroCtaButtons[]{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
+  heroCtaButtons[]{ label, variant, formPage->{ "slug": slug.current } },
   programsSectionTitle,
   programsSectionSubtitle,
   "featuredPrograms": featuredPrograms[]->{
@@ -390,7 +389,7 @@ const HOMEPAGE_QUERY = `*[_type == "homepage"][0]{
   testimonials[]{ quote, name, role },
   ctaTitle,
   ctaSubtitle,
-  ctaButtons[]{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
+  ctaButtons[]{ label, variant, formPage->{ "slug": slug.current } },
   footerNote,
   seo{ seoTitle, metaDescription }
 }`;
@@ -497,29 +496,29 @@ const DONATE_PAGE_QUERY = `*[_type == "donatePage"][0]{
   subtitle,
   introContent,
   introImage ${imageProjection},
-  introCtaButtons[]{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
+  introCtaButtons[]{ label, variant, formPage->{ "slug": slug.current } },
   waysToSupportTitle,
   waysToSupportItems[]{
     title,
     description,
     image ${imageProjection},
-    cta{ label, to, isExternal, variant, formPage->{ "slug": slug.current } }
+    cta{ label, variant, formPage->{ "slug": slug.current } }
   },
   scholarshipTitle,
   scholarshipSubtitle,
   scholarshipContent,
   scholarshipImages[] ${imageProjection},
-  scholarshipCtaButtons[]{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
+  scholarshipCtaButtons[]{ label, variant, formPage->{ "slug": slug.current } },
   trustTitle,
   hadith{ arabic, english, reference },
   hadithTitle,
-  hadithCtaButtons[]{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
+  hadithCtaButtons[]{ label, variant, formPage->{ "slug": slug.current } },
   trustBullets[]{ title, desc },
-  trustCtaButtons[]{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
+  trustCtaButtons[]{ label, variant, formPage->{ "slug": slug.current } },
   closingCtaTitle,
   closingCtaSubtitle,
   closingCtaImage ${imageProjection},
-  closingCtaButtons[]{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
+  closingCtaButtons[]{ label, variant, formPage->{ "slug": slug.current } },
   seo{ seoTitle, metaDescription }
 }`;
 
@@ -536,13 +535,14 @@ const FINANCIAL_AID_PAGE_QUERY = `*[_type == "financialAidPage"][0]{
   meritNeedIntro,
   meritNeedBullets,
   meritNeedImage ${imageProjection},
+  meritNeedCta{ label, variant, formPage->{ "slug": slug.current } },
   quoteEyebrow,
   quote{ arabic, english, reference },
   closingCtaTitle,
   closingCtaSubtitle,
   closingCtaImage ${imageProjection},
-  closingApplyCta{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
-  closingDonateCta{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
+  closingApplyCta{ label, variant, formPage->{ "slug": slug.current } },
+  closingDonateCta{ label, variant, formPage->{ "slug": slug.current } },
   additionalContent,
   seo{ seoTitle, metaDescription }
 }`;

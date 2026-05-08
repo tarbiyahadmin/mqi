@@ -1,25 +1,13 @@
 import type { CtaButton } from "@/lib/sanityQueries";
 import { formPagePath } from "@/lib/routes";
 
-function isHttpUrl(to: string): boolean {
-  return /^https?:\/\//i.test(to);
-}
-
 /**
- * Resolves CTA href and whether to open in a new tab.
- * Prefer a linked Form Page over a raw Jotform URL in `to`.
+ * Resolves CTA href for internal form-page-only buttons.
  */
-export function resolveCtaButtonTarget(btn: Pick<CtaButton, "to" | "isExternal" | "formPage">): {
-  to: string;
-  isExternal: boolean;
-} {
+export function resolveCtaButtonTarget(btn: Pick<CtaButton, "formPage">): string | null {
   const formSlug = btn.formPage?.slug;
   if (formSlug) {
-    return { to: formPagePath(formSlug), isExternal: false };
+    return formPagePath(formSlug);
   }
-  const to = btn.to;
-  return {
-    to,
-    isExternal: isHttpUrl(to) || btn.isExternal === true,
-  };
+  return null;
 }

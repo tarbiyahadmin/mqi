@@ -80,12 +80,12 @@ const Donate = () => {
                 <div className="flex flex-wrap justify-start gap-4">
                   {introCtas.map((btn, i) => {
                     const target = resolveCtaButtonTarget(btn);
+                    if (!target) return null;
                     return (
                       <CtaLink
-                        key={`${target.to}-${i}`}
+                        key={`${target}-${i}`}
                         label={btn.label}
-                        to={target.to}
-                        isExternal={target.isExternal}
+                        to={target}
                         variant={btn.variant ?? "primary"}
                       />
                     );
@@ -124,8 +124,7 @@ const Donate = () => {
                         <div className="mt-5 flex justify-start">
                           <CtaLink
                             label={item.cta.label}
-                            to={ctaTarget.to}
-                            isExternal={ctaTarget.isExternal}
+                            to={ctaTarget}
                             variant={item.cta.variant ?? "primary"}
                           />
                         </div>
@@ -160,12 +159,12 @@ const Donate = () => {
                   <div className="flex flex-wrap justify-start gap-4">
                     {scholarshipCtas.map((btn, i) => {
                       const target = resolveCtaButtonTarget(btn);
+                    if (!target) return null;
                       return (
                         <CtaLink
-                          key={`${target.to}-${i}`}
+                        key={`${target}-${i}`}
                           label={btn.label}
-                          to={target.to}
-                          isExternal={target.isExternal}
+                        to={target}
                           variant={btn.variant ?? "accent"}
                         />
                       );
@@ -207,12 +206,12 @@ const Donate = () => {
               <div className="mt-8 flex flex-wrap justify-start gap-4">
                 {trustCtas.map((btn, i) => {
                   const target = resolveCtaButtonTarget(btn);
+                  if (!target) return null;
                   return (
                     <CtaLink
-                      key={`${target.to}-${i}`}
+                      key={`${target}-${i}`}
                       label={btn.label}
-                      to={target.to}
-                      isExternal={target.isExternal}
+                      to={target}
                       variant={btn.variant ?? "primary"}
                     />
                   );
@@ -241,12 +240,12 @@ const Donate = () => {
                 <div className="mt-6 flex flex-wrap justify-start gap-4">
                   {hadithCtas.map((btn, i) => {
                     const target = resolveCtaButtonTarget(btn);
+                    if (!target) return null;
                     return (
                       <CtaLink
-                        key={`${target.to}-${i}`}
+                        key={`${target}-${i}`}
                         label={btn.label}
-                        to={target.to}
-                        isExternal={target.isExternal}
+                        to={target}
                         variant={btn.variant ?? "accent"}
                       />
                     );
@@ -303,12 +302,12 @@ const Donate = () => {
               <div className="flex flex-wrap justify-start gap-4 pt-2">
                 {closingCtaButtons.map((btn, i) => {
                   const target = resolveCtaButtonTarget(btn);
+                  if (!target) return null;
                   return (
                     <CtaLink
-                      key={`${target.to}-${i}`}
+                      key={`${target}-${i}`}
                       label={btn.label}
-                      to={target.to}
-                      isExternal={target.isExternal}
+                      to={target}
                       variant={btn.variant ?? "primary"}
                     />
                   );

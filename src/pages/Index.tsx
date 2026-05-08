@@ -51,10 +51,7 @@ const Index = () => {
   const heroEyebrow = homepage?.heroEyebrow ?? "— Milton Quran Institute —";
   const heroTitle = homepage?.heroTitle ?? "Nurturing Hearts Through Qur'anic Education";
   const heroSubtitle = homepage?.heroSubtitle ?? "Join a vibrant learning community dedicated to excellence in Qur'anic studies, Arabic language, and Islamic education for all ages.";
-  const heroCtaButtons = homepage?.heroCtaButtons?.length ? homepage.heroCtaButtons : [
-    { label: "Explore Programs", to: "/programs", variant: "primary" as const },
-    { label: "Support Us", to: "/donate", variant: "accent" as const },
-  ];
+  const heroCtaButtons = homepage?.heroCtaButtons?.length ? homepage.heroCtaButtons : [];
   const programsSectionTitle = homepage?.programsSectionTitle ?? "Our Programs";
   const programsSectionSubtitle = homepage?.programsSectionSubtitle ?? "Discover our range of programs designed to meet learners at every stage of their Qur'anic journey.";
   const featuredPrograms = homepage?.featuredPrograms ?? [];
@@ -90,10 +87,7 @@ const Index = () => {
   const ctaTitle = homepage?.ctaTitle ?? "Begin Your Qur'anic Journey Today";
   const ctaSubtitle = homepage?.ctaSubtitle ?? "Enroll in one of our programs and join a community dedicated to learning, growth, and spiritual development.";
   const footerNote = homepage?.footerNote;
-  const ctaButtons = homepage?.ctaButtons?.length ? homepage.ctaButtons : [
-    { label: "View Programs", to: "/programs", variant: "primary" as const },
-    { label: "Support Us", to: "/donate", variant: "accent" as const },
-  ];
+  const ctaButtons = homepage?.ctaButtons?.length ? homepage.ctaButtons : [];
   const seo = homepage?.seo;
 
   const testimonialsSectionTitle = homepage?.testimonialsSectionTitle ?? "What Families Say";
@@ -144,13 +138,13 @@ const Index = () => {
               </p>
               <div className="flex flex-wrap gap-3.5 pt-2">
                 {heroCtaButtons.map((btn, i) => {
-                  const { to, isExternal } = resolveCtaButtonTarget(btn);
+                  const to = resolveCtaButtonTarget(btn);
+                  if (!to) return null;
                   return (
                     <CtaLink
                       key={`${to}-${i}`}
                       label={btn.label}
                       to={to}
-                      isExternal={isExternal}
                       variant={btn.variant ?? "primary"}
                       compact
                     />
@@ -603,13 +597,13 @@ const Index = () => {
           </p>
           <div className="flex flex-wrap justify-center gap-5 pt-4">
             {ctaButtons.map((btn, i) => {
-              const { to, isExternal } = resolveCtaButtonTarget(btn);
+              const to = resolveCtaButtonTarget(btn);
+              if (!to) return null;
               return (
                 <CtaLink
                   key={`${to}-${i}`}
                   label={btn.label}
                   to={to}
-                  isExternal={isExternal}
                   variant={btn.variant ?? "primary"}
                 />
               );
