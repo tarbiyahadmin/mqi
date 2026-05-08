@@ -136,10 +136,10 @@ const Index = () => {
               <p className="text-xs font-medium uppercase tracking-[0.28em] text-primary md:text-sm">
                 {heroEyebrow}
               </p>
-              <h1 className="hero-headline-gradient max-w-[20ch] text-4xl font-bold leading-[1.05] sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl">
+              <h1 className="hero-headline-gradient max-w-[20ch] text-4xl font-bold leading-[1.12] sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl">
                 {heroTitle}
               </h1>
-              <p className="text-lg leading-relaxed text-muted-foreground md:text-xl md:leading-relaxed max-w-xl">
+              <p className="max-w-xl text-lg leading-[1.85] text-muted-foreground md:text-xl md:leading-[1.9]">
                 {heroSubtitle}
               </p>
               <div className="flex flex-wrap gap-3.5 pt-2">

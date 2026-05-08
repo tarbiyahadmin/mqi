@@ -33,10 +33,10 @@ export function FormPageShell({
   const embedUrl = getJotformEmbedUrl(embedSource);
 
   return (
-    <main className="section-soft-radial relative overflow-hidden py-16 md:py-28 lg:py-32">
+    <main className="section-soft-radial relative overflow-hidden py-16 md:py-24 lg:py-28">
       <DecorativeArabic variant="full" opacity={0.038} />
       <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${title} | MQI`} />
-      <div className="container relative z-10 w-full max-w-6xl px-3 sm:px-6">
+      <div className="container relative z-10 w-full max-w-none px-3 sm:px-6">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mb-10 md:mb-12">
           <PageTitle title={title} />
         </motion.div>
@@ -54,17 +54,11 @@ export function FormPageShell({
         )}
 
         {embedUrl ? (
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-            className="overflow-hidden rounded-2xl border border-border/50 bg-muted/20 shadow-md"
-          >
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="w-full">
             <iframe
               title={title}
               src={embedUrl}
-              className="block min-h-[760px] w-full border-0 sm:min-h-[800px] lg:min-h-[880px]"
+              className="block min-h-[85vh] w-full border-0"
               loading="lazy"
               allow="geolocation; microphone; camera; fullscreen"
             />

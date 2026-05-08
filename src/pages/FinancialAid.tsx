@@ -168,7 +168,11 @@ const FinancialAid = () => {
       <div className="section-y container relative z-10 space-y-20 md:space-y-28">
         {/* Overview */}
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-          <PageTitle headingLevel="h2" title={scholarshipOverviewTitle} />
+          <PageTitle
+            headingLevel="h2"
+            title={scholarshipOverviewTitle}
+            subtitle="We partner with families to make meaningful Qur'anic learning accessible with dignity, clarity, and care."
+          />
           <div className="grid min-w-0 gap-8 md:grid-cols-2 md:items-start md:gap-10">
             <p className="whitespace-pre-line text-base leading-relaxed text-muted-foreground md:text-lg">{scholarshipOverviewBody}</p>
             <ImageSoftFade className="relative aspect-[4/3] w-full max-w-xl overflow-hidden rounded-2xl shadow-sm ring-1 ring-border/35 md:mx-0 md:max-w-none">
@@ -179,6 +183,9 @@ const FinancialAid = () => {
                 loading="lazy"
               />
             </ImageSoftFade>
+          </div>
+          <div className="mt-8 flex justify-start">
+            <CtaLink label={applyCta.label} to={applyTarget.to} isExternal={applyTarget.isExternal} variant={applyCta.variant ?? "primary"} />
           </div>
         </motion.section>
 
@@ -209,6 +216,14 @@ const FinancialAid = () => {
               <img src={img(page?.howItWorksImage, 2, 960, 720)} alt="" className="h-full w-full object-cover" loading="lazy" />
             </ImageSoftFade>
           </div>
+          <div className="mt-8 flex justify-start">
+            <CtaLink
+              label={donateCta.label}
+              to={donateTarget.to}
+              isExternal={donateTarget.isExternal}
+              variant={donateCta.variant ?? "accent"}
+            />
+          </div>
         </motion.section>
 
         {/* Merit & need — larger image */}
@@ -230,6 +245,14 @@ const FinancialAid = () => {
                 ))}
               </ul>
             </div>
+          </div>
+          <div className="mt-8 flex justify-start">
+            <CtaLink
+              label="Ask about eligibility"
+              to={`mailto:${instituteEmail}`}
+              isExternal
+              variant="primary"
+            />
           </div>
         </motion.section>
 

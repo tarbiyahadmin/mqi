@@ -17,7 +17,7 @@ import { programsPage } from './programsPage'
 import { blogPost } from './blogPost'
 import { blogPage } from './blogPage'
 import { careerRole, careersPage } from './careerRole'
-import { donateTrustBullet, donatePage } from './donatePage'
+import { donateTrustBullet, donateWaysSupportItem, donatePage } from './donatePage'
 import { formPage } from './formPage'
 import { thankYouPage } from './thankYouPage'
 import { aboutTeacher, aboutGraduate, aboutPage } from './aboutPage'
@@ -46,6 +46,7 @@ export const schemaTypes = [
   careerRole,
   careersPage,
   donateTrustBullet,
+  donateWaysSupportItem,
   donatePage,
   formPage,
   thankYouPage,

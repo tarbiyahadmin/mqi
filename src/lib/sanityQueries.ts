@@ -257,22 +257,36 @@ export interface DonateTrustBullet {
   desc?: string;
 }
 
+export interface DonateWaysSupportItem {
+  title?: string;
+  description?: string;
+  image?: { asset?: { url: string }; _type?: string };
+  cta?: CtaButton | null;
+}
+
 export interface DonatePage {
   title?: string;
   subtitle?: string;
+  introContent?: unknown[];
+  introImage?: { asset?: { url: string }; _type?: string };
+  introCtaButtons?: CtaButton[];
+  waysToSupportTitle?: string;
+  waysToSupportItems?: DonateWaysSupportItem[];
+  scholarshipTitle?: string;
+  scholarshipSubtitle?: string;
+  scholarshipContent?: unknown[];
+  scholarshipImages?: { asset?: { url: string }; _type?: string }[];
+  scholarshipCtaButtons?: CtaButton[];
+  trustTitle?: string;
   hadith?: Hadith;
+  hadithTitle?: string;
+  hadithCtaButtons?: CtaButton[];
   trustBullets?: DonateTrustBullet[];
-  howDonationHelps?: string[];
-  studentSponsorship?: string;
-  donateFormPage?: FormPageRef | null;
-  sponsorFormPage?: FormPageRef | null;
-  jotformDonateUrl?: string;
-  donateCtaLabel?: string;
-  jotformSponsorStudentUrl?: string;
-  sponsorCtaLabel?: string;
-  donateFormTitle?: string;
-  sponsorFormTitle?: string;
-  additionalContent?: unknown[];
+  trustCtaButtons?: CtaButton[];
+  closingCtaTitle?: string;
+  closingCtaSubtitle?: string;
+  closingCtaImage?: { asset?: { url: string }; _type?: string };
+  closingCtaButtons?: CtaButton[];
   seo?: SeoData;
 }
 
@@ -481,19 +495,31 @@ const CAREER_ROLES_QUERY = `*[_type == "careerRole"] | order(title asc){
 const DONATE_PAGE_QUERY = `*[_type == "donatePage"][0]{
   title,
   subtitle,
+  introContent,
+  introImage ${imageProjection},
+  introCtaButtons[]{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
+  waysToSupportTitle,
+  waysToSupportItems[]{
+    title,
+    description,
+    image ${imageProjection},
+    cta{ label, to, isExternal, variant, formPage->{ "slug": slug.current } }
+  },
+  scholarshipTitle,
+  scholarshipSubtitle,
+  scholarshipContent,
+  scholarshipImages[] ${imageProjection},
+  scholarshipCtaButtons[]{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
+  trustTitle,
   hadith{ arabic, english, reference },
+  hadithTitle,
+  hadithCtaButtons[]{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
   trustBullets[]{ title, desc },
-  howDonationHelps,
-  studentSponsorship,
-  donateFormPage->{ "slug": slug.current },
-  sponsorFormPage->{ "slug": slug.current },
-  jotformDonateUrl,
-  donateCtaLabel,
-  jotformSponsorStudentUrl,
-  sponsorCtaLabel,
-  donateFormTitle,
-  sponsorFormTitle,
-  additionalContent,
+  trustCtaButtons[]{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
+  closingCtaTitle,
+  closingCtaSubtitle,
+  closingCtaImage ${imageProjection},
+  closingCtaButtons[]{ label, to, isExternal, variant, formPage->{ "slug": slug.current } },
   seo{ seoTitle, metaDescription }
 }`;
 
