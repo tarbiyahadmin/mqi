@@ -3,6 +3,7 @@ import { siteSettings } from './siteSettings'
 import { seo } from './seo'
 import { hadith } from './hadith'
 import { homeProgramCategory, whyChooseUsItem, ctaButton } from './homeProgramCategory'
+import { pageCtaButton } from './pageCtaButton'
 import { homepage } from './homepage'
 import { programInfoCard } from './programInfoCard'
 import {
@@ -22,6 +23,7 @@ import { formPage } from './formPage'
 import { thankYouPage } from './thankYouPage'
 import { aboutTeacher, aboutGraduate, aboutPage } from './aboutPage'
 import { financialAidStep, financialAidPage } from './financialAidPage'
+import { bookMeetPage } from './bookMeetPage'
 
 export const schemaTypes = [
   navLink,
@@ -31,6 +33,7 @@ export const schemaTypes = [
   homeProgramCategory,
   whyChooseUsItem,
   ctaButton,
+  pageCtaButton,
   homepage,
   programInfoCard,
   scheduleBlockProgramOptions,
@@ -55,4 +58,5 @@ export const schemaTypes = [
   aboutPage,
   financialAidStep,
   financialAidPage,
+  bookMeetPage,
 ]

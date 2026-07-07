@@ -3,8 +3,10 @@ import { Link, useLocation } from "react-router-dom";
 import mqiLogo from "@/assets/mqi-logo.svg";
 import { useQuery } from "@tanstack/react-query";
 import { getSiteSettings } from "@/lib/sanityQueries";
-import type { NavLink } from "@/lib/sanityQueries";
+import type { NavLink, PageCtaButton } from "@/lib/sanityQueries";
 import { ConfigurableNavLink } from "@/components/layout/ConfigurableNavLink";
+import { CtaLink } from "@/components/CtaLink";
+import { isPageCtaExternal, resolvePageCtaTarget } from "@/lib/ctaDestinations";
 
 const defaultNavLinks = [
   { label: "Home", to: "/" },
@@ -15,6 +17,17 @@ const defaultNavLinks = [
   { label: "Blog", to: "/blog" },
 ];
 
+function legacyNavCtaButtons(links: NavLink[]): PageCtaButton[] {
+  return links
+    .filter((link) => link.displayAsButton)
+    .map((link) => ({
+      label: link.label,
+      to: link.to,
+      variant: "primary" as const,
+      openInNewTab: link.openInNewTab,
+    }));
+}
+
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
@@ -24,7 +37,9 @@ const Header = () => {
   });
 
   const rawLinks = (siteSettings?.navLinks?.length ? siteSettings.navLinks : defaultNavLinks) as NavLink[];
-  const navLinks = rawLinks.filter((link) => link.to !== "/contact");
+  const navLinks = rawLinks.filter((link) => link.to !== "/contact" && !link.displayAsButton);
+  const legacyCtas = legacyNavCtaButtons(rawLinks);
+  const navCtaButtons = siteSettings?.navCtaButtons?.length ? siteSettings.navCtaButtons : legacyCtas;
 
   return (
     <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-sm">
@@ -43,6 +58,22 @@ const Header = () => {
               isActive={location.pathname === link.to}
             />
           ))}
+          {navCtaButtons.map((btn, index) => {
+            const to = resolvePageCtaTarget(btn);
+            if (!to) return null;
+            return (
+              <CtaLink
+                key={`${to}-${index}`}
+                label={btn.label}
+                to={to}
+                variant={btn.variant ?? "primary"}
+                isExternal={isPageCtaExternal(btn)}
+                openInNewTab={btn.openInNewTab}
+                compact
+                className="!min-h-0 !px-6 !py-2 text-sm"
+              />
+            );
+          })}
         </nav>
 
         {/* Mobile toggle */}
@@ -86,6 +117,23 @@ const Header = () => {
                 onNavigate={() => setMobileOpen(false)}
               />
             ))}
+            {navCtaButtons.map((btn, index) => {
+              const to = resolvePageCtaTarget(btn);
+              if (!to) return null;
+              return (
+                <div key={`${to}-${index}`} className="w-full" onClick={() => setMobileOpen(false)}>
+                  <CtaLink
+                    label={btn.label}
+                    to={to}
+                    variant={btn.variant ?? "primary"}
+                    isExternal={isPageCtaExternal(btn)}
+                    openInNewTab={btn.openInNewTab}
+                    compact
+                    className="w-full"
+                  />
+                </div>
+              );
+            })}
           </nav>
         </div>
       )}

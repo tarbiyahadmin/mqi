@@ -40,7 +40,8 @@ export const homepage = defineType({
       type: 'array',
       title: 'Hero CTA Buttons',
       group: 'hero',
-      of: [{ type: 'ctaButton' }],
+      of: [{ type: 'pageCtaButton' }],
+      description: 'Link to internal pages (e.g. /programs, /book-a-meet).',
     }),
     defineField({
       name: 'programsSectionTitle',
@@ -62,6 +63,14 @@ export const homepage = defineType({
       group: 'programs',
       description: 'Specific programs to display on the homepage. Users can filter by category.',
       of: [{ type: 'reference', to: [{ type: 'program' }] }],
+    }),
+    defineField({
+      name: 'programCategories',
+      type: 'array',
+      title: 'Program category cards (fallback)',
+      group: 'programs',
+      description: 'Shown when no featured programs are selected. Each card links to a program category or path.',
+      of: [{ type: 'homeProgramCategory' }],
     }),
     defineField({
       name: 'viewAllProgramsLabel',
@@ -142,7 +151,8 @@ export const homepage = defineType({
       type: 'array',
       title: 'CTA Banner Buttons',
       group: 'cta',
-      of: [{ type: 'ctaButton' }],
+      of: [{ type: 'pageCtaButton' }],
+      description: 'Link to internal pages (e.g. /programs, /book-a-meet).',
     }),
     defineField({
       name: 'footerNote',

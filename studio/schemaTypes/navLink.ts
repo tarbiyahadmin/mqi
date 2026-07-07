@@ -17,7 +17,7 @@ export const navLink = defineType({
       name: 'displayAsButton',
       type: 'boolean',
       title: 'Display as button',
-      description: 'Shows as a button in the header; a compact pill in footer link lists.',
+      description: 'Footer only — use Site Settings → Navigation CTA Buttons for header buttons.',
       initialValue: false,
     }),
     defineField({

@@ -7,3 +7,6 @@ export function formPagePath(slug: string): string {
 
 /** Post-submit redirect target (configure the same URL in Jotform). */
 export const THANK_YOU_PATH = "/thank-you";
+
+/** CMS-managed Book A Meet landing page. */
+export const BOOK_MEET_PATH = "/book-a-meet";

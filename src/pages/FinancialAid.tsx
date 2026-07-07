@@ -10,26 +10,15 @@ import { PageTitle } from "@/components/layout/PageTitle";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
 import { ImageSoftFade } from "@/components/ui/ImageSoftFade";
 import { CtaLink } from "@/components/CtaLink";
-import img01 from "@/assets/mqi-images/DSC00394.JPG";
-import img02 from "@/assets/mqi-images/DSC00487.JPG";
-import img03 from "@/assets/mqi-images/DSC00508.JPG";
-import img04 from "@/assets/mqi-images/DSC00518.JPG";
-import img05 from "@/assets/mqi-images/DSC00979.JPG";
-import img06 from "@/assets/mqi-images/DSC00985.JPG";
-import img07 from "@/assets/mqi-images/IMG_7053.jpg";
-import img08 from "@/assets/mqi-images/IMG_7107.jpg";
+import { PROGRAM_CARD_FALLBACK_IMAGES } from "@/lib/programImages";
 import img09 from "@/assets/mqi-images/IMG_7176.JPG";
-import img10 from "@/assets/mqi-images/IMG_7211.JPG";
-import img11 from "@/assets/mqi-images/IMG_7312.JPG";
-import img12 from "@/assets/mqi-images/IMG_7378.JPG";
-import img13 from "@/assets/mqi-images/IMG_7382.JPG";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-const FALLBACK_IMAGES = [img01, img02, img03, img04, img05, img06, img07, img08, img09, img10, img11, img12, img13];
+const FALLBACK_IMAGES = PROGRAM_CARD_FALLBACK_IMAGES;
 
 const DEFAULT_PAGE_TITLE = "Financial Aid";
 

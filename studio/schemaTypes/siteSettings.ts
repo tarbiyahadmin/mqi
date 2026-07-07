@@ -12,6 +12,15 @@ export const siteSettings = defineType({
       title: 'Navigation Links',
       group: 'nav',
       of: [{ type: 'navLink' }],
+      description: 'Text navigation links shown in the header.',
+    }),
+    defineField({
+      name: 'navCtaButtons',
+      type: 'array',
+      title: 'Navigation CTA Buttons',
+      group: 'nav',
+      of: [{ type: 'pageCtaButton' }],
+      description: 'Prominent header buttons (e.g. Book A Meet, Donate). Link to internal pages only.',
     }),
     defineField({
       name: 'footerTagline',

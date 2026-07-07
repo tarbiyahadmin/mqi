@@ -17,6 +17,7 @@ const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Donate = lazy(() => import("./pages/Donate"));
 const FinancialAid = lazy(() => import("./pages/FinancialAid"));
+const BookMeet = lazy(() => import("./pages/BookMeet"));
 const FormPageRoute = lazy(() => import("./pages/FormPage"));
 const ThankYou = lazy(() => import("./pages/ThankYou"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -55,6 +56,7 @@ const App = () => (
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/donate" element={<Donate />} />
                 <Route path="/financial-aid" element={<FinancialAid />} />
+                <Route path="/book-a-meet" element={<BookMeet />} />
                 <Route path="/forms/:slug" element={<FormPageRoute />} />
                 <Route path="/thank-you" element={<ThankYou />} />
                 <Route path="*" element={<NotFound />} />

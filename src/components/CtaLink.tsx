@@ -5,6 +5,7 @@ interface CtaLinkProps {
   label: string;
   to: string;
   isExternal?: boolean;
+  openInNewTab?: boolean;
   variant?: "primary" | "accent";
   size?: "default" | "sm" | "lg" | "icon";
   /** Use compact styling (e.g. for hero). Default false = prominent sitewide CTA. */
@@ -16,6 +17,7 @@ export function CtaLink({
   label,
   to,
   isExternal = false,
+  openInNewTab = false,
   variant = "primary",
   size = "lg",
   compact = false,
@@ -24,6 +26,8 @@ export function CtaLink({
   const isMailOrTel = /^mailto:|^tel:/i.test(to);
   const isHttpUrl = /^https?:\/\//i.test(to);
   const isExternalUrl = isExternal || isHttpUrl;
+  const target = openInNewTab || isExternalUrl ? "_blank" : undefined;
+  const rel = target === "_blank" ? "noopener noreferrer" : undefined;
 
   const baseCompact =
     "rounded-xl border px-7 py-4 text-sm font-semibold min-h-[3rem] shadow-sm transition-all hover:shadow-md";
@@ -54,7 +58,7 @@ export function CtaLink({
 
   if (isExternalUrl && isHttpUrl) {
     return (
-      <a href={to} target="_blank" rel="noopener noreferrer">
+      <a href={to} target={target} rel={rel}>
         <Button size={size} className={buttonClass}>
           {label}
         </Button>
@@ -63,7 +67,7 @@ export function CtaLink({
   }
 
   return (
-    <Link to={to}>
+    <Link to={to} target={target} rel={rel}>
       <Button size={size} className={buttonClass}>
         {label}
       </Button>

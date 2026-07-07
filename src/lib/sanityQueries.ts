@@ -18,6 +18,7 @@ export interface SocialLink {
 
 export interface SiteSettings {
   navLinks?: NavLink[];
+  navCtaButtons?: PageCtaButton[];
   footerTagline?: string;
   footerQuickLinks?: NavLink[];
   footerProgramLinks?: NavLink[];
@@ -33,6 +34,7 @@ export interface HomeProgramCategory {
   description: string;
   to?: string;
   categorySlug?: string;
+  image?: { asset?: { url: string }; _type?: string };
 }
 
 export interface WhyChooseUsItem {
@@ -50,6 +52,13 @@ export interface CtaButton {
   formPage?: FormPageRef | null;
 }
 
+export interface PageCtaButton {
+  label: string;
+  to: string;
+  variant?: 'primary' | 'accent';
+  openInNewTab?: boolean;
+}
+
 export interface Hadith {
   arabic?: string;
   english?: string;
@@ -60,7 +69,7 @@ export interface Homepage {
   heroEyebrow?: string;
   heroTitle?: string;
   heroSubtitle?: string;
-  heroCtaButtons?: CtaButton[];
+  heroCtaButtons?: PageCtaButton[];
   programsSectionTitle?: string;
   programsSectionSubtitle?: string;
   programCategories?: HomeProgramCategory[];
@@ -73,7 +82,7 @@ export interface Homepage {
   testimonials?: { quote?: string; name?: string; role?: string }[];
   ctaTitle?: string;
   ctaSubtitle?: string;
-  ctaButtons?: CtaButton[];
+  ctaButtons?: PageCtaButton[];
   footerNote?: string;
   editorialPhotos?: { asset?: { url: string }; _type?: string }[];
 }
@@ -332,6 +341,21 @@ export interface FinancialAidPage {
   seo?: SeoData;
 }
 
+export interface BookMeetPage {
+  title?: string;
+  slug?: string;
+  subtitle?: string;
+  fullTimeTitle?: string;
+  fullTimeBody?: string;
+  fullTimeImage?: { asset?: { url: string }; _type?: string };
+  fullTimeCta?: CtaButton | null;
+  partTimeTitle?: string;
+  partTimeBody?: string;
+  partTimeImage?: { asset?: { url: string }; _type?: string };
+  partTimeCta?: CtaButton | null;
+  seo?: SeoData;
+}
+
 export interface AboutPage {
   title?: string;
   subtitle?: string;
@@ -355,6 +379,7 @@ export interface SeoData {
 // --- GROQ Queries ---
 const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
   navLinks[]{ label, to, displayAsButton, openInNewTab },
+  navCtaButtons[]{ label, to, variant, openInNewTab },
   footerTagline,
   footerQuickLinks[]{ label, to, displayAsButton, openInNewTab },
   footerProgramLinks[]{ label, to, displayAsButton, openInNewTab },
@@ -369,7 +394,7 @@ const HOMEPAGE_QUERY = `*[_type == "homepage"][0]{
   heroEyebrow,
   heroTitle,
   heroSubtitle,
-  heroCtaButtons[]{ label, variant, formPage->{ "slug": slug.current } },
+  heroCtaButtons[]{ label, to, variant, openInNewTab },
   programsSectionTitle,
   programsSectionSubtitle,
   "featuredPrograms": featuredPrograms[]->{
@@ -380,6 +405,13 @@ const HOMEPAGE_QUERY = `*[_type == "homepage"][0]{
     mainImage ${imageProjection},
     "category": category->{ _id, title, "slug": slug.current }
   },
+  programCategories[]{
+    title,
+    description,
+    to,
+    image ${imageProjection},
+    "categorySlug": programCategory->slug.current
+  },
   viewAllProgramsLabel,
   editorialPhotos[] ${imageProjection},
   whyChooseUsSectionTitle,
@@ -389,7 +421,7 @@ const HOMEPAGE_QUERY = `*[_type == "homepage"][0]{
   testimonials[]{ quote, name, role },
   ctaTitle,
   ctaSubtitle,
-  ctaButtons[]{ label, variant, formPage->{ "slug": slug.current } },
+  ctaButtons[]{ label, to, variant, openInNewTab },
   footerNote,
   seo{ seoTitle, metaDescription }
 }`;
@@ -547,6 +579,21 @@ const FINANCIAL_AID_PAGE_QUERY = `*[_type == "financialAidPage"][0]{
   seo{ seoTitle, metaDescription }
 }`;
 
+const BOOK_MEET_PAGE_QUERY = `*[_type == "bookMeetPage"][0]{
+  title,
+  "slug": slug.current,
+  subtitle,
+  fullTimeTitle,
+  fullTimeBody,
+  fullTimeImage ${imageProjection},
+  fullTimeCta{ label, variant, formPage->{ "slug": slug.current } },
+  partTimeTitle,
+  partTimeBody,
+  partTimeImage ${imageProjection},
+  partTimeCta{ label, variant, formPage->{ "slug": slug.current } },
+  seo{ seoTitle, metaDescription }
+}`;
+
 const ABOUT_PAGE_QUERY = `*[_type == "aboutPage"][0]{
   title,
   subtitle,
@@ -645,6 +692,10 @@ export async function getAboutPage(): Promise<AboutPage | null> {
 
 export async function getFinancialAidPage(): Promise<FinancialAidPage | null> {
   return sanityClient.fetch<FinancialAidPage | null>(FINANCIAL_AID_PAGE_QUERY);
+}
+
+export async function getBookMeetPage(): Promise<BookMeetPage | null> {
+  return sanityClient.fetch<BookMeetPage | null>(BOOK_MEET_PAGE_QUERY);
 }
 
 export async function getFormPageBySlug(slug: string): Promise<FormPageDoc | null> {

@@ -15,7 +15,9 @@ import photoEditorialD from "@/assets/mqi-images/IMG_7382.JPG";
 import photoCtaBand from "@/assets/mqi-images/IMG_7176.JPG";
 import { useQuery } from "@tanstack/react-query";
 import { getHomepage, getAboutPage, type AboutTeacher } from "@/lib/sanityQueries";
-import { resolveCtaButtonTarget } from "@/lib/ctaDestinations";
+import { resolvePageCtaTarget, isPageCtaExternal } from "@/lib/ctaDestinations";
+import { ProgramCard } from "@/components/ProgramCard";
+import { resolveProgramCardImage } from "@/lib/programImages";
 import { urlFor } from "@/lib/sanity";
 
 const defaultProgramCategories = [
@@ -138,7 +140,7 @@ const Index = () => {
               </p>
               <div className="flex flex-wrap gap-3.5 pt-2">
                 {heroCtaButtons.map((btn, i) => {
-                  const to = resolveCtaButtonTarget(btn);
+                  const to = resolvePageCtaTarget(btn);
                   if (!to) return null;
                   return (
                     <CtaLink
@@ -146,6 +148,8 @@ const Index = () => {
                       label={btn.label}
                       to={to}
                       variant={btn.variant ?? "primary"}
+                      isExternal={isPageCtaExternal(btn)}
+                      openInNewTab={btn.openInNewTab}
                       compact
                     />
                   );
@@ -229,21 +233,14 @@ const Index = () => {
                   {filteredPrograms.map((prog: { _id: string; slug?: string; title?: string; category?: { slug?: string }; shortDescription?: string; mainImage?: unknown }) => {
                     const catSlug = prog.category?.slug ?? "programs";
                     return (
-                      <Link
+                      <ProgramCard
                         key={prog._id}
                         to={`/programs/${catSlug}/${prog.slug ?? ""}`}
-                        className="w-[min(86vw,300px)] shrink-0 snap-start sm:w-[min(72vw,320px)] md:w-[340px]"
-                      >
-                        <Card className="group relative h-full min-h-[200px] overflow-hidden border-border/50 shadow-md transition-shadow duration-300 hover:shadow-lg">
-                          <CardContent className="relative z-[1] flex h-full flex-col space-y-4 p-8">
-                            <h3 className="text-xl font-semibold leading-snug text-foreground md:text-2xl">{prog.title}</h3>
-                            <p className="line-clamp-3 flex-1 text-base leading-relaxed text-muted-foreground">{prog.shortDescription}</p>
-                            <span className="inline-block pt-1 text-base font-medium text-foreground/80 group-hover:text-primary/90 group-hover:underline">
-                              Learn more →
-                            </span>
-                          </CardContent>
-                        </Card>
-                      </Link>
+                        title={prog.title ?? ""}
+                        description={prog.shortDescription}
+                        image={prog.mainImage}
+                        imageSeed={prog._id}
+                      />
                     );
                   })}
                 </div>
@@ -278,14 +275,19 @@ const Index = () => {
             </>
           ) : (
             <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-              {programCategories.map((cat) => {
+              {programCategories.map((cat, i) => {
+                const imageUrl = resolveProgramCardImage(cat.image, cat.title ?? i);
+                const href = cat.categorySlug ? `/programs?category=${cat.categorySlug}` : (cat.to ?? "/programs");
                 return (
                   <div key={cat.title}>
-                    <Link to={cat.categorySlug ? `/programs?category=${cat.categorySlug}` : (cat.to ?? "/programs")}>
-                      <Card className="group h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-border/50">
-                        <CardContent className="p-8 text-center space-y-4">
+                    <Link to={href}>
+                      <Card className="group h-full overflow-hidden border-border/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                        <ImageSoftFade className="relative aspect-[16/10] w-full overflow-hidden">
+                          <img src={imageUrl} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" />
+                        </ImageSoftFade>
+                        <CardContent className="space-y-4 p-8 text-center">
                           <h3 className="text-xl font-semibold text-foreground">{cat.title}</h3>
-                          <p className="text-muted-foreground text-sm leading-relaxed">{cat.description}</p>
+                          <p className="text-sm leading-relaxed text-muted-foreground">{cat.description}</p>
                         </CardContent>
                       </Card>
                     </Link>
@@ -597,7 +599,7 @@ const Index = () => {
           </p>
           <div className="flex flex-wrap justify-center gap-5 pt-4">
             {ctaButtons.map((btn, i) => {
-              const to = resolveCtaButtonTarget(btn);
+              const to = resolvePageCtaTarget(btn);
               if (!to) return null;
               return (
                 <CtaLink
@@ -605,6 +607,8 @@ const Index = () => {
                   label={btn.label}
                   to={to}
                   variant={btn.variant ?? "primary"}
+                  isExternal={isPageCtaExternal(btn)}
+                  openInNewTab={btn.openInNewTab}
                 />
               );
             })}

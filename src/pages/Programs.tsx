@@ -1,8 +1,7 @@
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { PortableText } from "@portabletext/react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { ProgramCard } from "@/components/ProgramCard";
 import { useQuery } from "@tanstack/react-query";
 import { getProgramCategories, getProgramsPage, getProgramsForListing } from "@/lib/sanityQueries";
 import { PageSeo } from "@/components/PageSeo";
@@ -115,21 +114,15 @@ const Programs = () => {
                     {categoryPrograms.map((prog) => {
                       const categorySlug = prog.category?.slug ?? cat.slug;
                       return (
-                        <Link key={prog._id} to={`/programs/${categorySlug}/${prog.slug}`} className="min-w-0">
-                          <Card className="group relative h-full min-h-[280px] overflow-hidden border-border/50 shadow-md transition-shadow hover:shadow-lg">
-                            <CardContent className="relative z-[1] flex h-full flex-col space-y-5 p-8 md:p-10">
-                              <h3 className="text-2xl font-semibold leading-snug tracking-tight text-foreground md:text-3xl">{prog.title}</h3>
-                              {(prog.shortDescription || prog.overview) && (
-                                <p className="line-clamp-5 flex-1 text-base leading-relaxed text-muted-foreground md:text-lg">
-                                  {prog.shortDescription ?? prog.overview}
-                                </p>
-                              )}
-                              <Button variant="link" className="h-auto p-0 text-base font-medium text-primary group-hover:no-underline md:text-lg">
-                                Learn more →
-                              </Button>
-                            </CardContent>
-                          </Card>
-                        </Link>
+                        <ProgramCard
+                          key={prog._id}
+                          to={`/programs/${categorySlug}/${prog.slug}`}
+                          title={prog.title}
+                          description={prog.shortDescription ?? prog.overview}
+                          image={prog.mainImage}
+                          imageSeed={prog._id}
+                          layout="listing"
+                        />
                       );
                     })}
                   </div>

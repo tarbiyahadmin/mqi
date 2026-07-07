@@ -9,6 +9,13 @@ export const homeProgramCategory = defineType({
     defineField({ name: 'description', type: 'text', title: 'Description', validation: (r) => r.required() }),
     defineField({ name: 'to', type: 'string', title: 'Link (path)', initialValue: '/programs' }),
     defineField({
+      name: 'image',
+      type: 'image',
+      title: 'Card image',
+      options: { hotspot: true },
+      description: 'Optional. Falls back to institute photography when empty.',
+    }),
+    defineField({
       name: 'programCategory',
       type: 'reference',
       title: 'Program Category',
