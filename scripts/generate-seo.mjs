@@ -16,7 +16,7 @@ const root = join(__dirname, "..");
 const distDir = join(root, "dist");
 const publicDir = join(root, "public");
 
-const SITE_URL = "https://miltonquraninstitute.org";
+const SITE_URL = "https://miltonquraninstitute.com";
 const ORG_NAME = "Milton Quran Institute";
 const DEFAULT_DESCRIPTION =
   "Milton Quran Institute offers Qur'anic education, Hifz, Tajweed, and Islamic studies programs for all ages in Milton, Ontario.";

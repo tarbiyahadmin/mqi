@@ -1,5 +1,5 @@
 /** Canonical public site origin (no trailing slash). */
-export const SITE_URL = "https://miltonquraninstitute.org";
+export const SITE_URL = "https://miltonquraninstitute.com";
 
 /** Official organization name — use everywhere for entity consistency. */
 export const ORG_NAME = "Milton Quran Institute";

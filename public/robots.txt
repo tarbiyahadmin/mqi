@@ -17,4 +17,4 @@ Disallow: /forms/
 Disallow: /thank-you
 Disallow: /studio
 
-Sitemap: https://miltonquraninstitute.org/sitemap.xml
+Sitemap: https://miltonquraninstitute.com/sitemap.xml
