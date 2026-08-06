@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getSiteSettings } from "@/lib/sanityQueries";
 import type { NavLink as NavLinkFields } from "@/lib/sanityQueries";
 import { ConfigurableNavLink } from "@/components/layout/ConfigurableNavLink";
+import { MQI_NAP, ORG_NAME } from "@/lib/site";
 
 const defaultQuickLinks = [
   { label: "Programs", to: "/programs" },
@@ -13,10 +14,15 @@ const defaultQuickLinks = [
 ];
 
 const defaultProgramLinks = [
-  { label: "Courses", to: "/programs/courses" },
-  { label: "Full Time School", to: "/programs/full-time" },
-  { label: "Summer Programs", to: "/programs/summer" },
+  { label: "Courses", to: "/programs" },
+  { label: "Full Time School", to: "/programs" },
+  { label: "Summer Programs", to: "/programs" },
 ];
+
+function normalizeInternalPath(to: string): string {
+  if (!to || /^https?:\/\//i.test(to) || to.startsWith("mailto:") || to.startsWith("tel:")) return to;
+  return to.startsWith("/") ? to : `/${to}`;
+}
 
 const Footer = () => {
   const location = useLocation();
@@ -25,95 +31,95 @@ const Footer = () => {
     queryFn: getSiteSettings,
   });
 
-  const tagline = siteSettings?.footerTagline ?? "Nurturing minds and hearts through Qur'anic education, fostering a community of lifelong learners.";
+  const tagline =
+    siteSettings?.footerTagline ??
+    "Where your child’s Quranic journey begins and flourishes. Milton’s first and most trusted Islamic educational institute.";
   const rawQuickLinks = (siteSettings?.footerQuickLinks?.length ? siteSettings.footerQuickLinks : defaultQuickLinks) as NavLinkFields[];
-  const quickLinks = rawQuickLinks.filter((link) => link.to !== "/contact");
-  const programLinks = (siteSettings?.footerProgramLinks?.length ? siteSettings.footerProgramLinks : defaultProgramLinks) as NavLinkFields[];
-  const address = siteSettings?.footerAddress ?? "123 Main Street, Milton, ON L9T 1X1";
-  const phone = siteSettings?.footerPhone ?? "(905) 555-0123";
-  const email = siteSettings?.footerEmail ?? "info@miltonquran.org";
+  const quickLinks = rawQuickLinks.map((link) => ({ ...link, to: normalizeInternalPath(link.to) }));
+  const programLinks = (
+    (siteSettings?.footerProgramLinks?.length ? siteSettings.footerProgramLinks : defaultProgramLinks) as NavLinkFields[]
+  ).map((link) => ({ ...link, to: normalizeInternalPath(link.to) }));
+
+  const address = siteSettings?.footerAddress?.trim() || MQI_NAP.address;
+  const phone = siteSettings?.footerPhone?.trim() || MQI_NAP.phone;
+  const email = siteSettings?.footerEmail?.trim() || MQI_NAP.email;
   const socialLinks = siteSettings?.socialLinks ?? [];
-  const copyright = siteSettings?.footerCopyright ?? `© ${new Date().getFullYear()} Milton Qur'an Institute. All rights reserved.`;
-  const copyrightText = copyright.includes('{year}') ? copyright.replace('{year}', String(new Date().getFullYear())) : copyright;
+  const copyright =
+    siteSettings?.footerCopyright ?? `© ${new Date().getFullYear()} ${ORG_NAME}. All rights reserved.`;
+  const copyrightText = copyright.includes("{year}")
+    ? copyright.replace("{year}", String(new Date().getFullYear()))
+    : copyright;
 
   return (
     <footer className="bg-secondary text-secondary-foreground">
       <div className="geometric-divider" />
       <div className="container py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          {/* Brand */}
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-4">
-            <img src={mqiLogo} alt="Milton Qur'an Institute" className="h-12 w-auto brightness-0 invert" />
-            <p className="text-secondary-foreground/70 text-sm leading-relaxed">
-              {tagline}
-            </p>
+            <img src={mqiLogo} alt={ORG_NAME} className="h-12 w-auto brightness-0 invert" />
+            <p className="text-sm leading-relaxed text-secondary-foreground/70">{tagline}</p>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <h4 className="font-semibold text-sm uppercase tracking-wider mb-4 text-secondary-foreground/90">Quick Links</h4>
+            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-secondary-foreground/90">Quick Links</h4>
             <ul className="space-y-2.5">
               {quickLinks.map((link, index) => (
                 <li key={`${link.label}-${link.to}-${index}`}>
-                  <ConfigurableNavLink
-                    link={link}
-                    context="footer"
-                    isActive={location.pathname === link.to}
-                  />
+                  <ConfigurableNavLink link={link} context="footer" isActive={location.pathname === link.to} />
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Programs */}
           <div>
-            <h4 className="font-semibold text-sm uppercase tracking-wider mb-4 text-secondary-foreground/90">Programs</h4>
+            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-secondary-foreground/90">Programs</h4>
             <ul className="space-y-2.5">
               {programLinks.map((link, index) => (
                 <li key={`${link.label}-${link.to}-${index}`}>
-                  <ConfigurableNavLink
-                    link={link}
-                    context="footer"
-                    isActive={location.pathname === link.to}
-                  />
+                  <ConfigurableNavLink link={link} context="footer" isActive={location.pathname === link.to} />
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
-            <h4 className="font-semibold text-sm uppercase tracking-wider mb-4 text-secondary-foreground/90">Contact Us</h4>
+            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-secondary-foreground/90">Contact Us</h4>
             <ul className="space-y-3">
-              <li className="text-sm text-secondary-foreground/60">{address}</li>
-              <li className="text-sm text-secondary-foreground/60">{phone}</li>
-              <li className="text-sm text-secondary-foreground/60">{email}</li>
+              <li className="text-sm text-secondary-foreground/60">
+                <address className="not-italic">{address}</address>
+              </li>
+              <li className="text-sm text-secondary-foreground/60">
+                <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="hover:text-secondary-foreground">
+                  {phone}
+                </a>
+              </li>
+              <li className="text-sm text-secondary-foreground/60">
+                <a href={`mailto:${email}`} className="hover:text-secondary-foreground">
+                  {email}
+                </a>
+              </li>
             </ul>
             {socialLinks.length > 0 && (
               <div className="mt-4 flex flex-wrap items-center gap-2">
-                {socialLinks.map((s) => {
-                  return (
-                    <a
-                      key={s.platform + s.url}
-                      href={s.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded-lg border border-secondary-foreground/25 px-2.5 py-1 text-xs uppercase tracking-wide text-secondary-foreground/70 transition-colors hover:text-secondary-foreground"
-                      aria-label={s.platform}
-                    >
-                      {s.platform}
-                    </a>
-                  );
-                })}
+                {socialLinks.map((s) => (
+                  <a
+                    key={s.platform + s.url}
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-lg border border-secondary-foreground/25 px-2.5 py-1 text-xs uppercase tracking-wide text-secondary-foreground/70 transition-colors hover:text-secondary-foreground"
+                    aria-label={s.platform}
+                  >
+                    {s.platform}
+                  </a>
+                ))}
               </div>
             )}
           </div>
         </div>
 
-        <div className="geometric-divider mt-10 mb-6" />
-        <p className="text-center text-xs text-secondary-foreground/40">
-          {copyrightText}
-        </p>
+        <div className="geometric-divider mb-6 mt-10" />
+        <p className="text-center text-xs text-secondary-foreground/40">{copyrightText}</p>
       </div>
     </footer>
   );

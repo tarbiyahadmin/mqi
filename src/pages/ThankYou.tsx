@@ -22,7 +22,7 @@ const ThankYou = () => {
   const title = data?.title?.trim() || "Thank you";
   const subtitle =
     data?.subtitle?.trim() ||
-    "Your submission was received. We appreciate you taking the time to connect with Milton Qur'an Institute.";
+    "Your submission was received. We appreciate you taking the time to connect with Milton Quran Institute.";
   const body = data?.body;
   const ctaLabel = data?.primaryCtaLabel?.trim() || "Back to home";
   const ctaPath = data?.primaryCtaPath?.trim() || "/";
@@ -39,7 +39,7 @@ const ThankYou = () => {
   return (
     <main className="section-soft-radial section-y relative overflow-hidden">
       <DecorativeArabic variant="full" opacity={0.034} />
-      <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${title} | MQI`} />
+      <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${title} | Milton Quran Institute`} noIndex />
       <div className="container relative z-10 max-w-3xl">
         <motion.div initial="hidden" animate="visible" variants={fadeUp}>
           <PageTitle title={title} subtitle={subtitle} />

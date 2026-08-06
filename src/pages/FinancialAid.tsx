@@ -121,7 +121,7 @@ const FinancialAid = () => {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_52%_50%,transparent_20%,hsl(var(--background)/0.76)_100%)]"
         aria-hidden
       />
-      <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | MQI`} />
+      <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | Milton Quran Institute`} />
 
       <PageTitle visuallyHidden title={pageTitle} />
 

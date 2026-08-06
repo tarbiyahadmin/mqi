@@ -45,7 +45,7 @@ const Careers = () => {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_62%_at_52%_48%,transparent_20%,hsl(var(--background)/0.78)_100%)]"
         aria-hidden
       />
-      <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | MQI`} />
+      <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | Milton Quran Institute`} />
       <div className="container relative z-10">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mb-16">
           <PageTitle title={pageTitle} subtitle={pageSubtitle} />

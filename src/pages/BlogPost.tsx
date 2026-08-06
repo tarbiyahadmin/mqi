@@ -50,7 +50,7 @@ const BlogPost = () => {
   return (
     <main className="section-soft-radial relative py-16 md:py-28 lg:py-32">
       <DecorativeArabic variant="full" opacity={0.034} />
-      <PageSeo title={post.seo?.seoTitle} description={post.seo?.metaDescription} fallbackTitle={`${post.title} | MQI`} />
+      <PageSeo title={post.seo?.seoTitle} description={post.seo?.metaDescription} fallbackTitle={`${post.title} | Milton Quran Institute`} />
       <div className="container relative z-10 max-w-3xl">
         <Link to="/blog" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-8 transition-colors">
           <span aria-hidden>←</span> Back to Blog

@@ -17,6 +17,7 @@ export interface SocialLink {
 }
 
 export interface SiteSettings {
+  organizationName?: string;
   navLinks?: NavLink[];
   navCtaButtons?: PageCtaButton[];
   footerTagline?: string;
@@ -378,6 +379,7 @@ export interface SeoData {
 
 // --- GROQ Queries ---
 const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
+  organizationName,
   navLinks[]{ label, to, displayAsButton, openInNewTab },
   navCtaButtons[]{ label, to, variant, openInNewTab },
   footerTagline,

@@ -27,14 +27,14 @@ const Blog = () => {
   });
 
   const pageTitle = blogPageData?.title ?? "Blog";
-  const pageSubtitle = blogPageData?.subtitle ?? "Insights, reflections, and updates from Milton Qur'an Institute.";
+  const pageSubtitle = blogPageData?.subtitle ?? "Insights, reflections, and updates from Milton Quran Institute.";
   const introContent = blogPageData?.introContent;
   const seo = blogPageData?.seo;
 
   return (
     <main className="section-soft-radial section-y relative overflow-hidden">
       <DecorativeArabic variant="full" opacity={0.034} />
-      <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | MQI`} />
+      <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | Milton Quran Institute`} />
       <div className="container relative z-10">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mb-12 md:mb-16">
           <PageTitle title={pageTitle} subtitle={pageSubtitle} />

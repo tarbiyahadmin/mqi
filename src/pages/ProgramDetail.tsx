@@ -86,7 +86,7 @@ const ProgramDetail = () => {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_74%_64%_at_50%_50%,transparent_18%,hsl(var(--background)/0.78)_100%)]"
         aria-hidden
       />
-      <PageSeo title={program.seo?.seoTitle} description={program.seo?.metaDescription} fallbackTitle={`${program.title} | MQI`} />
+      <PageSeo title={program.seo?.seoTitle} description={program.seo?.metaDescription} fallbackTitle={`${program.title} | Milton Quran Institute`} />
       <div className="container relative z-10 max-w-4xl">
         <Link to="/programs" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-8 transition-colors">
           <span aria-hidden>←</span> Back to Programs

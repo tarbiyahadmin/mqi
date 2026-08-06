@@ -4,8 +4,45 @@ export const siteSettings = defineType({
   name: 'siteSettings',
   type: 'document',
   title: 'Site Settings',
-  groups: [{ name: 'nav', title: 'Navigation' }, { name: 'footer', title: 'Footer' }],
+  groups: [
+    { name: 'organization', title: 'Organization / NAP' },
+    { name: 'nav', title: 'Navigation' },
+    { name: 'footer', title: 'Footer' },
+  ],
   fields: [
+    defineField({
+      name: 'organizationName',
+      type: 'string',
+      title: 'Organization name',
+      group: 'organization',
+      initialValue: 'Milton Quran Institute',
+      validation: (r) => r.required(),
+      description: 'Official business name used for SEO and entity signals. Must remain "Milton Quran Institute".',
+    }),
+    defineField({
+      name: 'footerAddress',
+      type: 'string',
+      title: 'Address',
+      group: 'organization',
+      validation: (r) => r.required(),
+      description: 'Verified Milton Quran Institute street address (shown in footer + schema).',
+    }),
+    defineField({
+      name: 'footerPhone',
+      type: 'string',
+      title: 'Phone',
+      group: 'organization',
+      validation: (r) => r.required(),
+      description: 'Verified Milton Quran Institute phone number.',
+    }),
+    defineField({
+      name: 'footerEmail',
+      type: 'string',
+      title: 'Email',
+      group: 'organization',
+      validation: (r) => r.required().email(),
+      description: 'Verified Milton Quran Institute email address.',
+    }),
     defineField({
       name: 'navLinks',
       type: 'array',
@@ -43,15 +80,12 @@ export const siteSettings = defineType({
       group: 'footer',
       of: [{ type: 'navLink' }],
     }),
-    defineField({ name: 'footerAddress', type: 'string', title: 'Footer Address', group: 'footer' }),
-    defineField({ name: 'footerPhone', type: 'string', title: 'Footer Phone', group: 'footer' }),
-    defineField({ name: 'footerEmail', type: 'string', title: 'Footer Email', group: 'footer' }),
     defineField({
       name: 'socialLinks',
       type: 'array',
       title: 'Social Media Links',
-      group: 'footer',
-      description: 'Displayed under Contact in the footer.',
+      group: 'organization',
+      description: 'Profile URLs used in the footer and schema.org sameAs.',
       of: [
         {
           type: 'object',
@@ -78,6 +112,12 @@ export const siteSettings = defineType({
         },
       ],
     }),
-    defineField({ name: 'footerCopyright', type: 'string', title: 'Footer Copyright', description: "e.g. © {year} Milton Qur'an Institute. All rights reserved." }),
+    defineField({
+      name: 'footerCopyright',
+      type: 'string',
+      title: 'Footer Copyright',
+      group: 'footer',
+      description: 'e.g. © {year} Milton Quran Institute. All rights reserved.',
+    }),
   ],
 });

@@ -61,7 +61,7 @@ const Donate = () => {
   return (
     <main className="section-soft-radial relative overflow-hidden pb-0">
       <DecorativeArabic variant="full" opacity={0.034} />
-      <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | MQI`} />
+      <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | Milton Quran Institute`} />
       <div className="container relative z-10 space-y-20 pb-20 pt-16 md:space-y-24 md:pb-24 md:pt-20">
         <motion.div initial="hidden" animate="visible" variants={fadeUp}>
           <PageTitle title={pageTitle} subtitle={pageSubtitle} />

@@ -7,6 +7,7 @@ import type { NavLink, PageCtaButton } from "@/lib/sanityQueries";
 import { ConfigurableNavLink } from "@/components/layout/ConfigurableNavLink";
 import { CtaLink } from "@/components/CtaLink";
 import { isPageCtaExternal, resolvePageCtaTarget } from "@/lib/ctaDestinations";
+import { ORG_NAME } from "@/lib/site";
 
 const defaultNavLinks = [
   { label: "Home", to: "/" },
@@ -17,12 +18,17 @@ const defaultNavLinks = [
   { label: "Blog", to: "/blog" },
 ];
 
+function normalizeInternalPath(to: string): string {
+  if (!to || /^https?:\/\//i.test(to) || to.startsWith("mailto:") || to.startsWith("tel:")) return to;
+  return to.startsWith("/") ? to : `/${to}`;
+}
+
 function legacyNavCtaButtons(links: NavLink[]): PageCtaButton[] {
   return links
     .filter((link) => link.displayAsButton)
     .map((link) => ({
       label: link.label,
-      to: link.to,
+      to: normalizeInternalPath(link.to),
       variant: "primary" as const,
       openInNewTab: link.openInNewTab,
     }));
@@ -37,19 +43,23 @@ const Header = () => {
   });
 
   const rawLinks = (siteSettings?.navLinks?.length ? siteSettings.navLinks : defaultNavLinks) as NavLink[];
-  const navLinks = rawLinks.filter((link) => link.to !== "/contact" && !link.displayAsButton);
+  const navLinks = rawLinks
+    .filter((link) => !link.displayAsButton)
+    .map((link) => ({ ...link, to: normalizeInternalPath(link.to) }));
   const legacyCtas = legacyNavCtaButtons(rawLinks);
-  const navCtaButtons = siteSettings?.navCtaButtons?.length ? siteSettings.navCtaButtons : legacyCtas;
+  const navCtaButtons = (siteSettings?.navCtaButtons?.length ? siteSettings.navCtaButtons : legacyCtas).map((btn) => ({
+    ...btn,
+    to: normalizeInternalPath(btn.to),
+  }));
 
   return (
-    <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-sm">
+    <header className="sticky top-0 z-50 border-b border-border bg-card/95 shadow-sm backdrop-blur-md">
       <div className="container flex h-[4.25rem] items-center justify-between md:h-[5.25rem]">
         <Link to="/" className="flex items-center gap-3">
-          <img src={mqiLogo} alt="Milton Qur'an Institute" className="h-11 w-auto md:h-[3.25rem]" />
+          <img src={mqiLogo} alt={ORG_NAME} className="h-11 w-auto md:h-[3.25rem]" />
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-2 flex-wrap justify-end">
+        <nav className="hidden flex-wrap items-center justify-end gap-2 lg:flex">
           {navLinks.map((link, index) => (
             <ConfigurableNavLink
               key={`${link.label}-${link.to}-${index}`}
@@ -76,9 +86,8 @@ const Header = () => {
           })}
         </nav>
 
-        {/* Mobile toggle */}
         <button
-          className="lg:hidden rounded-lg p-2.5 hover:bg-muted"
+          className="rounded-lg p-2.5 hover:bg-muted lg:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
           aria-expanded={mobileOpen}
@@ -104,9 +113,8 @@ const Header = () => {
         </button>
       </div>
 
-      {/* Mobile nav */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-border bg-card/95 pb-4 backdrop-blur-md">
+        <div className="border-t border-border bg-card/95 pb-4 backdrop-blur-md lg:hidden">
           <nav className="container flex flex-col gap-2 pt-3">
             {navLinks.map((link, index) => (
               <ConfigurableNavLink

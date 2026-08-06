@@ -54,7 +54,7 @@ const Programs = () => {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_74%_64%_at_64%_46%,transparent_16%,hsl(var(--background)/0.8)_100%)]"
         aria-hidden
       />
-      <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | MQI`} />
+      <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${pageTitle} | Milton Quran Institute`} />
       <div className="container relative z-10">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mx-auto mb-16 max-w-5xl md:mb-20">
           <PageTitle title={pageTitle} subtitle={pageSubtitle} />
