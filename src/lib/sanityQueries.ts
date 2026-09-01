@@ -1,4 +1,4 @@
-import { sanityClient } from './sanity';
+import { sanityClient } from './sanityClient';
 
 // Reusable GROQ fragments
 const imageProjection = `{ _type, asset->{ _id, url }, hotspot, crop }`;
@@ -16,6 +16,11 @@ export interface SocialLink {
   url: string;
 }
 
+export interface LabeledEmail {
+  title: string;
+  email: string;
+}
+
 export interface SiteSettings {
   organizationName?: string;
   navLinks?: NavLink[];
@@ -26,6 +31,7 @@ export interface SiteSettings {
   footerAddress?: string;
   footerPhone?: string;
   footerEmail?: string;
+  footerEmails?: LabeledEmail[];
   socialLinks?: SocialLink[];
   footerCopyright?: string;
 }
@@ -86,6 +92,7 @@ export interface Homepage {
   ctaButtons?: PageCtaButton[];
   footerNote?: string;
   editorialPhotos?: { asset?: { url: string }; _type?: string }[];
+  seo?: SeoData;
 }
 
 export interface ProgramCategoryRef {
@@ -342,6 +349,22 @@ export interface FinancialAidPage {
   seo?: SeoData;
 }
 
+export interface ContactPage {
+  title?: string;
+  subtitle?: string;
+  intro?: string;
+  contactSectionTitle?: string;
+  address?: string;
+  phone?: string;
+  contactEmails?: LabeledEmail[];
+  visitSectionTitle?: string;
+  officeHours?: string;
+  mapNote?: string;
+  mapsLinkLabel?: string;
+  mapsLinkUrl?: string;
+  seo?: SeoData;
+}
+
 export interface BookMeetPage {
   title?: string;
   slug?: string;
@@ -388,6 +411,7 @@ const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
   footerAddress,
   footerPhone,
   footerEmail,
+  footerEmails[]{ title, email },
   socialLinks[]{ platform, url },
   footerCopyright
 }`;
@@ -630,6 +654,24 @@ const FORM_PAGE_BY_SLUG_QUERY = `*[_type == "formPage" && slug.current == $slug]
   seo{ seoTitle, metaDescription }
 }`;
 
+const CONTACT_PAGE_QUERY = `*[_type == "contactPage"] | order(_updatedAt desc)[0]{
+  title,
+  subtitle,
+  intro,
+  contactSectionTitle,
+  address,
+  phone,
+  contactEmails[]{ title, email },
+  visitSectionTitle,
+  officeHours,
+  mapNote,
+  mapsLinkLabel,
+  mapsLinkUrl,
+  seo{ seoTitle, metaDescription }
+}`;
+
+const FORM_PAGE_SLUGS_QUERY = `*[_type == "formPage" && defined(slug.current)]{ "slug": slug.current }`;
+
 const THANK_YOU_PAGE_QUERY = `*[_type == "thankYouPage"] | order(_updatedAt desc)[0]{
   title,
   subtitle,
@@ -698,6 +740,14 @@ export async function getFinancialAidPage(): Promise<FinancialAidPage | null> {
 
 export async function getBookMeetPage(): Promise<BookMeetPage | null> {
   return sanityClient.fetch<BookMeetPage | null>(BOOK_MEET_PAGE_QUERY);
+}
+
+export async function getContactPage(): Promise<ContactPage | null> {
+  return sanityClient.fetch<ContactPage | null>(CONTACT_PAGE_QUERY);
+}
+
+export async function getFormPageSlugs(): Promise<{ slug: string }[]> {
+  return sanityClient.fetch<{ slug: string }[]>(FORM_PAGE_SLUGS_QUERY);
 }
 
 export async function getFormPageBySlug(slug: string): Promise<FormPageDoc | null> {

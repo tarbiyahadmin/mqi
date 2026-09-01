@@ -1,0 +1,102 @@
+import { defineType, defineField } from "sanity";
+import { seoFields } from "./seo";
+
+export const contactPage = defineType({
+  name: "contactPage",
+  type: "document",
+  title: "Contact Page",
+  groups: [
+    { name: "content", title: "Content" },
+    { name: "contact", title: "Contact Info" },
+    { name: "visit", title: "Visit & Hours" },
+    { name: "seo", title: "SEO" },
+  ],
+  fields: [
+    defineField({
+      name: "title",
+      type: "string",
+      title: "Page Title",
+      group: "content",
+      initialValue: "Contact Us",
+    }),
+    defineField({
+      name: "subtitle",
+      type: "text",
+      title: "Page Subtitle",
+      group: "content",
+      rows: 3,
+    }),
+    defineField({
+      name: "intro",
+      type: "text",
+      title: "Introduction",
+      group: "content",
+      rows: 4,
+      description: "Short text shown below the page title.",
+    }),
+    defineField({
+      name: "contactSectionTitle",
+      type: "string",
+      title: "Contact Section Title",
+      group: "contact",
+      initialValue: "Milton Quran Institute",
+    }),
+    defineField({
+      name: "address",
+      type: "text",
+      title: "Address",
+      group: "contact",
+      rows: 2,
+    }),
+    defineField({
+      name: "phone",
+      type: "string",
+      title: "Phone",
+      group: "contact",
+    }),
+    defineField({
+      name: "contactEmails",
+      type: "array",
+      title: "Email Entries",
+      group: "contact",
+      of: [{ type: "labeledEmail" }],
+      description: "Program or department emails shown on the contact page.",
+    }),
+    defineField({
+      name: "visitSectionTitle",
+      type: "string",
+      title: "Visit Section Title",
+      group: "visit",
+      initialValue: "Visit & Hours",
+    }),
+    defineField({
+      name: "officeHours",
+      type: "text",
+      title: "Office Hours",
+      group: "visit",
+      rows: 3,
+    }),
+    defineField({
+      name: "mapNote",
+      type: "string",
+      title: "Map / Directions Note",
+      group: "visit",
+      description: "Optional note about parking or finding the institute.",
+    }),
+    defineField({
+      name: "mapsLinkLabel",
+      type: "string",
+      title: "Google Maps Link Label",
+      group: "visit",
+      initialValue: "Open in Google Maps →",
+    }),
+    defineField({
+      name: "mapsLinkUrl",
+      type: "url",
+      title: "Google Maps Link URL",
+      group: "visit",
+      description: "Full Google Maps URL. Leave empty to auto-generate from the address.",
+    }),
+    ...seoFields,
+  ],
+});

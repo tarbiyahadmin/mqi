@@ -38,10 +38,18 @@ export const siteSettings = defineType({
     defineField({
       name: 'footerEmail',
       type: 'string',
-      title: 'Email',
+      title: 'Primary Email (legacy)',
       group: 'organization',
-      validation: (r) => r.required().email(),
-      description: 'Verified Milton Quran Institute email address.',
+      validation: (r) => r.email(),
+      description: 'Fallback when Footer Emails is empty. Prefer adding entries under Footer Emails.',
+    }),
+    defineField({
+      name: 'footerEmails',
+      type: 'array',
+      title: 'Footer Emails',
+      group: 'footer',
+      of: [{ type: 'labeledEmail' }],
+      description: 'Contact emails shown in the footer, each with a title (e.g. Part-Time Programs).',
     }),
     defineField({
       name: 'navLinks',

@@ -1,5 +1,3 @@
-import grainUrl from "@/assets/grain.jpg";
-
 /** Full-viewport film grain overlay with subtle blend. */
 export function GlobalGrain() {
   return (
@@ -7,7 +5,7 @@ export function GlobalGrain() {
       aria-hidden
       className="pointer-events-none fixed inset-0 z-[1] mix-blend-soft-light opacity-[0.08]"
       style={{
-        backgroundImage: `url(${grainUrl})`,
+        backgroundImage: "url(/images/grain.webp)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { cn } from "@/lib/utils";
-import arabicUrl from "@/assets/arabic.svg";
+import { ARABIC_PATTERN } from "@/lib/localImages";
 
 interface DecorativeArabicProps {
   className?: string;
@@ -56,7 +56,7 @@ export function DecorativeArabic({
         style={bandLeftMask}
       >
         <img
-          src={arabicUrl}
+          src={ARABIC_PATTERN}
           alt=""
           className="absolute left-[-8%] top-1/2 w-[min(112%,620px)] max-w-none -translate-y-1/2 object-contain mix-blend-soft-light dark:mix-blend-soft-light"
           style={{ opacity }}
@@ -74,7 +74,7 @@ export function DecorativeArabic({
         style={fadeSection ? sectionEdgeMask : undefined}
       >
         <img
-          src={arabicUrl}
+          src={ARABIC_PATTERN}
           alt=""
           className="absolute left-1/2 top-1/2 max-h-none w-[min(122%,920px)] min-w-[100%] -translate-x-1/2 -translate-y-1/2 object-contain mix-blend-multiply dark:mix-blend-soft-light"
           style={{ opacity }}
@@ -91,7 +91,7 @@ export function DecorativeArabic({
       style={fadeSection ? sectionEdgeMask : undefined}
     >
       <img
-        src={arabicUrl}
+        src={ARABIC_PATTERN}
         alt=""
         className="absolute -right-[2%] top-1/2 w-[min(82vw,620px)] max-w-none -translate-y-1/2 object-contain mix-blend-multiply dark:mix-blend-soft-light md:w-[min(62vw,700px)]"
         style={{ opacity }}

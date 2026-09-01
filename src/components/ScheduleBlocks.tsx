@@ -16,7 +16,7 @@ function ScheduleBlockRenderer({ block }: { block: ScheduleBlock }) {
         {title && <h3 className="text-sm font-semibold text-muted-foreground mb-2 uppercase tracking-wider">{title}</h3>}
         {optsBlock.richText && optsBlock.richText.length > 0 && (
           <div className="prose prose-sm max-w-none prose-p:text-muted-foreground prose-headings:text-foreground mb-4">
-            <PortableText value={optsBlock.richText} />
+            <PortableText value={optsBlock.richText as never} />
           </div>
         )}
         {optsBlock.options?.length ? (

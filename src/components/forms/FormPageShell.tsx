@@ -1,6 +1,8 @@
+"use client";
+
 import { motion } from "framer-motion";
 import { PortableText } from "@portabletext/react";
-import { PageSeo } from "@/components/PageSeo";
+
 import { PageTitle } from "@/components/layout/PageTitle";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
 import { getJotformEmbedUrl } from "@/lib/jotform";
@@ -35,7 +37,6 @@ export function FormPageShell({
   return (
     <main className="section-soft-radial relative overflow-hidden py-16 md:py-24 lg:py-28">
       <DecorativeArabic variant="full" opacity={0.038} />
-      <PageSeo title={seo?.seoTitle} description={seo?.metaDescription} fallbackTitle={`${title} | Milton Quran Institute`} noIndex />
       <div className="container relative z-10 w-full max-w-none px-3 sm:px-6">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mb-10 md:mb-12">
           <PageTitle title={title} />
@@ -49,7 +50,7 @@ export function FormPageShell({
             variants={fadeUp}
             className="prose prose-lg prose-editorial mb-10 max-w-none text-center prose-p:text-muted-foreground md:text-left"
           >
-            <PortableText value={intro} />
+            <PortableText value={intro as never} />
           </motion.div>
         )}
 

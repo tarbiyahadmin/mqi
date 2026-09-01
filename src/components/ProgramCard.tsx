@@ -1,5 +1,7 @@
+"use client";
+
 import { memo, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { ImageSoftFade } from "@/components/ui/ImageSoftFade";
 import { resolveProgramCardImage } from "@/lib/programImages";
@@ -18,7 +20,7 @@ function ProgramCardInner({ to, title, description, image, imageSeed, layout = "
   const isListing = layout === "listing";
 
   return (
-    <Link to={to} className={isListing ? "min-w-0" : "w-[min(86vw,300px)] shrink-0 snap-start sm:w-[min(72vw,320px)] md:w-[340px]"}>
+    <Link href={to} className={isListing ? "min-w-0 h-full" : "w-[min(86vw,300px)] shrink-0 snap-start sm:w-[min(72vw,320px)] md:w-[340px]"}>
       <Card
         className={`group relative h-full overflow-hidden border-border/50 shadow-md transition-shadow duration-300 hover:shadow-lg ${
           isListing ? "min-h-[280px]" : "min-h-[200px]"

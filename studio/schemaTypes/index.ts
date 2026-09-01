@@ -1,3 +1,4 @@
+import { labeledEmail } from './labeledEmail'
 import { navLink } from './navLink'
 import { siteSettings } from './siteSettings'
 import { seo } from './seo'
@@ -24,8 +25,10 @@ import { thankYouPage } from './thankYouPage'
 import { aboutTeacher, aboutGraduate, aboutPage } from './aboutPage'
 import { financialAidStep, financialAidPage } from './financialAidPage'
 import { bookMeetPage } from './bookMeetPage'
+import { contactPage } from './contactPage'
 
 export const schemaTypes = [
+  labeledEmail,
   navLink,
   siteSettings,
   seo,
@@ -59,4 +62,5 @@ export const schemaTypes = [
   financialAidStep,
   financialAidPage,
   bookMeetPage,
+  contactPage,
 ]

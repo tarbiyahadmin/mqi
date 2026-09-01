@@ -1,8 +1,8 @@
+"use client";
+
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import mqiLogo from "@/assets/mqi-logo.svg";
-import { useQuery } from "@tanstack/react-query";
-import { getSiteSettings } from "@/lib/sanityQueries";
+import { Link, usePathname } from "@/lib/navigation";
+import { useSiteSettings } from "@/components/providers/SiteSettingsProvider";
 import type { NavLink, PageCtaButton } from "@/lib/sanityQueries";
 import { ConfigurableNavLink } from "@/components/layout/ConfigurableNavLink";
 import { CtaLink } from "@/components/CtaLink";
@@ -36,11 +36,8 @@ function legacyNavCtaButtons(links: NavLink[]): PageCtaButton[] {
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const location = useLocation();
-  const { data: siteSettings } = useQuery({
-    queryKey: ["siteSettings"],
-    queryFn: getSiteSettings,
-  });
+  const pathname = usePathname();
+  const siteSettings = useSiteSettings();
 
   const rawLinks = (siteSettings?.navLinks?.length ? siteSettings.navLinks : defaultNavLinks) as NavLink[];
   const navLinks = rawLinks
@@ -55,8 +52,8 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card/95 shadow-sm backdrop-blur-md">
       <div className="container flex h-[4.25rem] items-center justify-between md:h-[5.25rem]">
-        <Link to="/" className="flex items-center gap-3">
-          <img src={mqiLogo} alt={ORG_NAME} className="h-11 w-auto md:h-[3.25rem]" />
+        <Link href="/" className="flex items-center gap-3">
+          <img src="/mqi-logo.svg" alt={ORG_NAME} className="h-11 w-auto md:h-[3.25rem]" />
         </Link>
 
         <nav className="hidden flex-wrap items-center justify-end gap-2 lg:flex">
@@ -65,7 +62,7 @@ const Header = () => {
               key={`${link.label}-${link.to}-${index}`}
               link={link}
               context="header-desktop"
-              isActive={location.pathname === link.to}
+              isActive={pathname === link.to}
             />
           ))}
           {navCtaButtons.map((btn, index) => {
@@ -121,7 +118,7 @@ const Header = () => {
                 key={`${link.label}-${link.to}-${index}`}
                 link={link}
                 context="header-mobile"
-                isActive={location.pathname === link.to}
+                isActive={pathname === link.to}
                 onNavigate={() => setMobileOpen(false)}
               />
             ))}

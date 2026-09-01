@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { NavLink as NavLinkFields } from "@/lib/sanityQueries";
@@ -62,7 +64,7 @@ export function ConfigurableNavLink({ link, context, isActive, onNavigate }: Con
     }
     return (
       <Button asChild className={btnCn}>
-        <Link to={link.to} target={target} rel={rel} onClick={onNavigate}>
+        <Link href={link.to} target={target} rel={rel} onClick={onNavigate}>
           {link.label}
         </Link>
       </Button>
@@ -78,7 +80,7 @@ export function ConfigurableNavLink({ link, context, isActive, onNavigate }: Con
   }
 
   return (
-    <Link to={link.to} className={textCn} onClick={onNavigate} target={target} rel={rel}>
+    <Link href={link.to} className={textCn} onClick={onNavigate} target={target} rel={rel}>
       {link.label}
     </Link>
   );

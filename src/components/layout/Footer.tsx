@@ -1,9 +1,10 @@
-import { useLocation } from "react-router-dom";
-import mqiLogo from "@/assets/mqi-logo.svg";
-import { useQuery } from "@tanstack/react-query";
-import { getSiteSettings } from "@/lib/sanityQueries";
+"use client";
+
+import { usePathname } from "@/lib/navigation";
+import { useSiteSettings } from "@/components/providers/SiteSettingsProvider";
 import type { NavLink as NavLinkFields } from "@/lib/sanityQueries";
 import { ConfigurableNavLink } from "@/components/layout/ConfigurableNavLink";
+import { resolveEmailEntries } from "@/lib/contactEmails";
 import { MQI_NAP, ORG_NAME } from "@/lib/site";
 
 const defaultQuickLinks = [
@@ -25,11 +26,8 @@ function normalizeInternalPath(to: string): string {
 }
 
 const Footer = () => {
-  const location = useLocation();
-  const { data: siteSettings } = useQuery({
-    queryKey: ["siteSettings"],
-    queryFn: getSiteSettings,
-  });
+  const pathname = usePathname();
+  const siteSettings = useSiteSettings();
 
   const tagline =
     siteSettings?.footerTagline ??
@@ -42,7 +40,7 @@ const Footer = () => {
 
   const address = siteSettings?.footerAddress?.trim() || MQI_NAP.address;
   const phone = siteSettings?.footerPhone?.trim() || MQI_NAP.phone;
-  const email = siteSettings?.footerEmail?.trim() || MQI_NAP.email;
+  const footerEmails = resolveEmailEntries(siteSettings?.footerEmails, siteSettings?.footerEmail);
   const socialLinks = siteSettings?.socialLinks ?? [];
   const copyright =
     siteSettings?.footerCopyright ?? `© ${new Date().getFullYear()} ${ORG_NAME}. All rights reserved.`;
@@ -56,7 +54,7 @@ const Footer = () => {
       <div className="container py-12 md:py-16">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-4">
-            <img src={mqiLogo} alt={ORG_NAME} className="h-12 w-auto brightness-0 invert" />
+            <img src="/mqi-logo.svg" alt={ORG_NAME} className="h-12 w-auto brightness-0 invert" />
             <p className="text-sm leading-relaxed text-secondary-foreground/70">{tagline}</p>
           </div>
 
@@ -65,7 +63,7 @@ const Footer = () => {
             <ul className="space-y-2.5">
               {quickLinks.map((link, index) => (
                 <li key={`${link.label}-${link.to}-${index}`}>
-                  <ConfigurableNavLink link={link} context="footer" isActive={location.pathname === link.to} />
+                  <ConfigurableNavLink link={link} context="footer" isActive={pathname === link.to} />
                 </li>
               ))}
             </ul>
@@ -76,7 +74,7 @@ const Footer = () => {
             <ul className="space-y-2.5">
               {programLinks.map((link, index) => (
                 <li key={`${link.label}-${link.to}-${index}`}>
-                  <ConfigurableNavLink link={link} context="footer" isActive={location.pathname === link.to} />
+                  <ConfigurableNavLink link={link} context="footer" isActive={pathname === link.to} />
                 </li>
               ))}
             </ul>
@@ -93,11 +91,16 @@ const Footer = () => {
                   {phone}
                 </a>
               </li>
-              <li className="text-sm text-secondary-foreground/60">
-                <a href={`mailto:${email}`} className="hover:text-secondary-foreground">
-                  {email}
-                </a>
-              </li>
+              {footerEmails.map((entry) => (
+                <li key={`${entry.title}-${entry.email}`} className="text-sm text-secondary-foreground/60">
+                  <span className="mb-0.5 block text-xs font-medium uppercase tracking-wide text-secondary-foreground/80">
+                    {entry.title}
+                  </span>
+                  <a href={`mailto:${entry.email}`} className="hover:text-secondary-foreground">
+                    {entry.email}
+                  </a>
+                </li>
+              ))}
             </ul>
             {socialLinks.length > 0 && (
               <div className="mt-4 flex flex-wrap items-center gap-2">

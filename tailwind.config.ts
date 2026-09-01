@@ -18,10 +18,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['"Poppins"', "system-ui", "sans-serif"],
-        display: ['"Poppins"', "system-ui", "sans-serif"],
-        arabic: ['"Noto Naskh Arabic"', "serif"],
-        serif: ['"Amiri"', "Georgia", "serif"],
+        sans: ["var(--font-poppins)", "system-ui", "sans-serif"],
+        display: ["var(--font-poppins)", "system-ui", "sans-serif"],
+        arabic: ["var(--font-amiri)", "Georgia", "serif"],
+        serif: ["var(--font-amiri)", "Georgia", "serif"],
       },
       colors: {
         emerald: {

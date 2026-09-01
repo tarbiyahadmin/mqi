@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { Button } from "@/components/ui/button";
 
 interface CtaLinkProps {
@@ -67,7 +69,7 @@ export function CtaLink({
   }
 
   return (
-    <Link to={to} target={target} rel={rel}>
+    <Link href={to} target={target} rel={rel}>
       <Button size={size} className={buttonClass}>
         {label}
       </Button>
