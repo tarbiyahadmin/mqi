@@ -1,0 +1,10 @@
+# Next.js static export (output: "export") — deploy plain files from out/
+# Do not use @netlify/plugin-nextjs or OpenNext for this site.
+
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
