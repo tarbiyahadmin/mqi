@@ -8,3 +8,16 @@
 [build.environment]
   NODE_VERSION = "20"
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
+
+# Pretty URLs: directory index.html is served at /path/
+[[redirects]]
+  from = "/programs/:category/:programSlug"
+  to = "/programs/:category/:programSlug/"
+  status = 301
+
+# Missing program pages (not prerendered) rewrite to the static-export fallback shell.
+# No `force`: existing out/programs/{category}/{slug}/index.html files still win.
+[[redirects]]
+  from = "/programs/:category/:programSlug/"
+  to = "/programs/__empty__/__empty__/"
+  status = 200

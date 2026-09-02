@@ -15,6 +15,7 @@ import { getHomepage, getAboutPage, type AboutTeacher } from "@/lib/sanityQuerie
 import { resolvePageCtaTarget, isPageCtaExternal } from "@/lib/ctaDestinations";
 import { ProgramCard } from "@/components/ProgramCard";
 import { resolveProgramCardImage } from "@/lib/programImages";
+import { programDetailPath } from "@/lib/routes";
 import { urlFor } from "@/lib/sanity";
 
 const defaultProgramCategories = [
@@ -231,7 +232,7 @@ const Index = () => {
                     return (
                       <ProgramCard
                         key={prog._id}
-                        to={`/programs/${catSlug}/${prog.slug ?? ""}`}
+                        to={programDetailPath(catSlug, prog.slug ?? "")}
                         title={prog.title ?? ""}
                         description={prog.shortDescription}
                         image={prog.mainImage}

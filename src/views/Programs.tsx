@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { PortableText } from "@portabletext/react";
 import { ProgramCard } from "@/components/ProgramCard";
 import { useQuery } from "@tanstack/react-query";
+import { programDetailPath } from "@/lib/routes";
 import { getProgramCategories, getProgramsPage, getProgramsForListing } from "@/lib/sanityQueries";
 
 import { PageTitle } from "@/components/layout/PageTitle";
@@ -126,7 +127,7 @@ const Programs = () => {
                       return (
                         <ProgramCard
                           key={prog._id}
-                          to={`/programs/${categorySlug}/${prog.slug}`}
+                          to={programDetailPath(categorySlug, prog.slug ?? "")}
                           title={prog.title}
                           description={prog.shortDescription ?? prog.overview}
                           image={prog.mainImage}

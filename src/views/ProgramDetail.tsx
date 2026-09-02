@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useParams, Link, paramAsString } from "@/lib/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { useQuery } from "@tanstack/react-query";
 import { getProgramBySlug } from "@/lib/sanityQueries";
 import { urlFor } from "@/lib/sanity";
-import { formPagePath } from "@/lib/routes";
+import { EMPTY_STATIC_PARAM, formPagePath, programSlugFromPathname } from "@/lib/routes";
 import { CtaLink } from "@/components/CtaLink";
 
 import { PageTitle } from "@/components/layout/PageTitle";
@@ -16,16 +17,30 @@ import { ScheduleBlocks } from "@/components/ScheduleBlocks";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
 import { ImageSoftFade } from "@/components/ui/ImageSoftFade";
 
+function slugFromNextParams(value: string | string[] | undefined): string {
+  const slug = paramAsString(value).replace(/\/$/, "");
+  return slug && slug !== EMPTY_STATIC_PARAM ? slug : "";
+}
+
 const ProgramDetail = () => {
   const { programSlug: programSlugParam } = useParams();
-  const programSlug = paramAsString(programSlugParam);
+  const paramSlug = slugFromNextParams(programSlugParam);
+  const [programSlug, setProgramSlug] = useState(paramSlug);
+  const [pathChecked, setPathChecked] = useState(!!paramSlug);
+
+  useEffect(() => {
+    const fromPath = programSlugFromPathname(window.location.pathname);
+    setProgramSlug(fromPath || paramSlug);
+    setPathChecked(true);
+  }, [paramSlug]);
+
   const { data: program, isLoading } = useQuery({
     queryKey: ["program", programSlug],
-    queryFn: () => getProgramBySlug(programSlug ?? ""),
+    queryFn: () => getProgramBySlug(programSlug),
     enabled: !!programSlug,
   });
 
-  if (isLoading) {
+  if (!pathChecked || isLoading) {
     return (
       <div className="container py-20 text-center">
         <p className="text-muted-foreground">Loading...</p>
