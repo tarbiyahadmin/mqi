@@ -3,6 +3,7 @@ import { Poppins, Amiri } from "next/font/google";
 import "@/index.css";
 import { AppProviders } from "@/components/providers/AppProviders";
 import { SiteSettingsProvider } from "@/components/providers/SiteSettingsProvider";
+import { MetaPixel } from "@/components/analytics/MetaPixel";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { GlobalGrain } from "@/components/layout/GlobalGrain";
@@ -54,6 +55,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
       </head>
       <body className="min-h-screen font-sans antialiased">
+        <MetaPixel />
         <AppProviders>
           <SiteSettingsProvider settings={settings}>
             <div className="relative flex min-h-screen flex-1 flex-col">

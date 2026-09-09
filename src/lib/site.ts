@@ -25,8 +25,10 @@ export const MQI_NAP = {
   email: "admin@miltonquraninstitute.com",
 } as const;
 
-/** Absolute URL for Open Graph / schema logo (served from /public). */
+/** Social / Open Graph share image (file: public/banner.png). */
 export const OG_IMAGE_PATH = "/banner.png";
+export const OG_IMAGE_WIDTH = 1730;
+export const OG_IMAGE_HEIGHT = 909;
 export const LOGO_PATH = "/mqi-logo.svg";
 
 export function absoluteUrl(path = "/"): string {

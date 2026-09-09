@@ -1,11 +1,15 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { PortableText } from "@portabletext/react";
 
 import { PageTitle } from "@/components/layout/PageTitle";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
-import { getJotformEmbedUrl } from "@/lib/jotform";
+import { useRouter } from "@/lib/navigation";
+import { getJotformEmbedUrl, isJotformEventOrigin, isJotformSubmissionMessage } from "@/lib/jotform";
+import { markRegistrationSuccess } from "@/lib/metaPixel";
+import { THANK_YOU_PATH } from "@/lib/routes";
 import type { SeoData } from "@/lib/sanityQueries";
 
 const fadeUp = {
@@ -33,6 +37,22 @@ export function FormPageShell({
   missingEmbedMessage = "This form is not available right now. Please try again later or contact us.",
 }: FormPageShellProps) {
   const embedUrl = getJotformEmbedUrl(embedSource);
+  const router = useRouter();
+  const redirectedRef = useRef(false);
+
+  useEffect(() => {
+    const onMessage = (event: MessageEvent) => {
+      if (redirectedRef.current) return;
+      if (!isJotformEventOrigin(event.origin)) return;
+      if (!isJotformSubmissionMessage(event.data)) return;
+      redirectedRef.current = true;
+      markRegistrationSuccess();
+      router.push(THANK_YOU_PATH);
+    };
+
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [router]);
 
   return (
     <main className="section-soft-radial relative overflow-hidden py-16 md:py-24 lg:py-28">

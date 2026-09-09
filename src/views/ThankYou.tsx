@@ -1,11 +1,18 @@
 "use client";
 
+import { useEffect } from "react";
 import { Link } from "@/lib/navigation";
 import { motion } from "framer-motion";
 import { PortableText } from "@portabletext/react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getThankYouPage } from "@/lib/sanityQueries";
+import {
+  consumePendingRegistrationEventId,
+  isDocumentReload,
+  isJotformReferrer,
+  trackCompleteRegistration,
+} from "@/lib/metaPixel";
 
 import { PageTitle } from "@/components/layout/PageTitle";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
@@ -20,6 +27,18 @@ const ThankYou = () => {
     queryKey: ["thankYouPage"],
     queryFn: getThankYouPage,
   });
+
+  useEffect(() => {
+    const pendingEventId = consumePendingRegistrationEventId();
+    if (pendingEventId) {
+      trackCompleteRegistration(pendingEventId);
+      return;
+    }
+    if (isDocumentReload()) return;
+    if (isJotformReferrer()) {
+      trackCompleteRegistration();
+    }
+  }, []);
 
   const title = data?.title?.trim() || "Thank you";
   const subtitle =

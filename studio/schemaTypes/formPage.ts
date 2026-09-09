@@ -43,7 +43,7 @@ export const formPage = defineType({
       group: 'form',
       validation: (r) => r.required().min(1),
       description:
-        'Full Jotform URL (https://form.jotform.com/…) or form ID only. In Jotform settings, set the thank-you redirect to this site’s /thank-you page.',
+        'Full Jotform URL (https://form.jotform.com/…) or form ID only. In Jotform, set the thank-you redirect to this site’s /thank-you page so CompleteRegistration is recorded after a successful submit.',
     }),
     ...seoFields,
   ],

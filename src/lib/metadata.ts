@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import {
   DEFAULT_META_DESCRIPTION,
+  OG_IMAGE_HEIGHT,
   OG_IMAGE_PATH,
+  OG_IMAGE_WIDTH,
   ORG_NAME,
   SITE_URL,
   absoluteAssetUrl,
@@ -39,7 +41,7 @@ export function buildMetadata({
       siteName: ORG_NAME,
       locale: "en_CA",
       type: "website",
-      images: [{ url: imageUrl, alt: ORG_NAME }],
+      images: [{ url: imageUrl, alt: ORG_NAME, width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT }],
     },
     twitter: {
       card: "summary_large_image",

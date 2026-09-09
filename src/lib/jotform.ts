@@ -19,3 +19,28 @@ export function getJotformEmbedUrl(input: string | undefined): string | null {
   // Jotform forms work in iframe with the same URL; no need to change path
   return url;
 }
+
+export function isJotformEventOrigin(origin: string): boolean {
+  try {
+    const host = new URL(origin).hostname;
+    return host === "jotform.com" || host.endsWith(".jotform.com");
+  } catch {
+    return false;
+  }
+}
+
+/** True when the iframe posts Jotform's successful-submit message. */
+export function isJotformSubmissionMessage(data: unknown): boolean {
+  if (data == null) return false;
+  if (typeof data === "string") {
+    try {
+      return isJotformSubmissionMessage(JSON.parse(data) as unknown);
+    } catch {
+      return data.includes("submission-completed");
+    }
+  }
+  if (typeof data === "object" && "action" in data) {
+    return (data as { action?: unknown }).action === "submission-completed";
+  }
+  return false;
+}
