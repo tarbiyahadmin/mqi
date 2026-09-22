@@ -8,6 +8,14 @@ export const careerRole = defineType({
   fields: [
     defineField({ name: 'title', type: 'string', title: 'Title', validation: (r) => r.required() }),
     defineField({
+      name: 'slug',
+      type: 'slug',
+      title: 'URL slug',
+      options: { source: 'title', maxLength: 96 },
+      description: 'Unique job URL. Existing roles without a slug use their document ID. Changing this value changes the shared URL. Publish and rebuild the website to update job pages.',
+      validation: (r) => r.required(),
+    }),
+    defineField({
       name: 'type',
       type: 'string',
       title: 'Type',

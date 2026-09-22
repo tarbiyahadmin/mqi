@@ -1,10 +1,7 @@
-"use client";
-
-import { Link } from "@/lib/navigation";
-import { motion } from "framer-motion";
+import Link from "next/link";
+import { MotionDiv } from "@/components/Motion";
 import { PortableText } from "@portabletext/react";
 import { Card, CardContent } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
 import { getBlogPosts, getBlogPage } from "@/lib/sanityQueries";
 import { urlFor } from "@/lib/sanity";
 import { format } from "date-fns";
@@ -18,33 +15,26 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-const Blog = () => {
-  const { data: blogPageData } = useQuery({
-    queryKey: ["blogPage"],
-    queryFn: getBlogPage,
-  });
-  const { data: posts = [] } = useQuery({
-    queryKey: ["blogPosts"],
-    queryFn: getBlogPosts,
-  });
+const Blog = async () => {
+  const blogPageData = await getBlogPage();
+  const posts = await getBlogPosts();
 
   const pageTitle = blogPageData?.title ?? "Blog";
   const pageSubtitle = blogPageData?.subtitle ?? "Insights, reflections, and updates from Milton Quran Institute.";
   const introContent = blogPageData?.introContent;
-  const seo = blogPageData?.seo;
 
   return (
     <main className="section-soft-radial section-y relative overflow-hidden">
       <DecorativeArabic variant="full" opacity={0.034} />
       <div className="container relative z-10">
-        <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mb-12 md:mb-16">
+        <MotionDiv initial="hidden" animate="visible" variants={fadeUp} className="mb-12 md:mb-16">
           <PageTitle title={pageTitle} subtitle={pageSubtitle} />
           {introContent && introContent.length > 0 && (
             <div className="prose prose-lg mx-auto mt-8 max-w-2xl text-center prose-p:text-muted-foreground">
               <PortableText value={introContent as never} />
             </div>
           )}
-        </motion.div>
+        </MotionDiv>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {posts.map((post, i) => {

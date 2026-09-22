@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Amiri } from "next/font/google";
 import "@/index.css";
-import { AppProviders } from "@/components/providers/AppProviders";
+import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { SiteSettingsProvider } from "@/components/providers/SiteSettingsProvider";
 import { MetaPixel } from "@/components/analytics/MetaPixel";
 import Header from "@/components/layout/Header";
@@ -56,16 +56,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body className="min-h-screen font-sans antialiased">
         <MetaPixel />
-        <AppProviders>
-          <SiteSettingsProvider settings={settings}>
-            <div className="relative flex min-h-screen flex-1 flex-col">
-              <GlobalGrain />
-              <Header />
-              <div className="relative z-10 flex-1">{children}</div>
-              <Footer />
-            </div>
-          </SiteSettingsProvider>
-        </AppProviders>
+        <ScrollToTop />
+        <SiteSettingsProvider settings={settings}>
+          <div className="relative flex min-h-screen flex-1 flex-col">
+            <GlobalGrain />
+            <Header />
+            <div className="relative z-10 flex-1">{children}</div>
+            <Footer />
+          </div>
+        </SiteSettingsProvider>
       </body>
     </html>
   );

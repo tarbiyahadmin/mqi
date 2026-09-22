@@ -1,3 +1,4 @@
+import { AppProviders } from "@/components/providers/AppProviders";
 import { buildMetadata } from "@/lib/metadata";
 import { EMPTY_STATIC_PARAM, programDetailPath } from "@/lib/routes";
 import { getProgramBySlug, getProgramsForListing } from "@/lib/sanityQueries";
@@ -37,5 +38,5 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default function Page() {
-  return <ProgramDetailPage />;
+  return <AppProviders><ProgramDetailPage /></AppProviders>;
 }

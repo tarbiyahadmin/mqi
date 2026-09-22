@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { buildMetadata } from "@/lib/metadata";
-import { getProgramsPage } from "@/lib/sanityQueries";
+import { getProgramsPage, getProgramCategories, getProgramsForListing } from "@/lib/sanityQueries";
 import ProgramsPage from "@/views/Programs";
 
 export async function generateMetadata() {
@@ -16,10 +16,11 @@ export async function generateMetadata() {
   }
 }
 
-export default function Page() {
+export default async function Page() {
+  const [programsPageData, categories, programs] = await Promise.all([getProgramsPage(), getProgramCategories(), getProgramsForListing()]);
   return (
     <Suspense fallback={null}>
-      <ProgramsPage />
+      <ProgramsPage programsPageData={programsPageData} categories={categories} programs={programs} />
     </Suspense>
   );
 }

@@ -1,7 +1,4 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
+import { MotionDiv, MotionSection } from "@/components/Motion";
 import { getBookMeetPage, type BookMeetPage } from "@/lib/sanityQueries";
 import { urlFor } from "@/lib/sanity";
 import { resolveCtaButtonTarget } from "@/lib/ctaDestinations";
@@ -55,7 +52,7 @@ function BookingSection({ title, body, imageUrl, imageAlt, cta }: BookingSection
   const ctaTarget = cta ? resolveCtaButtonTarget(cta) : null;
 
   return (
-    <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+    <MotionSection initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
       <h2 className="heading-section-sm mb-4">{title}</h2>
       <div className="geometric-divider mb-8 w-16" />
       <div className="grid min-w-0 gap-8 md:grid-cols-2 md:items-start md:gap-10">
@@ -71,15 +68,12 @@ function BookingSection({ title, body, imageUrl, imageAlt, cta }: BookingSection
           <img src={imageUrl} alt={imageAlt} className="h-full w-full object-cover" loading="lazy" />
         </ImageSoftFade>
       </div>
-    </motion.section>
+    </MotionSection>
   );
 }
 
-const BookMeet = () => {
-  const { data: page } = useQuery({
-    queryKey: ["bookMeetPage"],
-    queryFn: getBookMeetPage,
-  });
+const BookMeet = async () => {
+  const page = await getBookMeetPage();
 
   const pageTitle = page?.title?.trim() || DEFAULT_PAGE_TITLE;
   const pageSubtitle = page?.subtitle?.trim() || DEFAULT_PAGE_SUBTITLE;
@@ -92,7 +86,6 @@ const BookMeet = () => {
   const partTimeBody = page?.partTimeBody ?? DEFAULT_PART_TIME_BODY;
   const partTimeImageUrl = resolveImg(page?.partTimeImage, 960, 720, BOOK_MEET_PART_TIME);
 
-  const seo = page?.seo;
 
   return (
     <main className="section-soft-radial relative overflow-hidden pattern-stars">
@@ -103,9 +96,9 @@ const BookMeet = () => {
       />
 
       <div className="section-y container relative z-10 space-y-20 md:space-y-28">
-        <motion.div initial="hidden" animate="visible" variants={fadeUp}>
+        <MotionDiv initial="hidden" animate="visible" variants={fadeUp}>
           <PageTitle title={pageTitle} subtitle={pageSubtitle} />
-        </motion.div>
+        </MotionDiv>
 
         <BookingSection
           title={fullTimeTitle}

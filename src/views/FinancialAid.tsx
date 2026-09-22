@@ -1,9 +1,6 @@
-"use client";
-
 import type { ComponentProps } from "react";
-import { motion } from "framer-motion";
+import { MotionSection } from "@/components/Motion";
 import { PortableText } from "@portabletext/react";
-import { useQuery } from "@tanstack/react-query";
 import { getFinancialAidPage, type FinancialAidPage } from "@/lib/sanityQueries";
 import { urlFor } from "@/lib/sanity";
 import { resolveCtaButtonTarget } from "@/lib/ctaDestinations";
@@ -82,11 +79,8 @@ function resolveImg(
   return fallbackUrl;
 }
 
-const FinancialAid = () => {
-  const { data: page } = useQuery({
-    queryKey: ["financialAidPage"],
-    queryFn: getFinancialAidPage,
-  });
+const FinancialAid = async () => {
+  const page = await getFinancialAidPage();
 
   const img = (cms: FinancialAidPage["scholarshipOverviewImage"], i: number, w: number, h: number) =>
     resolveImg(cms, w, h, FALLBACK_IMAGES[i % FALLBACK_IMAGES.length]);
@@ -108,7 +102,6 @@ const FinancialAid = () => {
   const applyCta = page?.closingApplyCta;
   const donateCta = page?.closingDonateCta;
 
-  const seo = page?.seo;
 
   const closingFallbackPhoto = FINANCIAL_AID_FALLBACK;
 
@@ -128,7 +121,7 @@ const FinancialAid = () => {
 
       <div className="section-y container relative z-10 space-y-20 md:space-y-28">
         {/* Overview */}
-        <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+        <MotionSection initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
           <PageTitle
             headingLevel="h2"
             title={scholarshipOverviewTitle}
@@ -150,10 +143,10 @@ const FinancialAid = () => {
               <CtaLink label={applyCta.label} to={applyTarget} variant={applyCta.variant ?? "primary"} />
             </div>
           )}
-        </motion.section>
+        </MotionSection>
 
         {/* How it works */}
-        <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+        <MotionSection initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
           <h2 className="heading-section-sm mb-4">{howItWorksTitle}</h2>
           <div className="geometric-divider mb-8 w-16" />
           <div className="grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-12">
@@ -184,10 +177,10 @@ const FinancialAid = () => {
               <CtaLink label={donateCta.label} to={donateTarget} variant={donateCta.variant ?? "accent"} />
             </div>
           )}
-        </motion.section>
+        </MotionSection>
 
         {/* Merit & need — larger image */}
-        <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+        <MotionSection initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
           <h2 className="heading-section-sm mb-4">{meritNeedTitle}</h2>
           <div className="geometric-divider mb-6 w-16" />
           <div className="grid min-w-0 gap-8 lg:grid-cols-12 lg:items-center lg:gap-12">
@@ -211,11 +204,11 @@ const FinancialAid = () => {
               <CtaLink label={meritNeedCta.label} to={meritNeedTarget} variant={meritNeedCta.variant ?? "primary"} />
             </div>
           )}
-        </motion.section>
+        </MotionSection>
 
         {/* Hadith / quote */}
         {("arabic" in quote && quote.arabic) || quote.english ? (
-          <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+          <MotionSection initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
             <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/50 p-6 md:p-10">
               <div className="gold-accent-radial pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full opacity-40 blur-3xl" aria-hidden />
               <DecorativeArabic variant="corner" opacity={0.05} />
@@ -236,7 +229,7 @@ const FinancialAid = () => {
                 )}
               </blockquote>
             </div>
-          </motion.section>
+          </MotionSection>
         ) : null}
 
         {page?.additionalContent && page.additionalContent.length > 0 && (

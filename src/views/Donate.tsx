@@ -1,8 +1,5 @@
-"use client";
-
-import { motion } from "framer-motion";
+import { MotionDiv, MotionSection } from "@/components/Motion";
 import { PortableText } from "@portabletext/react";
-import { useQuery } from "@tanstack/react-query";
 import { getDonatePage } from "@/lib/sanityQueries";
 import { CtaLink } from "@/components/CtaLink";
 
@@ -24,11 +21,8 @@ function cmsImageUrl(image: unknown, width: number, height: number): string | nu
   return null;
 }
 
-const Donate = () => {
-  const { data: donatePageData } = useQuery({
-    queryKey: ["donatePage"],
-    queryFn: getDonatePage,
-  });
+const Donate = async () => {
+  const donatePageData = await getDonatePage();
 
   const pageTitle = donatePageData?.title ?? "Support Our Mission";
   const pageSubtitle = donatePageData?.subtitle;
@@ -58,15 +52,14 @@ const Donate = () => {
   const closingCtaButtons = donatePageData?.closingCtaButtons ?? [];
   const closingCtaImageUrl = cmsImageUrl(donatePageData?.closingCtaImage, 1600, 900);
 
-  const seo = donatePageData?.seo;
 
   return (
     <main className="section-soft-radial relative overflow-hidden pb-0">
       <DecorativeArabic variant="full" opacity={0.034} />
       <div className="container relative z-10 space-y-20 pb-20 pt-16 md:space-y-24 md:pb-24 md:pt-20">
-        <motion.div initial="hidden" animate="visible" variants={fadeUp}>
+        <MotionDiv initial="hidden" animate="visible" variants={fadeUp}>
           <PageTitle title={pageTitle} subtitle={pageSubtitle} />
-        </motion.div>
+        </MotionDiv>
 
         {/* Intro section: left text + right image */}
         {(introContent?.length || introImageUrl) && (
@@ -224,7 +217,7 @@ const Donate = () => {
 
         {/* Hadith section */}
         {(hadithTitle || hadith?.arabic || hadith?.english) && (
-          <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+          <MotionSection initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
             {hadithTitle && <h2 className="heading-section-sm mb-4">{hadithTitle}</h2>}
             <div className="geometric-divider mb-8 w-16" />
             <div className="rounded-2xl border border-border/50 bg-card/50 p-6 md:p-10">
@@ -254,7 +247,7 @@ const Donate = () => {
                 </div>
               )}
             </div>
-          </motion.section>
+          </MotionSection>
         )}
       </div>
 

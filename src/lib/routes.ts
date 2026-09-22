@@ -28,3 +28,8 @@ export const THANK_YOU_PATH = "/thank-you";
 
 /** CMS-managed Book A Meet landing page. */
 export const BOOK_MEET_PATH = "/book-a-meet";
+
+/** Stable CMS slug (or document ID for existing roles). */
+export function careerDetailPath(slug: string): string {
+  return `/careers/${encodeURIComponent(slug)}/`;
+}

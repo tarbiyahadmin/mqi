@@ -1,5 +1,6 @@
 "use client";
 
+import type { Homepage, AboutPage } from "@/lib/sanityQueries";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Link } from "@/lib/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,8 +11,7 @@ import { CtaLink } from "@/components/CtaLink";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
 import { ImageSoftFade } from "@/components/ui/ImageSoftFade";
 import { QURAN_HERO, EDITORIAL_PHOTOS, CTA_BAND_PHOTO } from "@/lib/localImages";
-import { useQuery } from "@tanstack/react-query";
-import { getHomepage, getAboutPage, type AboutTeacher } from "@/lib/sanityQueries";
+import { type AboutTeacher } from "@/lib/sanityQueries";
 import { resolvePageCtaTarget, isPageCtaExternal } from "@/lib/ctaDestinations";
 import { ProgramCard } from "@/components/ProgramCard";
 import { resolveProgramCardImage } from "@/lib/programImages";
@@ -38,15 +38,7 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 };
 
-const Index = () => {
-  const { data: homepage } = useQuery({
-    queryKey: ["homepage"],
-    queryFn: getHomepage,
-  });
-  const { data: aboutPage } = useQuery({
-    queryKey: ["aboutPageForHome"],
-    queryFn: getAboutPage,
-  });
+const Index = ({ homepage, aboutPage }: { homepage: Homepage | null; aboutPage: AboutPage | null }) => {
 
   const heroEyebrow = homepage?.heroEyebrow ?? "— Milton Quran Institute —";
   const heroTitle = homepage?.heroTitle ?? "Nurturing Hearts Through Qur'anic Education";

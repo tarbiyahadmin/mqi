@@ -1,5 +1,5 @@
 import { buildMetadata } from "@/lib/metadata";
-import { getHomepage } from "@/lib/sanityQueries";
+import { getHomepage, getAboutPage } from "@/lib/sanityQueries";
 import HomePage from "@/views/Index";
 
 export async function generateMetadata() {
@@ -15,6 +15,7 @@ export async function generateMetadata() {
   }
 }
 
-export default function Page() {
-  return <HomePage />;
+export default async function Page() {
+  const [homepage, aboutPage] = await Promise.all([getHomepage(), getAboutPage()]);
+  return <HomePage homepage={homepage} aboutPage={aboutPage} />;
 }

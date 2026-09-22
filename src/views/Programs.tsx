@@ -1,12 +1,11 @@
 "use client";
 
+import type { ProgramsPage, ProgramCategory } from "@/lib/sanityQueries";
 import { useSearchParams, usePathname, useRouter } from "@/lib/navigation";
 import { motion } from "framer-motion";
 import { PortableText } from "@portabletext/react";
 import { ProgramCard } from "@/components/ProgramCard";
-import { useQuery } from "@tanstack/react-query";
 import { programDetailPath } from "@/lib/routes";
-import { getProgramCategories, getProgramsPage, getProgramsForListing } from "@/lib/sanityQueries";
 
 import { PageTitle } from "@/components/layout/PageTitle";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
@@ -17,7 +16,7 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-const Programs = () => {
+const Programs = ({ programsPageData, categories, programs }: { programsPageData: ProgramsPage | null; categories: ProgramCategory[]; programs: ProgramForListing[] }) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -31,18 +30,6 @@ const Programs = () => {
     router.push(qs ? `${pathname}?${qs}` : pathname);
   };
 
-  const { data: programsPageData } = useQuery({
-    queryKey: ["programsPage"],
-    queryFn: getProgramsPage,
-  });
-  const { data: categories = [] } = useQuery({
-    queryKey: ["programCategories"],
-    queryFn: getProgramCategories,
-  });
-  const { data: programs = [] } = useQuery({
-    queryKey: ["programsForListing"],
-    queryFn: getProgramsForListing,
-  });
 
   const pageTitle = programsPageData?.title ?? "Our Programs";
   const pageSubtitle = programsPageData?.subtitle ?? "Explore our comprehensive range of Qur'anic education programs designed for learners at every stage.";

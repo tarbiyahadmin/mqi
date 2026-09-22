@@ -1,3 +1,4 @@
+import { getStaticCareerRoles } from "@/lib/careers";
 import { buildMetadata } from "@/lib/metadata";
 import { getCareersPage } from "@/lib/sanityQueries";
 import CareersPage from "@/views/Careers";
@@ -15,6 +16,7 @@ export async function generateMetadata() {
   }
 }
 
-export default function Page() {
-  return <CareersPage />;
+export default async function Page() {
+  const [careersPageData, roles] = await Promise.all([getCareersPage(), getStaticCareerRoles()]);
+  return <CareersPage careersPageData={careersPageData} roles={roles} />;
 }

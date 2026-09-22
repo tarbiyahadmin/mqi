@@ -1,6 +1,4 @@
-"use client";
-
-import { motion } from "framer-motion";
+import { MotionDiv } from "@/components/Motion";
 import { PageTitle } from "@/components/layout/PageTitle";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
 import type { ContactPage } from "@/lib/sanityQueries";
@@ -37,12 +35,12 @@ export function ContactView({ page }: ContactViewProps) {
     <main className="section-soft-radial section-y relative overflow-hidden">
       <DecorativeArabic variant="full" opacity={0.032} />
       <div className="container relative z-10">
-        <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mx-auto mb-12 max-w-3xl md:mb-16">
+        <MotionDiv initial="hidden" animate="visible" variants={fadeUp} className="mx-auto mb-12 max-w-3xl md:mb-16">
           <PageTitle title={pageTitle} subtitle={pageSubtitle} />
           {intro && <p className="mt-6 text-center text-base leading-relaxed text-muted-foreground md:text-left md:text-lg">{intro}</p>}
-        </motion.div>
+        </MotionDiv>
 
-        <motion.div
+        <MotionDiv
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
@@ -98,7 +96,7 @@ export function ContactView({ page }: ContactViewProps) {
               </a>
             </div>
           </section>
-        </motion.div>
+        </MotionDiv>
       </div>
     </main>
   );

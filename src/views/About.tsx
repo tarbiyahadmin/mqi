@@ -1,13 +1,13 @@
 "use client";
 
+import type { AboutPage, Homepage } from "@/lib/sanityQueries";
 import { useRef, useMemo } from "react";
 import { motion } from "framer-motion";
 import { PortableText } from "@portabletext/react";
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { PageTitle } from "@/components/layout/PageTitle";
-import { getAboutPage, getHomepage, type AboutTeacher, type AboutGraduate } from "@/lib/sanityQueries";
+import { type AboutTeacher, type AboutGraduate } from "@/lib/sanityQueries";
 import { urlFor } from "@/lib/sanity";
 import { DecorativeArabic } from "@/components/layout/DecorativeArabic";
 import { ImageSoftFade } from "@/components/ui/ImageSoftFade";
@@ -20,15 +20,7 @@ const fadeUp = {
 
 const scrollByAmount = 320;
 
-const About = () => {
-  const { data: aboutPage } = useQuery({
-    queryKey: ["aboutPage"],
-    queryFn: getAboutPage,
-  });
-  const { data: homepage } = useQuery({
-    queryKey: ["homepage"],
-    queryFn: getHomepage,
-  });
+const About = ({ aboutPage, homepage }: { aboutPage: AboutPage | null; homepage: Homepage | null }) => {
   const testimonials = homepage?.testimonials ?? [];
   const testimonialsSectionTitle = homepage?.testimonialsSectionTitle ?? "What Families Say";
 

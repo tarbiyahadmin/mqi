@@ -1,3 +1,4 @@
+import { AppProviders } from "@/components/providers/AppProviders";
 import { buildMetadata } from "@/lib/metadata";
 import { getThankYouPage } from "@/lib/sanityQueries";
 import ThankYouPage from "@/views/ThankYou";
@@ -17,5 +18,5 @@ export async function generateMetadata() {
 }
 
 export default function Page() {
-  return <ThankYouPage />;
+  return <AppProviders><ThankYouPage /></AppProviders>;
 }

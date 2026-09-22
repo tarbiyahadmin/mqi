@@ -1,3 +1,4 @@
+import { AppProviders } from "@/components/providers/AppProviders";
 import { buildMetadata } from "@/lib/metadata";
 import { getFormPageBySlug, getFormPageSlugs } from "@/lib/sanityQueries";
 import { withStaticExportFallback } from "@/lib/staticParams";
@@ -35,5 +36,5 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default function Page() {
-  return <FormPage />;
+  return <AppProviders><FormPage /></AppProviders>;
 }

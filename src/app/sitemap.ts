@@ -1,3 +1,5 @@
+import { getStaticCareerRoles } from "@/lib/careers";
+import { careerDetailPath } from "@/lib/routes";
 import type { MetadataRoute } from "next";
 import { getBlogPosts, getProgramsForListing } from "@/lib/sanityQueries";
 import { SITE_URL } from "@/lib/site";
@@ -50,6 +52,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   } catch {
     // Static routes only if Sanity is unavailable at build time
+  }
+
+  for (const role of await getStaticCareerRoles()) {
+    entries.push({ url: `${SITE_URL}${careerDetailPath(role.slug)}`, changeFrequency: "monthly", priority: 0.6 });
   }
 
   return entries;

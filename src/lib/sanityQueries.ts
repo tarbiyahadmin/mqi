@@ -247,6 +247,7 @@ export interface BlogPage {
 
 export interface CareerRole {
   _id: string;
+  slug: string;
   title: string;
   type: string;
   location?: string;
@@ -538,6 +539,7 @@ const CAREERS_PAGE_QUERY = `*[_type == "careersPage"][0]{
 
 const CAREER_ROLES_QUERY = `*[_type == "careerRole"] | order(title asc){
   _id,
+  "slug": coalesce(slug.current, _id),
   title,
   type,
   location,

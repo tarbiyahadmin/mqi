@@ -1,13 +1,10 @@
-"use client";
-
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { MotionDiv } from "@/components/Motion";
+import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { PortableText } from "@portabletext/react";
-import { useQuery } from "@tanstack/react-query";
-import { getCareerRoles, getCareersPage } from "@/lib/sanityQueries";
-import { formPagePath } from "@/lib/routes";
+import type { CareerRole, CareersPage } from "@/lib/sanityQueries";
+import { formPagePath, careerDetailPath } from "@/lib/routes";
 import { CtaLink } from "@/components/CtaLink";
 
 import { PageTitle } from "@/components/layout/PageTitle";
@@ -18,19 +15,7 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-const Careers = () => {
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
-
-  const { data: careersPageData } = useQuery({
-    queryKey: ["careersPage"],
-    queryFn: getCareersPage,
-  });
-  const { data: roles = [] } = useQuery({
-    queryKey: ["careerRoles"],
-    queryFn: getCareerRoles,
-  });
-
-  const role = selectedRole ? roles.find((r) => r._id === selectedRole) : null;
+const Careers = ({ careersPageData, roles = [], role = null }: { careersPageData: CareersPage | null; roles?: CareerRole[]; role?: CareerRole | null }) => {
   const pageTitle = careersPageData?.title ?? "Career & Volunteer Opportunities";
   const pageSubtitle = careersPageData?.subtitle ?? "Join our team and make a meaningful impact in the community through Qur'anic education.";
   const whyWorkAtMqi = careersPageData?.whyWorkAtMqi;
@@ -38,7 +23,6 @@ const Careers = () => {
   const introContent = careersPageData?.introContent;
   const applicationPath =
     role?.applicationFormPage?.slug != null ? formPagePath(role.applicationFormPage.slug) : null;
-  const seo = careersPageData?.seo;
 
   return (
     <main className="section-soft-radial section-y relative overflow-hidden">
@@ -48,14 +32,14 @@ const Careers = () => {
         aria-hidden
       />
       <div className="container relative z-10">
-        <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mb-16">
-          <PageTitle title={pageTitle} subtitle={pageSubtitle} />
+        <MotionDiv initial="hidden" animate="visible" variants={fadeUp} className="mb-16">
+          <PageTitle title={pageTitle} subtitle={pageSubtitle} headingLevel={role ? "h2" : "h1"} />
           {introContent && introContent.length > 0 && (
             <div className="prose prose-lg mx-auto mt-8 max-w-2xl text-center prose-p:text-muted-foreground">
               <PortableText value={introContent as never} />
             </div>
           )}
-        </motion.div>
+        </MotionDiv>
 
         {whyWorkAtMqi && (
           <section className="mb-16 max-w-3xl mx-auto">
@@ -64,14 +48,13 @@ const Careers = () => {
           </section>
         )}
 
-        {!selectedRole ? (
+        {!role ? (
           <div className="mx-auto flex max-w-5xl flex-col gap-8">
-            {roles.map((r, i) => {
+            {roles.map((r) => {
               return (
-                <div key={r._id}>
+                <Link key={r._id} href={careerDetailPath(r.slug)} className="block rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
                   <Card
                     className="h-full cursor-pointer border-border/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                    onClick={() => setSelectedRole(r._id)}
                   >
                     <CardContent className="space-y-5 p-8 md:p-10">
                       <div className="flex items-center justify-between">
@@ -86,24 +69,25 @@ const Careers = () => {
                       </div>
                       <h3 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">{r.title}</h3>
                       <p className="max-w-3xl text-base leading-relaxed text-muted-foreground md:text-lg">{r.description}</p>
-                      <Button variant="link" className="p-0 h-auto text-primary font-medium">
+                      <span className={buttonVariants({ variant: "link", className: "p-0 h-auto text-primary font-medium" })}>
                         View Details <span aria-hidden className="ml-1">→</span>
-                      </Button>
+                      </span>
                     </CardContent>
                   </Card>
-                </div>
+                </Link>
               );
             })}
           </div>
         ) : (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mx-auto max-w-4xl">
-            <button onClick={() => setSelectedRole(null)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-6 transition-colors">
+          <MotionDiv initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mx-auto max-w-4xl">
+            <Link href="/careers/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-6 transition-colors">
               <span aria-hidden>×</span> Back to all positions
-            </button>
+            </Link>
             {role && (
               <>
                 <span className={`text-xs px-3 py-1 rounded-full font-medium ${role.type === "Volunteer" ? "bg-accent/20 text-accent-foreground" : "bg-primary/10 text-primary"}`}>{role.type}</span>
-                <h2 className="mt-4 mb-3 text-4xl font-bold tracking-tight text-foreground md:text-5xl">{role.title}</h2>
+                <h1 className="mt-4 mb-3 text-4xl font-bold tracking-tight text-foreground md:text-5xl">{role.title}</h1>
+                {role.location && <p className="mb-3 text-sm text-muted-foreground">{role.location}</p>}
                 <p className="mb-10 text-lg leading-relaxed text-muted-foreground">{role.description}</p>
 
                 {role.positionDetails && (
@@ -162,7 +146,7 @@ const Careers = () => {
                 </section>
               </>
             )}
-          </motion.div>
+          </MotionDiv>
         )}
       </div>
     </main>
